@@ -1,0 +1,21 @@
+# Secrets
+.env
+.otp
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Browser session (device-registered) — do not commit
+profile/
+state.json
+state_chrome.json
+
+# Generated raw data (regenerated daily)
+src/data/
+
+# Daily-generated outputs that may contain careet excerpts (유료 미디어 — push 안 함)
+docs/dashboard.html
+docs/review/digest_*.md
+docs/review/deepread_*.md
