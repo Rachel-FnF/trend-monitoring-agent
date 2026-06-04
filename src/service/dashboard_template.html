@@ -308,19 +308,13 @@ function itemCard(it){
   const tags = (it.tags||[]).slice(0,3).filter(Boolean).map(t => '<span class="item-tag">' + esc(t) + '</span>').join("");
   const what = it.what || "";
   const why = it.why || "";
-  const ffAngle = it.ff_angle || "";
-  const ffPoint = it.ff_point || "";
   const whatRow = what
     ? '<div class="ana-row"><span class="ana-label">무엇</span><span class="ana-text">' + esc(what) + '</span></div>'
     : '<div class="ana-row"><span class="ana-label">무엇</span><span class="ana-text muted">분석 대기</span></div>';
   const whyRow = why
     ? '<div class="ana-row"><span class="ana-label">왜 뜨나</span><span class="ana-text">' + esc(why) + '</span></div>'
     : '';
-  const ffRow = (ffAngle || ffPoint)
-    ? '<div class="ana-row ana-ff"><span class="ana-label">F&amp;F</span><span class="ana-text">'
-      + (ffAngle ? '<span class="ana-angle">' + esc(ffAngle) + '</span>' : '')
-      + esc(ffPoint) + '</span></div>'
-    : '';
+  const ffRow = '';
   const thumb = it.image
     ? '<div class="item-thumb"><img src="' + esc(it.image) + '" alt="" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></div>'
     : '';
@@ -366,7 +360,6 @@ function crossCard(cv){
     + '</div>'
     + analysis
     + '<div class="cross-items"><span class="cross-items-label">잡힌 소스</span>' + items + '</div>'
-    + '<div class="cross-ff"><strong>F&amp;F 시사</strong><br>' + esc(cv.ff) + '</div>'
     + '</article>';
 }
 

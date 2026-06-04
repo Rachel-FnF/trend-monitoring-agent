@@ -2,13 +2,19 @@
 "사는 재미가 없으면 사는 재미라도" 컨셉의 에디토리얼 미디어.
 카테고리: STYLE·TECH·EAT·LIFE·CULTURE (제품 추천·트렌드 분석).
 RSS 없음 → 홈페이지 정적 HTML. URL id 추출 후 각 id 주변 context에서 정보 잡음.
+
+날짜: listing의 <p class="date">는 빈 칸일 때가 많아 각 글 페이지의 article:published_time
+메타로 보강. URL 단위 캐시로 한 번 받은 글은 재fetch 안 함.
 각 항목: 제목·URL·날짜·카테고리·요약·이미지.
 """
-import re, sys, urllib.request
+import json, re, sys, urllib.request
 from html import unescape
+from pathlib import Path
 
 LIST_URL = "https://the-edit.co.kr/"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+
+_DATE_CACHE = Path(__file__).resolve().parents[2] / "src" / "data" / "the_edit_date_cache.json"
 
 
 def _clean(s: str) -> str:
@@ -20,6 +26,42 @@ def _parse_date(s: str) -> str:
     if not m:
         return ""
     return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+
+
+def _load_date_cache():
+    if _DATE_CACHE.exists():
+        try:
+            return json.loads(_DATE_CACHE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_date_cache(c):
+    try:
+        _DATE_CACHE.write_text(json.dumps(c, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:
+        pass
+
+
+def _fetch_published_date(url: str, cache: dict) -> str:
+    """글 페이지의 article:published_time 메타에서 YYYY-MM-DD. 캐시 hit면 즉시."""
+    if url in cache:
+        return cache[url]
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        html = urllib.request.urlopen(req, timeout=12).read().decode("utf-8", "replace")
+        m = re.search(r'<meta\s+property="article:published_time"\s+content="(\d{4})-(\d{2})-(\d{2})', html)
+        if not m:
+            m = re.search(r'"datePublished"\s*:\s*"(\d{4})-(\d{2})-(\d{2})', html)
+        if m:
+            iso = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+            cache[url] = iso
+            return iso
+    except Exception:
+        pass
+    cache[url] = ""
+    return ""
 
 
 def fetch_the_edit(limit=15):
@@ -80,6 +122,18 @@ def fetch_the_edit(limit=15):
         })
         if len(out) >= limit:
             break
+
+    # 날짜 보강 — listing의 <p class="date">가 빈 칸인 글은 글 페이지에서 published_time 가져옴
+    date_cache = _load_date_cache()
+    new_fetched = 0
+    for it in out:
+        if it["date"]:
+            continue  # listing에서 이미 잡힘
+        if it["url"] not in date_cache:
+            new_fetched += 1
+        it["date"] = _fetch_published_date(it["url"], date_cache)
+    if new_fetched:
+        _save_date_cache(date_cache)
     return out
 
 

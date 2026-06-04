@@ -60,9 +60,17 @@ def fetch_insight(limit=15):
         img_m = re.search(r'<img\s+src="(https?://img\.insight\.co\.kr/[^"]+)"', inner)
         image = img_m.group(1) if img_m else ""
 
-        # 날짜 — datePublished 또는 별도 시간 표기. listing엔 명시적 날짜 없을 수 있음
-        date_m = re.search(r'datePublished"[^>]*content="([^"]+)"', inner)
-        date_iso = _parse_date(date_m.group(1)) if date_m else ""
+        # 날짜 — listing엔 datePublished 메타 없음. 이미지 URL path에서 추출:
+        # img.insight.co.kr/static/YYYY/MM/DD/...
+        date_iso = ""
+        if image:
+            dm = re.search(r"/static/(\d{4})/(\d{2})/(\d{2})/", image)
+            if dm:
+                date_iso = f"{dm.group(1)}-{dm.group(2)}-{dm.group(3)}"
+        # fallback: 혹시 datePublished 메타가 있으면 우선
+        date_meta_m = re.search(r'datePublished"[^>]*content="([^"]+)"', inner)
+        if date_meta_m:
+            date_iso = _parse_date(date_meta_m.group(1)) or date_iso
 
         # 요약 — description meta 또는 figcaption
         cap_m = re.search(r'<figcaption[^>]*>\s*(.*?)\s*</figcaption>', inner, re.DOTALL)

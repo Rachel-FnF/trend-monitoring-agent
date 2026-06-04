@@ -55,10 +55,16 @@ def fetch_heypop(limit=15):
         tag_matches = re.findall(r'<a\s+href="[^"]*\?c=[^"]+"\s+class="tag">\s*([^<]+?)\s*</a>', after)
         categories = [unescape(t).strip() for t in tag_matches]
 
+        # 날짜 — 이미지 파일명에 'YYYYMMDD_' 패턴이 있어 거기서 추출.
+        date_iso = ""
+        if image:
+            dm = re.search(r"(\d{4})(\d{2})(\d{2})_\d", image)
+            if dm:
+                date_iso = f"{dm.group(1)}-{dm.group(2)}-{dm.group(3)}"
         out.append({
             "title": title,
             "url": f"https://heypop.kr/n/{aid}",
-            "date": "",  # listing 카드에 날짜 명시 없음
+            "date": date_iso,
             "image": image,
             "excerpt": excerpt[:300],
             "categories": categories,
