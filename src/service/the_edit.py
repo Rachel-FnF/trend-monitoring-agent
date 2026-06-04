@@ -44,24 +44,37 @@ def _save_date_cache(c):
         pass
 
 
-def _fetch_published_date(url: str, cache: dict) -> str:
-    """글 페이지의 article:published_time 메타에서 YYYY-MM-DD. 캐시 hit면 즉시."""
-    if url in cache:
-        return cache[url]
+def _fetch_meta(url: str, cache: dict) -> dict:
+    """글 페이지의 article:published_time + 본문 <p>들 추출. 캐시 hit면 즉시.
+    legacy 캐시(str → date만)는 자동 마이그레이션."""
+    cached = cache.get(url)
+    if isinstance(cached, dict):
+        return cached
+    legacy_date = cached if isinstance(cached, str) else ""
+    out = {"date": legacy_date, "body": ""}
     try:
         req = urllib.request.Request(url, headers={"User-Agent": UA})
         html = urllib.request.urlopen(req, timeout=12).read().decode("utf-8", "replace")
+        # 날짜
         m = re.search(r'<meta\s+property="article:published_time"\s+content="(\d{4})-(\d{2})-(\d{2})', html)
         if not m:
             m = re.search(r'"datePublished"\s*:\s*"(\d{4})-(\d{2})-(\d{2})', html)
         if m:
-            iso = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
-            cache[url] = iso
-            return iso
+            out["date"] = f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+        # 본문 — 의미 있는 길이(50자+)의 <p>를 합쳐 1800자 이내로
+        body_parts = []
+        for p_html in re.findall(r"<p[^>]*>(.*?)</p>", html, re.DOTALL):
+            txt = re.sub(r"<[^>]+>", "", p_html)
+            txt = unescape(re.sub(r"\s+", " ", txt)).strip()
+            if len(txt) > 50:
+                body_parts.append(txt)
+            if sum(len(x) + 1 for x in body_parts) > 1800:
+                break
+        out["body"] = " ".join(body_parts)[:1800]
     except Exception:
         pass
-    cache[url] = ""
-    return ""
+    cache[url] = out
+    return out
 
 
 def fetch_the_edit(limit=15):
@@ -123,17 +136,24 @@ def fetch_the_edit(limit=15):
         if len(out) >= limit:
             break
 
-    # 날짜 보강 — listing의 <p class="date">가 빈 칸인 글은 글 페이지에서 published_time 가져옴
-    date_cache = _load_date_cache()
+    # 날짜·본문 보강 — listing의 excerpt가 짧고 date 비어있으면 글 페이지에서 둘 다 가져옴
+    meta_cache = _load_date_cache()
     new_fetched = 0
     for it in out:
-        if it["date"]:
-            continue  # listing에서 이미 잡힘
-        if it["url"] not in date_cache:
+        need_date = not it["date"]
+        need_body = len(it.get("excerpt", "")) < 80
+        if not (need_date or need_body):
+            continue
+        if it["url"] not in meta_cache or not isinstance(meta_cache.get(it["url"]), dict):
             new_fetched += 1
-        it["date"] = _fetch_published_date(it["url"], date_cache)
+        meta = _fetch_meta(it["url"], meta_cache)
+        if need_date and meta.get("date"):
+            it["date"] = meta["date"]
+        if need_body and meta.get("body"):
+            # 짧은 listing excerpt + 풍부한 본문 = 본문 우선
+            it["excerpt"] = (meta["body"][:1800])
     if new_fetched:
-        _save_date_cache(date_cache)
+        _save_date_cache(meta_cache)
     return out
 
 
