@@ -164,15 +164,35 @@ with sync_playwright() as pw:
     micro = [m for m in micro if since(m.get("datetime", ""))]
     p(f"articles total: {len(articles)} (new today: {len(new_ids)}, since={SINCE_DATE}, cut {_before - len(articles)})")
 
-    # fetch body excerpts for new articles (cap 20)
-    for aid in new_ids[:30]:
+    # Body cache — 한 번 fetch한 글의 본문은 영구 저장해 매일 재사용.
+    # collected_<today>.json은 매일 새로 만들어지지만 body는 글이 살아있는 동안 안 바뀜 →
+    # SINCE 윈도우 안에서는 옛 글도 본문 유지(분석 일관성·캐릿 hit 절감).
+    body_cache_path = DATA / "careet_body_cache.json"
+    body_cache = json.loads(body_cache_path.read_text(encoding="utf-8")) if body_cache_path.exists() else {}
+    # 1단계: 캐시 hit 적용
+    cache_hits = 0
+    for aid, r in articles.items():
+        if not r.get("body_excerpt") and aid in body_cache:
+            r["body_excerpt"] = body_cache[aid]
+            cache_hits += 1
+    # 2단계: 본문이 비어있는 글을 fetch (new_ids 우선 + 캐시 miss인 옛 글, cap 30)
+    to_fetch = [aid for aid in new_ids if not articles[aid].get("body_excerpt")]
+    extras = [aid for aid in articles if aid not in to_fetch and not articles[aid].get("body_excerpt")]
+    # 최근 글 우선(date desc)
+    extras.sort(key=lambda a: articles[a].get("date", ""), reverse=True)
+    fetch_queue = (to_fetch + extras)[:30]
+    p(f"body cache: {cache_hits} hit, {len(fetch_queue)} to fetch (new={len(to_fetch)}, extras={min(len(extras), 30-len(to_fetch))})")
+    for aid in fetch_queue:
         try:
             page.goto(f"https://www.careet.net/{aid}", wait_until="domcontentloaded")
             page.wait_for_timeout(1800)
             body = page.inner_text("article") if page.locator("article").count() else page.inner_text("main")
-            articles[aid]["body_excerpt"] = re.sub(r"\s+", " ", body)[:2000]
-        except Exception as e:
-            articles[aid]["body_excerpt"] = ""
+            excerpt = re.sub(r"\s+", " ", body)[:2000]
+            articles[aid]["body_excerpt"] = excerpt
+            body_cache[aid] = excerpt
+        except Exception:
+            articles[aid].setdefault("body_excerpt", "")
+    body_cache_path.write_text(json.dumps(body_cache, ensure_ascii=False, indent=1), encoding="utf-8")
 
     ctx.close()
 
