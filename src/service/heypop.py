@@ -2,14 +2,57 @@
 "매일 새로운 팝업 및 공간 트렌드와 디자인 스폿, 브랜드 이슈" 컨셉.
 카테고리: Style·Gourmet·Culture·Tech·News·Exhibition 등.
 /trend 페이지 정적 HTML. <a class="title"> anchor 기준으로 잡고, 위쪽에서 이미지,
-아래쪽에서 요약·태그 추출.
-각 항목: 제목·URL·날짜(비움)·이미지·요약·카테고리 태그.
+아래쪽에서 요약·태그 추출. 본문은 각 글 페이지에서 <p> 합쳐 보강(영구 캐시).
+각 항목: 제목·URL·날짜(이미지 파일명에서 추출)·이미지·요약·본문·카테고리 태그.
 """
-import re, sys, urllib.request
+import json, re, sys, urllib.request
 from html import unescape
+from pathlib import Path
 
-LIST_URL = "https://heypop.kr/trend"
+LIST_URL = "https://heypop.kr/n/?c=POP-UP"  # 사용자 요청: POP-UP 카테고리만
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+
+_BODY_CACHE = Path(__file__).resolve().parents[2] / "src" / "data" / "source_cache" / "heypop_body_cache.json"
+_BODY_CACHE.parent.mkdir(parents=True, exist_ok=True)
+
+
+def _load_cache():
+    if _BODY_CACHE.exists():
+        try:
+            return json.loads(_BODY_CACHE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_cache(c):
+    try:
+        _BODY_CACHE.write_text(json.dumps(c, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:
+        pass
+
+
+def _fetch_body(url: str, cache: dict) -> str:
+    """글 페이지 <p> 본문 합쳐 1800자 이내. 캐시 hit면 즉시."""
+    if url in cache:
+        return cache[url]
+    body = ""
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        html = urllib.request.urlopen(req, timeout=12).read().decode("utf-8", "replace")
+        parts = []
+        for p_html in re.findall(r"<p[^>]*>(.*?)</p>", html, re.DOTALL):
+            txt = re.sub(r"<[^>]+>", "", p_html)
+            txt = unescape(re.sub(r"\s+", " ", txt)).strip()
+            if len(txt) > 50:
+                parts.append(txt)
+            if sum(len(x) + 1 for x in parts) > 1800:
+                break
+        body = " ".join(parts)[:1800]
+    except Exception:
+        pass
+    cache[url] = body
+    return body
 
 
 def _clean(s: str) -> str:
@@ -71,6 +114,18 @@ def fetch_heypop(limit=15):
         })
         if len(out) >= limit:
             break
+
+    # 본문 보강 — 각 글 페이지 <p> 합쳐 1800자
+    cache = _load_cache()
+    new_fetched = 0
+    for it in out:
+        if it["url"] not in cache:
+            new_fetched += 1
+        body = _fetch_body(it["url"], cache)
+        if body and len(body) > len(it.get("excerpt", "")):
+            it["excerpt"] = body
+    if new_fetched:
+        _save_cache(cache)
     return out
 
 

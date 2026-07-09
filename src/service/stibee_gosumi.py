@@ -6,12 +6,13 @@ SPA라 Playwright headless 렌더링 필요. 캐릿용 같은 영구 프로필 �
 domcontentloaded + wait_for_selector(stib.ee anchors)로 SPA 렌더링 완료를 명시적으로 대기.
 빈 결과면 1회 재시도. 그래도 빈 결과면 src/data/stibee_debug.log에 진단 남김.
 
-이미지: 각 글 페이지에 og:image가 없어서 본문 안 hero 이미지를 추출.
-패턴 — 본문 안 img 태그들 중 처음 3개는 헤더 템플릿(공통 ntr ID 반복).
-첫 등장하는 "새 ntr ID"의 첫 이미지가 본문 hero. URL 단위 캐시.
-각 항목: 날짜·제목·URL·is_ad·이미지.
+이미지·본문: 각 글 페이지를 한 번 fetch해서 hero 이미지(첫 새 ntr ID)와 본문 <p>들을
+함께 추출 + URL 단위 캐시. 캐시 구조 {url: {"image": ..., "body": ...}}.
+legacy str 캐시(image만) 자동 마이그레이션. 광고 표기 글은 fetch 자체 스킵.
+각 항목: 날짜·제목·URL·is_ad·이미지·본문.
 """
 import json, re, sys, datetime, urllib.request
+from html import unescape
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -20,7 +21,8 @@ UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like 
 
 ROOT = Path(__file__).resolve().parents[2]
 DBG = ROOT / "src" / "data" / "stibee_debug.log"
-_IMG_CACHE = ROOT / "src" / "data" / "stibee_image_cache.json"
+_IMG_CACHE = ROOT / "src" / "data" / "source_cache" / "stibee_image_cache.json"
+_IMG_CACHE.parent.mkdir(parents=True, exist_ok=True)
 
 _LINE = re.compile(r"^(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\(광고\))?\s*(.*?)$")
 
@@ -59,34 +61,48 @@ def _save_img_cache(c):
         pass
 
 
-def _hero_image_for(url: str, cache: dict) -> str:
-    """본문 첫 hero 이미지 — 처음 등장 ntr이 헤더(공통 템플릿).
-    첫 새 ntr 이미지가 본문 hero. 못 찾으면 첫 img로 fallback."""
-    if url in cache:
-        return cache[url]
-    img = ""
+def _fetch_meta_for(url: str, cache: dict) -> dict:
+    """글 페이지 한 번 fetch로 hero 이미지(첫 새 ntr ID) + 본문 <p>들 동시 추출.
+    캐시 hit면 즉시. legacy str(image만) 자동 마이그레이션."""
+    cached = cache.get(url)
+    if isinstance(cached, dict):
+        return cached
+    legacy_img = cached if isinstance(cached, str) else ""
+    out = {"image": legacy_img, "body": ""}
     try:
         req = urllib.request.Request(url, headers={"User-Agent": UA})
         html = urllib.request.urlopen(req, timeout=12).read().decode("utf-8", "replace")
-        imgs = re.findall(r'<img[^>]+src=["\']([^"\']+)["\']', html)
-        first_ntr = None
-        for src in imgs:
-            m = re.search(r"\d+_(\d+)_", src)
-            if not m:
-                continue
-            ntr = m.group(1)
-            if first_ntr is None:
-                first_ntr = ntr
-                continue
-            if ntr != first_ntr:
-                img = src
+        # image — 첫 새 ntr ID
+        if not out["image"]:
+            imgs = re.findall(r'<img[^>]+src=["\']([^"\']+)["\']', html)
+            first_ntr = None
+            for src in imgs:
+                m = re.search(r"\d+_(\d+)_", src)
+                if not m:
+                    continue
+                ntr = m.group(1)
+                if first_ntr is None:
+                    first_ntr = ntr
+                    continue
+                if ntr != first_ntr:
+                    out["image"] = src
+                    break
+            if not out["image"] and imgs:
+                out["image"] = imgs[0]
+        # body
+        parts = []
+        for p_html in re.findall(r"<p[^>]*>(.*?)</p>", html, re.DOTALL):
+            txt = re.sub(r"<[^>]+>", "", p_html)
+            txt = unescape(re.sub(r"\s+", " ", txt)).strip()
+            if len(txt) > 50:
+                parts.append(txt)
+            if sum(len(x) + 1 for x in parts) > 1800:
                 break
-        if not img and imgs:
-            img = imgs[0]
+        out["body"] = " ".join(parts)[:1800]
     except Exception:
-        img = ""
-    cache[url] = img
-    return img
+        pass
+    cache[url] = out
+    return out
 
 
 def _grab_anchors(page):
@@ -152,18 +168,17 @@ def fetch_stibee_gosumi(limit=15):
         _diag(f"empty result | {' | '.join(diag_trail)}")
         return out
 
-    # hero 이미지 보강 — 광고가 아닌 글만 fetch (광고는 어차피 다이제스트 제외).
-    img_cache = _load_img_cache()
+    # 사용자 요청: 광고 글도 본문/이미지 fetch (광고 제외 조건 제거).
+    meta_cache = _load_img_cache()
     fetched = 0
     for it in out:
-        if it.get("is_ad"):
-            it["image"] = ""
-            continue
-        if it["url"] not in img_cache:
+        if it["url"] not in meta_cache or not isinstance(meta_cache.get(it["url"]), dict):
             fetched += 1
-        it["image"] = _hero_image_for(it["url"], img_cache)
+        meta = _fetch_meta_for(it["url"], meta_cache)
+        it["image"] = meta.get("image", "")
+        it["body"] = meta.get("body", "")
     if fetched:
-        _save_img_cache(img_cache)
+        _save_img_cache(meta_cache)
 
     return out
 

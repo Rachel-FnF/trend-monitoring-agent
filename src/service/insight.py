@@ -2,13 +2,59 @@
 패션·뷰티·셀럽·콘텐츠·이슈 중심 뉴스 큐레이션.
 정적 HTML(schema.org NewsArticle 마크업)이라 깔끔하게 파싱.
 RSS 없음 → /trend listing 페이지 직접 파싱.
-각 항목: 제목·URL·날짜·이미지·요약.
+본문은 각 글 페이지의 og:description(뉴스 본문 요약)으로 보강 + 영구 캐시.
+각 항목: 제목·URL·날짜·이미지·요약·본문.
 """
-import re, sys, urllib.request
+import json, re, sys, urllib.request
 from html import unescape
+from pathlib import Path
 
 LIST_URL = "https://www.insight.co.kr/trend/"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+
+_BODY_CACHE = Path(__file__).resolve().parents[2] / "src" / "data" / "source_cache" / "insight_body_cache.json"
+_BODY_CACHE.parent.mkdir(parents=True, exist_ok=True)
+
+
+def _load_cache():
+    if _BODY_CACHE.exists():
+        try:
+            return json.loads(_BODY_CACHE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_cache(c):
+    try:
+        _BODY_CACHE.write_text(json.dumps(c, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:
+        pass
+
+
+_OG_DESC_PATTERNS = [
+    re.compile(r'<meta\s+property=["\']og:description["\']\s+content=["\']([^"\']+)["\']', re.IGNORECASE),
+    re.compile(r'<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']', re.IGNORECASE),
+]
+
+
+def _fetch_body(url: str, cache: dict) -> str:
+    """뉴스 본문 — og:description 우선(보통 1~2문장 요약), 부족하면 첫 <p> 보강."""
+    if url in cache:
+        return cache[url]
+    body = ""
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        html = urllib.request.urlopen(req, timeout=12).read().decode("utf-8", "replace")
+        for pat in _OG_DESC_PATTERNS:
+            m = pat.search(html)
+            if m:
+                body = unescape(m.group(1)).strip()
+                break
+    except Exception:
+        pass
+    cache[url] = body
+    return body
 
 
 def _clean(s: str) -> str:
@@ -27,9 +73,10 @@ def fetch_insight(limit=15):
     req = urllib.request.Request(LIST_URL, headers={"User-Agent": UA, "Accept-Language": "ko-KR,ko;q=0.9"})
     body = urllib.request.urlopen(req, timeout=25).read().decode("utf-8", "replace")
 
-    # 카드 패턴: <article class="main-section-list-item" ...> ... </article>
+    # 카드 패턴: 모든 <article> 태그 — class 무관 (헤드라인+리스트 둘 다 포함).
+    # 내부에 /news/숫자 anchor가 있는 article만 카드로 처리.
     article_re = re.compile(
-        r'<article\s+class="main-section-list-item[^"]*"[^>]*>(?P<inner>.*?)</article>',
+        r'<article[^>]*>(?P<inner>.*?)</article>',
         re.DOTALL,
     )
 
@@ -87,6 +134,18 @@ def fetch_insight(limit=15):
         })
         if len(out) >= limit:
             break
+
+    # 본문 보강 — 각 글 페이지 og:description 가져옴(영구 캐시)
+    cache = _load_cache()
+    new_fetched = 0
+    for it in out:
+        if it["url"] not in cache:
+            new_fetched += 1
+        body = _fetch_body(it["url"], cache)
+        if body and len(body) > len(it.get("excerpt", "")):
+            it["excerpt"] = body[:600]
+    if new_fetched:
+        _save_cache(cache)
     return out
 
 

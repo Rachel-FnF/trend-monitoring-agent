@@ -24,11 +24,11 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
 
 # Date cutoff — only keep items dated on/after this.
-# 환경변수 SINCE_DATE override 가능. 미설정 시 기본 = 오늘로부터 14일 전 (최근 2주).
+# 환경변수 SINCE_DATE override 가능. 미설정 시 기본 = 오늘로부터 21일 전 (최근 3주).
 # Affects 캐릿/고구마팜/마케팅레시피/20대연구소/고슴이/The Edit/Insight.
 # Google Trends·네이버 데이터랩은 이미 최근 1~7일 스냅샷이라 영향 없음.
 # HeyPop은 listing에 date가 없어 자동으로 통과(보수적).
-SINCE_DATE = os.environ.get("SINCE_DATE") or (datetime.date.today() - datetime.timedelta(days=14)).isoformat()
+SINCE_DATE = os.environ.get("SINCE_DATE") or (datetime.date.today() - datetime.timedelta(days=21)).isoformat()
 
 
 def since(d: str) -> bool:
@@ -41,13 +41,11 @@ def since(d: str) -> bool:
         return False
     return s >= SINCE_DATE
 
-# F&F-relevant keyword verticals: label -> (KeywordName 섹션, keywordSubName)
-KEYWORDS = {
-    "패션": ("소비 트렌드", "패션"), "유행템": ("소비 트렌드", "유행템"),
-    "뜨는브랜드": ("소비 트렌드", "뜨는브랜드"), "핫플레이스": ("소비 트렌드", "핫플레이스"),
-    "KPOP": ("소비 트렌드", "KPOP"), "콜라보": ("마케팅", "콜라보"), "굿즈": ("마케팅", "굿즈"),
-    "해외트렌드": ("영감 레퍼런스", "해외트렌드"), "비주얼레퍼런스": ("영감 레퍼런스", "비주얼레퍼런스"),
-    "F&B": ("소비 트렌드", "F&B"),
+# 사용자 요청: 캐릿 시리즈 3개만 (요즘뜨는밈 + Z세대 최신근황 + 이주의 유행템)
+SERIES = {
+    "요즘뜨는밈": "/Content/Series/1",
+    "Z세대 최신근황": "/Content/Series/2",
+    "이주의 유행템": "/Content/Series/5",
 }
 CARD_JS = r"""ns => ns.filter(a=>/^\/\d+$/.test(a.getAttribute('href')||'')).map(a=>{
   let t=(a.innerText||'').replace(/\s+/g,' ').trim();
@@ -124,25 +122,16 @@ with sync_playwright() as pw:
             if not r.get(f) and rec.get(f):
                 r[f] = rec[f]
 
-    # homepage
-    for c in cards(page):
-        add(c, "home")
-
-    # micro trend board
-    page.goto("https://www.careet.net/MicroTrend", wait_until="domcontentloaded")
-    page.wait_for_timeout(2500)
-    micro = parse_micro(page.inner_text("main"))
-    p(f"micro_trends: {len(micro)}")
-
-    # keyword verticals
-    for label, (kn, sub) in KEYWORDS.items():
-        url = f"https://www.careet.net/TrendKeyword/TrendList?KeywordName={quote(kn)}&keywordSubName={quote(sub)}"
-        page.goto(url, wait_until="domcontentloaded")
+    # 사용자 요청: 시리즈 3개 (요즘뜨는밈·Z세대 최신근황·이주의 유행템)
+    # 홈·MicroTrend·키워드 vertical은 제외.
+    micro = []  # MicroTrend 미사용
+    for label, path in SERIES.items():
+        page.goto(f"https://www.careet.net{path}", wait_until="domcontentloaded")
         page.wait_for_timeout(2500)
         cs = cards(page)
         for c in cs:
             add(c, label)
-        p(f"keyword '{label}': {len(cs)}")
+        p(f"series '{label}': {len(cs)}")
 
     # first-seen tracking
     seen_path = DATA / "seen.json"
@@ -167,7 +156,8 @@ with sync_playwright() as pw:
     # Body cache — 한 번 fetch한 글의 본문은 영구 저장해 매일 재사용.
     # collected_<today>.json은 매일 새로 만들어지지만 body는 글이 살아있는 동안 안 바뀜 →
     # SINCE 윈도우 안에서는 옛 글도 본문 유지(분석 일관성·캐릿 hit 절감).
-    body_cache_path = DATA / "careet_body_cache.json"
+    body_cache_path = DATA / "source_cache" / "careet_body_cache.json"
+    body_cache_path.parent.mkdir(parents=True, exist_ok=True)
     body_cache = json.loads(body_cache_path.read_text(encoding="utf-8")) if body_cache_path.exists() else {}
     # 1단계: 캐시 hit 적용
     cache_hits = 0
@@ -186,6 +176,15 @@ with sync_playwright() as pw:
         try:
             page.goto(f"https://www.careet.net/{aid}", wait_until="domcontentloaded")
             page.wait_for_timeout(1800)
+            # 발행일 fallback — listing에서 못 잡은 글들 보강. body 태그 상단 800자에서 첫 20YY.MM.DD
+            if not articles[aid].get("date"):
+                try:
+                    top = page.inner_text("body")[:800]
+                    dm = re.search(r"(20\d\d)\.(\d\d)\.(\d\d)", top)
+                    if dm:
+                        articles[aid]["date"] = f"{dm.group(1)}.{dm.group(2)}.{dm.group(3)}"
+                except Exception:
+                    pass
             body = page.inner_text("article") if page.locator("article").count() else page.inner_text("main")
             excerpt = re.sub(r"\s+", " ", body)[:2000]
             articles[aid]["body_excerpt"] = excerpt
@@ -209,14 +208,8 @@ except Exception as e:
     gtrends = []
     p("gtrends_fail:", repr(e)[:100])
 
-# Naver DataLab 쇼핑인사이트 (패션·화장품 인기검색어) — 대중·전연령 검색수요
-try:
-    from service.naverlab import fetch_naver_shopping_kr
-    naver = fetch_naver_shopping_kr()
-    p(f"naver_shopping: {len(naver)} cats")
-except Exception as e:
-    naver = []
-    p("naver_fail:", repr(e)[:100])
+# Naver DataLab 쇼핑인사이트 — 사용자 요청으로 소스 제외
+naver = []
 
 # 고구마팜 — MZ 트렌드·밈 (RSS, 캐릿과 결 같은 큐레이션, 직접 교차검증)
 try:
@@ -295,7 +288,7 @@ p(f"after SINCE_DATE({SINCE_DATE}): gogumafarm={len(gogumafarm)} marketingrecipe
 out = {
     "collected_at": TODAY,
     "since_date": SINCE_DATE,
-    "source": "careet.net + Google Trends KR + Naver DataLab + 고구마팜 + 마케팅레시피 + 20대연구소 + 고슴이의 비트 + The Edit + HeyPop + Insight",
+    "source": "캐릿(요즘뜨는밈+Z세대 최신근황+이주의 유행템) + Google Trends KR + 고구마팜(트렌드) + 마케팅레시피(한-입 트렌드) + 20대연구소(뉴스레터) + 고슴이의 비트 + The Edit(STYLE) + HeyPop(POP-UP) + Insight(트렌드)",
     "copyright_note": "캐릿 유료 미디어. 무단 전재·재배포 금지, 내부 분석용.",
     "counts": {
         "articles": len(articles), "micro_trends": len(micro), "new_today": len(new_ids),
@@ -316,6 +309,8 @@ out = {
     "insight": insight,
     "articles": sorted(articles.values(), key=lambda r: r.get("date", ""), reverse=True),
 }
-outpath = DATA / f"collected_{TODAY}.json"
+collected_dir = DATA / "collected"
+collected_dir.mkdir(parents=True, exist_ok=True)
+outpath = collected_dir / f"collected_{TODAY}.json"
 outpath.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
 p(f"WROTE {outpath}")

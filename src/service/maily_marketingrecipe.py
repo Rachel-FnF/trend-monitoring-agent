@@ -14,7 +14,8 @@ RSS_URL = "https://maily.so/marketingrecipe/feed"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 
 # og:image 캐시 (URL → image URL). 한 번 fetch한 글은 재사용.
-_CACHE_PATH = Path(__file__).resolve().parents[2] / "src" / "data" / "maily_image_cache.json"
+_CACHE_PATH = Path(__file__).resolve().parents[2] / "src" / "data" / "source_cache" / "maily_image_cache.json"
+_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 _MONTHS = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04", "May": "05", "Jun": "06",
            "Jul": "07", "Aug": "08", "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
@@ -74,23 +75,33 @@ def _fetch_og_image(url: str, cache: dict) -> str:
 
 
 def fetch_maily_marketingrecipe(limit=15):
+    """사용자 요청: '한-입 트렌드' 카테고리만 수집.
+    RSS의 <category> 필드로 필터, 매칭 0건이면 전체 fallback(공백 카테고리 대응)."""
     req = urllib.request.Request(RSS_URL, headers={"User-Agent": UA})
     xml_bytes = urllib.request.urlopen(req, timeout=25).read()
     root = ET.fromstring(xml_bytes)
-    out = []
+    all_items = []
     for item in root.iter("item"):
         title = (item.findtext("title") or "").strip()
         link = (item.findtext("link") or "").strip()
         if not title or not link:
             continue
-        out.append({
+        all_items.append({
             "title": title, "url": link,
             "date": _rfc822_to_iso(item.findtext("pubDate") or ""),
             "category": (item.findtext("category") or "").strip(),
             "subtitle": _strip_html(item.findtext("description") or "")[:400],
         })
-        if len(out) >= limit:
-            break
+
+    # '한-입 트렌드' 카테고리 필터 (하이픈 변형 허용)
+    def _is_trend(c):
+        n = (c or "").replace("-", "").replace(" ", "")
+        return "한입트렌드" in n
+    filtered = [it for it in all_items if _is_trend(it["category"])]
+    if not filtered:
+        # RSS category가 비어있는 경우 → URL 패턴(/c/trend) 또는 제목 키워드로 fallback
+        filtered = [it for it in all_items if "/c/trend" in it["url"] or "한-입" in it["title"]]
+    out = filtered[:limit]
 
     # og:image 보강 (캐시 hit는 즉시 반환, 새 URL만 fetch)
     cache = _load_cache()

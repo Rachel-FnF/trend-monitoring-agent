@@ -11,10 +11,11 @@ import json, re, sys, urllib.request
 from html import unescape
 from pathlib import Path
 
-LIST_URL = "https://the-edit.co.kr/"
+LIST_URL = "https://the-edit.co.kr/category/style"  # 사용자 요청: STYLE 카테고리(패션+뷰티)만
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 
-_DATE_CACHE = Path(__file__).resolve().parents[2] / "src" / "data" / "the_edit_date_cache.json"
+_DATE_CACHE = Path(__file__).resolve().parents[2] / "src" / "data" / "source_cache" / "the_edit_date_cache.json"
+_DATE_CACHE.parent.mkdir(parents=True, exist_ok=True)
 
 
 def _clean(s: str) -> str:
