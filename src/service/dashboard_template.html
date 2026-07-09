@@ -161,10 +161,9 @@
   .item-link:hover{text-decoration:underline}
 
   /* SIGNALS */
-  .sig-row{display:grid;grid-template-columns:1fr 1fr;gap:32px}
-  .sig-panel{background:var(--paper);border:1px solid var(--rule);padding:28px 26px}
-  .sig-panel h3{font-family:'Noto Serif KR',serif;font-weight:700;font-size:22px;margin-bottom:4px;letter-spacing:-.01em}
-  .sig-panel .sig-meta{font-family:'Fraunces',serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:18px;font-weight:600}
+  /* 카드 안 검색 신호 칩 */
+  .item-signals{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px}
+  .item-signal{font-family:'Fraunces',serif;font-style:italic;font-size:10.5px;letter-spacing:.04em;padding:2px 8px;border:1px dashed var(--accent);color:var(--accent);background:var(--bg);border-radius:100px;font-weight:600;white-space:nowrap}
   .sig-list{list-style:none}
   .sig-list li{padding:9px 0;border-bottom:1px solid rgba(26,22,18,.15);font-size:14px;line-height:1.4}
   .sig-list li:last-child{border-bottom:none}
@@ -196,7 +195,7 @@
       <span id="hero-meta">—</span>
     </div>
     <h1>트렌드 <em>dashboard</em></h1>
-    <p class="hero-sub">5개 큐레이션 소스 + Google Trends + 네이버 데이터랩 통합. 매일 09:00 자동 수집·재빌드.</p>
+    <p class="hero-sub">8개 큐레이션 소스 + Google Trends KR 통합. Gemini 3.5 flash로 본문+이미지 분석. 매일 09:00 자동 수집·재빌드.</p>
     <div class="stats">
       <div class="stat"><div class="stat-num" id="stat-total">—</div><div class="stat-label">트렌드 신호</div></div>
       <div class="stat"><div class="stat-num" id="stat-sources">—</div><div class="stat-label">큐레이션 소스</div></div>
@@ -216,7 +215,7 @@
 
   <section class="section">
     <h2>⭐ 교차검증 트렌드</h2>
-    <div class="section-meta">2개 이상 소스에서 동시 등장한 강한 신호 — 다이제스트 상단으로 자동 노출</div>
+    <div class="section-meta">Gemini가 전체 분석 글에서 매일 추출 — 2개 이상 소스에서 동시 등장한 강한 신호</div>
     <div class="cross-grid" id="cross-grid"></div>
   </section>
 
@@ -225,23 +224,6 @@
     <div class="section-meta" id="all-meta"></div>
     <div class="items-grid" id="items-grid"></div>
     <div class="no-results" id="no-results" style="display:none">검색·필터 조건에 맞는 트렌드가 없어요.</div>
-  </section>
-
-  <section class="section" style="border-bottom:none">
-    <h2>🔍 검색·쇼핑 신호</h2>
-    <div class="section-meta">오늘 스냅샷 — Google 급상승 + 네이버 인기검색</div>
-    <div class="sig-row">
-      <div class="sig-panel">
-        <h3>Google Trends 한국</h3>
-        <div class="sig-meta">오늘 급상승 검색어</div>
-        <ul class="sig-list" id="gtrends-list"></ul>
-      </div>
-      <div class="sig-panel">
-        <h3>네이버 데이터랩</h3>
-        <div class="sig-meta">지난 7일 인기 검색</div>
-        <ul class="sig-list" id="naver-list"></ul>
-      </div>
-    </div>
   </section>
 
   <footer class="footer">
@@ -254,11 +236,10 @@
 <script>
 const DATA = __DATA_JSON__;
 const SRC_COLOR = {
-  "캐릿":"#c8482a", "캐릿 전광판":"#6b4978",
+  "캐릿":"#c8482a",
   "고구마팜":"#d4a017", "마케팅레시피":"#5a7a3e",
   "20대연구소":"#2c5a78", "고슴이의 비트":"#a04565",
   "The Edit":"#3d6b6e", "HeyPop":"#b8541f", "Insight":"#7a3d4a",
-  "네이버 데이터랩":"#3a8050",
 };
 const ALL_SRC = Object.keys(SRC_COLOR);
 const state = { sources: new Set(ALL_SRC) };
@@ -273,7 +254,13 @@ const d1 = new Date(DATA.stats.period_from), d2 = new Date(DATA.stats.period_to)
 document.getElementById("stat-period").textContent = Math.round((d2 - d1)/86400000);
 document.getElementById("hero-meta").textContent = "Updated " + DATA.stats.generated_at.replace("T", " ") + " · careet snapshot " + DATA.stats.careet_snapshot;
 document.getElementById("generated-stamp").textContent = "Period " + DATA.stats.period_from + " → " + DATA.stats.period_to;
-document.getElementById("all-meta").textContent = "최근 3개월 — " + DATA.stats.period_from + " ~ " + DATA.stats.period_to;
+{
+  const days = Math.round((d2 - d1) / 86400000);
+  const label = days >= 60 ? `최근 ${Math.round(days/30)}개월`
+              : days >= 14 ? `최근 ${Math.round(days/7)}주`
+              : `최근 ${days}일`;
+  document.getElementById("all-meta").textContent = `${label} — ${DATA.stats.period_from} ~ ${DATA.stats.period_to}`;
+}
 
 // Source chips
 const chipsEl = document.getElementById("source-chips");
@@ -284,9 +271,17 @@ ALL_SRC.forEach(name => {
   chip.dataset.source = name;
   chip.innerHTML = '<span class="chip-dot" style="background:' + color + '"></span>' + esc(name);
   chip.onclick = () => {
-    if (state.sources.has(name)) state.sources.delete(name);
-    else state.sources.add(name);
-    chip.classList.toggle("active");
+    // 단독 선택: 클릭한 소스만 active. 이미 단독 active면 전체 복원.
+    const isSoloActive = state.sources.size === 1 && state.sources.has(name);
+    if (isSoloActive) {
+      state.sources = new Set(ALL_SRC);
+      document.querySelectorAll(".chip[data-source]").forEach(c => c.classList.add("active"));
+    } else {
+      state.sources = new Set([name]);
+      document.querySelectorAll(".chip[data-source]").forEach(c =>
+        c.classList.toggle("active", c.dataset.source === name)
+      );
+    }
     renderItems();
   };
   chipsEl.appendChild(chip);
@@ -300,7 +295,9 @@ document.getElementById("reset-filters").onclick = () => {
 };
 
 function passes(it){
-  return state.sources.has(it.source);
+  if(!state.sources.has(it.source)) return false;
+  // 사용자 요청: 광고·홍보성 자동 숨김 제거 — 모든 카드 표시
+  return true;
 }
 
 function itemCard(it){
@@ -318,6 +315,8 @@ function itemCard(it){
   const thumb = it.image
     ? '<div class="item-thumb"><img src="' + esc(it.image) + '" alt="" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></div>'
     : '';
+  const sigs = (it.related_signals || []).map(s => '<span class="item-signal">' + esc(s) + '</span>').join("");
+  const sigsHtml = sigs ? '<div class="item-signals">' + sigs + '</div>' : '';
   return ''
     + '<article class="item" data-source="' + esc(it.source) + '">'
     + '<div class="item-head">'
@@ -327,6 +326,7 @@ function itemCard(it){
     + thumb
     + '<div class="item-title">' + esc(it.title) + '</div>'
     + '<div class="item-analysis">' + whatRow + whyRow + ffRow + '</div>'
+    + sigsHtml
     + (tags ? '<div class="item-tags">' + tags + '</div>' : '')
     + '<a class="item-link" href="' + esc(it.url) + '" target="_blank" rel="noopener">원문 →</a>'
     + '</article>';
@@ -374,20 +374,8 @@ function renderItems(){
   document.getElementById("visible-count").textContent = visible.length + " / " + DATA.items.length;
 }
 
-function renderSignals(){
-  document.getElementById("gtrends-list").innerHTML = DATA.google_trends.map(g => {
-    const news = (g.news && g.news[0]) ? '<span style="color:var(--ink-muted);font-size:12px"> · ' + esc(g.news[0].slice(0,52)) + '</span>' : "";
-    return '<li><strong>' + esc(g.term) + '</strong><span class="sig-traffic">' + esc(g.traffic) + '</span>' + news + '</li>';
-  }).join("");
-  document.getElementById("naver-list").innerHTML = DATA.naver_shopping.map(c => {
-    const kws = (c.keywords||[]).slice(0,5).join(", ");
-    return '<li><strong>[' + esc(c.category) + ']</strong> ' + esc(kws) + '</li>';
-  }).join("");
-}
-
 renderCross();
 renderItems();
-renderSignals();
 </script>
 
 </body>
