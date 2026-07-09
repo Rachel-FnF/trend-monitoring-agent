@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>트렌드 모니터링 에이전트 · 프로젝트 브리프</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+<style>
+  :root {
+    --ink:#15110e;
+    --ink-soft:#3a342f;
+    --bg:#fafaf6;
+    --surface:#ffffff;
+    --line:#e7e3dc;
+    --muted:#7a756e;
+    --accent:#c8482a;
+    --accent-soft:#fef2ec;
+    --teal:#3d6b6e;
+    --teal-soft:#eaf2f2;
+    --olive:#5a7a3e;
+    --olive-soft:#f0f4ea;
+    --gold:#a87a17;
+    --plum:#7a3d4a;
+    --pill:#f4f0e8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink); font-size:18px; line-height:1.7;
+    font-family:"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    font-feature-settings:"ss06" 1;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px; margin:0 auto; padding:80px 48px 120px}
+
+  /* Hero */
+  .hero{margin-bottom:80px}
+  .hero-tag{
+    display:inline-block; font-size:13px; font-weight:600;
+    letter-spacing:0.12em; text-transform:uppercase; color:var(--accent);
+    background:var(--accent-soft); padding:6px 14px; border-radius:99px;
+    margin-bottom:24px;
+  }
+  .hero h1{
+    font-size:54px; font-weight:800; letter-spacing:-0.025em;
+    line-height:1.15; margin-bottom:20px; color:var(--ink);
+  }
+  .hero .lede{
+    font-size:22px; line-height:1.55; color:var(--ink-soft);
+    max-width:760px; font-weight:400;
+  }
+  .hero-meta{
+    margin-top:32px; display:flex; gap:32px; flex-wrap:wrap;
+    padding-top:24px; border-top:1px solid var(--line);
+  }
+  .hero-meta-item{display:flex; flex-direction:column; gap:4px}
+  .hero-meta-label{font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  .hero-meta-value{font-size:16px; font-weight:600; color:var(--ink)}
+
+  /* Section */
+  section{margin:96px 0}
+  .section-num{
+    display:inline-block; font-size:13px; font-weight:700;
+    letter-spacing:0.18em; color:var(--muted); margin-bottom:12px;
+  }
+  h2{
+    font-size:36px; font-weight:800; letter-spacing:-0.02em;
+    line-height:1.2; color:var(--ink); margin-bottom:14px;
+  }
+  .section-sub{font-size:18px; color:var(--ink-soft); margin-bottom:36px; max-width:720px}
+
+  h3{font-size:22px; font-weight:700; color:var(--ink); margin:32px 0 14px; letter-spacing:-0.01em}
+
+  p{margin-bottom:14px}
+
+  /* Flow */
+  .flow{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;
+    margin:24px 0;
+  }
+  .flow-step{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:24px 22px; position:relative;
+  }
+  .flow-step-num{
+    position:absolute; top:18px; right:20px; font-size:32px;
+    font-weight:800; color:var(--line); letter-spacing:-0.02em;
+  }
+  .flow-step-title{
+    font-size:13px; font-weight:700; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:10px;
+  }
+  .flow-step-body{font-size:15px; line-height:1.55; color:var(--ink-soft)}
+
+  /* Source rows — 한 줄에 [dot · 이름 · 범위 · 노트] 가로 배치 */
+  .source-grid{
+    display:flex; flex-direction:column; gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; margin:24px 0;
+  }
+  .source-card{
+    background:var(--surface); padding:14px 20px;
+    display:grid; grid-template-columns:24px 200px 1fr auto; align-items:center; gap:16px;
+    transition:background 0.12s ease;
+  }
+  .source-card:hover{background:var(--bg)}
+  .source-dot{width:10px; height:10px; border-radius:50%; flex-shrink:0}
+  .source-name{font-size:16px; font-weight:700; color:var(--ink)}
+  .source-range{font-size:15px; color:var(--ink-soft); line-height:1.4}
+  .source-note{font-size:13px; color:var(--muted); font-style:italic; white-space:nowrap}
+  .src-careet{background:#c8482a}
+  .src-gogu{background:#d4a017}
+  .src-maily{background:#5a7a3e}
+  .src-slab{background:#2c5a78}
+  .src-gosumi{background:#a04565}
+  .src-edit{background:#3d6b6e}
+  .src-heypop{background:#b8541f}
+  .src-insight{background:#7a3d4a}
+  .src-gtrends{background:#4a8a64}
+
+  /* Tree (folder structure) */
+  pre.tree{
+    background:#15110e; color:#e7e3dc; border-radius:10px;
+    padding:24px 28px; font-family:"SF Mono","Menlo","Consolas",monospace;
+    font-size:14.5px; line-height:1.75; overflow-x:auto; margin:20px 0;
+  }
+  pre.tree .c{color:#7a756e}
+  pre.tree .h{color:#f4a261; font-weight:600}
+
+  /* Tables */
+  table{width:100%; border-collapse:collapse; margin:20px 0; font-size:16px}
+  th,td{padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top}
+  th{
+    background:var(--pill); font-size:13.5px; font-weight:700; color:var(--ink);
+    letter-spacing:0.04em; text-transform:uppercase;
+  }
+  td:first-child{font-weight:600; white-space:nowrap}
+
+  code{
+    font-family:"SF Mono","Menlo","Consolas",monospace; font-size:14px;
+    background:var(--pill); padding:2px 7px; border-radius:4px;
+    color:var(--accent); font-weight:500;
+  }
+
+  /* Field groups — 큰 박스 안에 필드들이 한 줄씩 세로로 나열 */
+  .field-groups{display:flex; flex-direction:column; gap:14px; margin:24px 0}
+  .field-group{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:22px 26px;
+  }
+  .field-group-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-bottom:14px; margin-bottom:14px; border-bottom:1px solid var(--line);
+  }
+  .field-group-title{font-size:14px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase}
+  .field-group-count{
+    font-size:12px; color:var(--muted); font-weight:700;
+    background:var(--pill); padding:3px 10px; border-radius:99px;
+  }
+  .field-group ul{list-style:none; padding:0}
+  .field-group li{
+    padding:9px 0; font-size:16px; color:var(--ink-soft); line-height:1.55;
+    border-bottom:1px dashed var(--line);
+    display:grid; grid-template-columns:200px 1fr; gap:20px; align-items:baseline;
+  }
+  .field-group li:last-child{border-bottom:none}
+  .field-group li code{font-size:14.5px; color:var(--accent); margin:0; background:transparent; padding:0; font-weight:600}
+  .field-group.meta .field-group-title{color:var(--ink)}
+  .field-group.summary .field-group-title{color:var(--accent)}
+  .field-group.image .field-group-title{color:var(--teal)}
+  .field-group.classify .field-group-title{color:var(--olive)}
+  .field-group.mood .field-group-title{color:var(--plum)}
+  .field-group.insight .field-group-title{color:var(--gold)}
+  .field-group.extract .field-group-title{color:var(--teal)}
+
+  /* Channels (결과 보는 법) */
+  .channels{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin:28px 0}
+  .channel{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:28px 26px; position:relative; overflow:hidden;
+  }
+  .channel-tag{
+    display:inline-block; font-size:11.5px; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px;
+    border-radius:99px; margin-bottom:14px;
+  }
+  .channel.dashboard .channel-tag{background:var(--accent-soft); color:var(--accent)}
+  .channel.slack .channel-tag{background:var(--olive-soft); color:var(--olive)}
+  .channel.terminal .channel-tag{background:var(--teal-soft); color:var(--teal)}
+  .channel-title{font-size:21px; font-weight:700; color:var(--ink); margin-bottom:10px; letter-spacing:-0.01em}
+  .channel-body{font-size:15px; line-height:1.6; color:var(--ink-soft); margin-bottom:12px}
+  .channel-cmd{
+    background:var(--bg); border:1px solid var(--line); border-radius:6px;
+    padding:8px 12px; font-family:"SF Mono","Menlo","Consolas",monospace;
+    font-size:12.5px; color:var(--ink); margin-top:auto;
+  }
+
+  /* Note */
+  .note{
+    background:var(--accent-soft); border-left:4px solid var(--accent);
+    padding:18px 22px; border-radius:6px; margin:24px 0;
+    font-size:15.5px; line-height:1.6;
+  }
+
+  /* Highlight */
+  .highlight{font-weight:700; color:var(--ink)}
+
+  /* Footer */
+  footer{
+    margin-top:96px; padding-top:32px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center;
+    color:var(--muted); font-size:14.5px;
+  }
+  footer .ver{font-weight:600; color:var(--ink-soft)}
+
+  @media (max-width:720px){
+    .wrap{padding:48px 24px 80px}
+    .hero h1{font-size:38px}
+    .hero .lede{font-size:18px}
+    h2{font-size:28px}
+    .flow,.source-grid,.field-groups,.channels{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-tag">F&amp;F Innovation · Project Brief</div>
+  <h1>트렌드 모니터링 에이전트</h1>
+  <p class="lede">8개 큐레이션 매체에서 매일 자동으로 트렌드를 수집하고, 본문과 이미지를 함께 AI 분석해 한 화면에서 검토하는 사내 모니터링 시스템.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">분석 모델</div>
+      <div class="hero-meta-value">Gemini 3.5 flash (vision)</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">수집 주기</div>
+      <div class="hero-meta-value">매일 08:00 · 자동</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">기본 윈도우</div>
+      <div class="hero-meta-value">최근 14일 · 60일 가변</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">결과물</div>
+      <div class="hero-meta-value">대시보드 · 슬랙 · 터미널 · 교차검증 트렌드</div>
+    </div>
+  </div>
+</header>
+
+<!-- SECTION 1: 무엇을 하나 -->
+<section>
+  <div class="section-num">01</div>
+  <h2>무엇을 하는 프로젝트인가</h2>
+  <p class="section-sub">트렌드를 <span class="highlight">일찍 포착</span>하고 <span class="highlight">맥락과 함께 본다</span>는 두 가지를 목표로 합니다. 마케터·기획자가 매일 8개 매체를 직접 돌아보지 않아도, 핵심 트렌드 카드만 한 화면에서 검토할 수 있도록 자동화했습니다.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-step-num">1</div>
+      <div class="flow-step-title">수집</div>
+      <div class="flow-step-body">9개 소스에서 최근 14일(또는 60일) 글 자동 수집</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">2</div>
+      <div class="flow-step-title">Fetch</div>
+      <div class="flow-step-body">각 글의 본문 텍스트 + 이미지 최대 12장 다운로드</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">3</div>
+      <div class="flow-step-title">AI 분석</div>
+      <div class="flow-step-body">Gemini가 본문 + 이미지를 함께 보고 20개 필드 추출 (대표 이미지 자동 선정 포함)</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">4</div>
+      <div class="flow-step-title">전달</div>
+      <div class="flow-step-body">대시보드 · 슬랙 · 터미널 + 교차검증 트렌드 카드 자동 추출</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: 어디서 가져오나 -->
+<section>
+  <div class="section-num">02</div>
+  <h2>어디서 어떤 정보를 가져오는가</h2>
+  <p class="section-sub">각 매체에서 마케팅팀이 보고 싶다고 지정한 카테고리만 좁혀서 수집합니다. 광범위하게 받지 않고 의도된 범위만 골라옵니다.</p>
+
+  <div class="source-grid">
+    <div class="source-card"><span class="source-dot src-careet"></span><span class="source-name">캐릿 (careet)</span><span class="source-range">요즘뜨는밈 · Z세대 최신근황 · 이주의 유행템</span><span class="source-note">유료 미디어 · 시리즈 3개</span></div>
+    <div class="source-card"><span class="source-dot src-gogu"></span><span class="source-name">고구마팜</span><span class="source-range">최신 밈과 트렌드</span><span class="source-note">RSS · MZ 큐레이션</span></div>
+    <div class="source-card"><span class="source-dot src-maily"></span><span class="source-name">마케팅레시피</span><span class="source-range">한-입 트렌드 카테고리</span><span class="source-note">마케터 실행 인사이트</span></div>
+    <div class="source-card"><span class="source-dot src-slab"></span><span class="source-name">20대연구소</span><span class="source-range">뉴스레터 페이지</span><span class="source-note">세대 연구 칼럼</span></div>
+    <div class="source-card"><span class="source-dot src-gosumi"></span><span class="source-name">뉴닉 고슴이의 비트</span><span class="source-range">전체 뉴스레터 (광고 포함)</span><span class="source-note">라이프스타일 큐레이션</span></div>
+    <div class="source-card"><span class="source-dot src-edit"></span><span class="source-name">The Edit (디에디트)</span><span class="source-range">STYLE 카테고리 (패션 + 뷰티)</span><span class="source-note">에디터 큐레이션</span></div>
+    <div class="source-card"><span class="source-dot src-heypop"></span><span class="source-name">HeyPop</span><span class="source-range">POP-UP 카테고리</span><span class="source-note">팝업 · 공간 트렌드</span></div>
+    <div class="source-card"><span class="source-dot src-insight"></span><span class="source-name">인사이트 (insight)</span><span class="source-range">트렌드</span><span class="source-note">패션 · 뷰티 · 셀럽 뉴스</span></div>
+    <div class="source-card"><span class="source-dot src-gtrends"></span><span class="source-name">구글 트렌드 KR</span><span class="source-range">한국 급상승 검색어 (14일 누적)</span><span class="source-note">검증용 검색 신호</span></div>
+  </div>
+
+  <div class="note">SINCE_DATE 윈도우(기본 14일 / 옵션 60일) 안의 글만 대시보드에 표시. 그 이전 글은 다음 빌드에서 자동으로 빠집니다. <span class="highlight">두 윈도우 모두 빌드 가능</span> — <code>dashboard.html</code>(14일)과 <code>dashboard_v2.html</code>(60일) 두 결과물 병행 운영.</div>
+</section>
+
+<!-- SECTION 3: 데이터 구조 -->
+<section>
+  <div class="section-num">03</div>
+  <h2>데이터는 어디에 어떻게 저장되는가</h2>
+  <p class="section-sub">한 글의 <span class="highlight">본문 · 이미지 · 수집 메타 · AI 분석 결과</span>를 같은 글 ID로 4곳에 일관되게 저장합니다.</p>
+
+  <pre class="tree">src/data/
+├── articles/                   <span class="c"># 본문 텍스트 (글당 .txt, 6000자)</span>
+├── article_images/             <span class="c"># 본문 이미지 (글당 폴더, img_01.png ~)</span>
+├── raw/                        <span class="c"># 수집 시 메타 (글당 .json)</span>
+├── analysis/                   <span class="c"># AI 분석 결과 (글당 .json) ★</span>
+├── collected/                  <span class="c"># 일자별 통합 수집 스냅샷</span>
+├── source_cache/               <span class="c"># 소스 모듈별 영구 캐시 (재수집 최소화)</span>
+├── <span class="h">article_content_analysis.json</span>   <span class="c"># 분석 통합 인덱스 (전체 검색용)</span>
+├── seen.json                   <span class="c"># 글별 첫 포착일 추적</span>
+└── dashboard_enrich.json       <span class="c"># 대시보드 카드 보강 캐시</span></pre>
+
+  <p>예) 캐릿 <code>1914</code>번 글의 모든 자료는 같은 ID로 4곳에서:</p>
+  <table>
+    <thead><tr><th>경로</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td><code>articles/1914.txt</code></td><td>본문 텍스트 6000자</td></tr>
+      <tr><td><code>article_images/1914/img_*.png</code></td><td>본문 이미지 12장</td></tr>
+      <tr><td><code>raw/1914.json</code></td><td>수집 시 메타 (제목·URL·카테고리·태그·발행일)</td></tr>
+      <tr><td><code>analysis/1914.json</code></td><td>Gemini 분석 결과 19개 필드 (글당 파일)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- SECTION 4: AI 분석 -->
+<section>
+  <div class="section-num">04</div>
+  <h2>본문과 이미지를 어떻게 분석하는가</h2>
+  <p class="section-sub">본문 텍스트와 본문 안 이미지들을 <span class="highlight">한 번에</span> Gemini 3.5 flash에 보내 종합 분석합니다. 텍스트만이나 이미지만이 아니라, 둘을 함께 보고 한 글의 맥락을 추출합니다.</p>
+
+  <div class="flow" style="grid-template-columns:repeat(3, 1fr)">
+    <div class="flow-step">
+      <div class="flow-step-num">In</div>
+      <div class="flow-step-title">입력</div>
+      <div class="flow-step-body">본문 텍스트 6000자<br>+ 이미지 최대 12장</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">AI</div>
+      <div class="flow-step-title">Gemini 3.5 flash</div>
+      <div class="flow-step-body">고정 PROMPT로<br>19개 필드 추출 강제</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">Out</div>
+      <div class="flow-step-title">출력</div>
+      <div class="flow-step-body">JSON 1건<br>→ analysis/&lt;글ID&gt;.json</div>
+    </div>
+  </div>
+
+  <h3>분석 결과 20개 필드</h3>
+  <div class="field-groups">
+    <div class="field-group meta">
+      <div class="field-group-head"><span class="field-group-title">메타</span><span class="field-group-count">3개 필드</span></div>
+      <ul>
+        <li><code>title</code><span>원본 글 제목 (한글)</span></li>
+        <li><code>url</code><span>원문 URL</span></li>
+        <li><code>date</code><span>원문 기사 발행일 (YYYY-MM-DD)</span></li>
+      </ul>
+    </div>
+    <div class="field-group summary">
+      <div class="field-group-head"><span class="field-group-title">요약</span><span class="field-group-count">2개 필드</span></div>
+      <ul>
+        <li><code>one_line_summary</code><span>1문장 요약</span></li>
+        <li><code>full_description</code><span>2~4문장 종합 설명 (구체적 사례·브랜드·수치 포함)</span></li>
+      </ul>
+    </div>
+    <div class="field-group image">
+      <div class="field-group-head"><span class="field-group-title">이미지</span><span class="field-group-count">3개 필드</span></div>
+      <ul>
+        <li><code>image_by_image[]</code><span>첨부 이미지를 순서대로 1장씩 묘사</span></li>
+        <li><code>image_urls[]</code><span>다운로드된 이미지 원본 URL (image_by_image와 인덱스 일치)</span></li>
+        <li><code>hero_image_index</code><span>가장 핵심 시각 표현 이미지의 인덱스 — 대시보드 카드 대표 이미지로 자동 사용</span></li>
+      </ul>
+    </div>
+    <div class="field-group classify">
+      <div class="field-group-head"><span class="field-group-title">분류 · 고정 옵션 중 선택</span><span class="field-group-count">3개 필드</span></div>
+      <ul>
+        <li><code>content_category</code><span>패션/뷰티 · 라이프스타일 · F&amp;B · 테크 · 마케팅 · 뉴스 · 라이프 · 기타 중 1개</span></li>
+        <li><code>content_format</code><span>기사 · 인터뷰 · 화보 · 리뷰 · 정보전달 · 이벤트 · 제품홍보 · 데이터분석 · 기타 중 1개</span></li>
+        <li><code>is_sponsored</code><span>true / false — #광고·#제작지원 표기 또는 PR/보도자료 톤이면 true</span></li>
+      </ul>
+    </div>
+    <div class="field-group mood">
+      <div class="field-group-head"><span class="field-group-title">분위기 · 맥락</span><span class="field-group-count">2개 필드</span></div>
+      <ul>
+        <li><code>mood_tone</code><span>콘텐츠 톤·분위기 한 줄</span></li>
+        <li><code>scene_setting</code><span>본문·이미지의 배경·공간 묘사</span></li>
+      </ul>
+    </div>
+    <div class="field-group insight">
+      <div class="field-group-head"><span class="field-group-title">해석 · 시사점</span><span class="field-group-count">3개 필드</span></div>
+      <ul>
+        <li><code>sponsorship_note</code><span>광고 판단 근거 (1문장)</span></li>
+        <li><code>marketing_insight</code><span>마케팅 시사점 (1~2문장)</span></li>
+        <li><code>target_audience</code><span>타깃 독자 (1문장)</span></li>
+      </ul>
+    </div>
+    <div class="field-group extract">
+      <div class="field-group-head"><span class="field-group-title">본문 추출 · 본문·이미지에서 직접</span><span class="field-group-count">4개 필드</span></div>
+      <ul>
+        <li><code>topics[]</code><span>핵심 키워드 5~10개</span></li>
+        <li><code>brands_products[]</code><span>언급된 브랜드·제품</span></li>
+        <li><code>people[]</code><span>등장 인물·셀럽</span></li>
+        <li><code>text_in_media[]</code><span>이미지 안에 보이는 글자 (간이 OCR)</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: 결과 보는 법 -->
+<section>
+  <div class="section-num">05</div>
+  <h2>결과는 어떻게 보는가</h2>
+  <p class="section-sub">3가지 채널로 결과를 받아볼 수 있습니다. 상황에 맞게 골라 사용합니다.</p>
+
+  <div class="channels">
+    <div class="channel dashboard">
+      <span class="channel-tag">대시보드</span>
+      <div class="channel-title">카드형 대시보드 HTML</div>
+      <div class="channel-body">소스 칩 · 단독 필터 · 교차검증 컨셉 · 검색 신호 + 대표 이미지 자동 적용. 그때그때 즉시 빌드, 기간(14일 / 60일) 가변 지원.</div>
+      <div class="channel-cmd">python build_dashboard.py</div>
+    </div>
+    <div class="channel slack">
+      <span class="channel-tag">슬랙</span>
+      <div class="channel-title">슬랙 다이제스트 전달</div>
+      <div class="channel-body">팀 채널로 매일 자동 다이제스트 발송. 모바일에서도 핵심 트렌드 카드만 빠르게 훑어볼 수 있고, 댓글로 즉시 공유·논의 가능.</div>
+      <div class="channel-cmd">python deliver.py --slack</div>
+    </div>
+    <div class="channel terminal">
+      <span class="channel-tag">터미널</span>
+      <div class="channel-title">CLI · 디지스트 마크다운</div>
+      <div class="channel-body">개발자·운영자가 터미널에서 바로 확인. <code style="font-size:13px">docs/review/digest_*.md</code> 마크다운 출력 + 표준출력 요약. 자동화 파이프라인 연계 용이.</div>
+      <div class="channel-cmd">python run_daily.py</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:36px">+ 교차검증 트렌드 자동 추출</h3>
+  <p>매일 자동 실행 후 분석된 글 전체를 다시 메타 분석해, 여러 글에 공통으로 등장하는 핵심 트렌드를 카드 형태로 추출합니다. 결과는 <code>src/data/cross_trends.json</code>으로 저장.</p>
+  <p style="color:var(--ink-soft); font-size:15.5px">각 트렌드 카드: <code>keyword</code> · <code>what</code>(무엇인지) · <code>why</code>(왜 뜨는지) · <code>sources[]</code>(잡힌 매체) · <code>articles[]</code>(원문 title · url · source · date). 예) 럭키맥싱(4건, 캐릿·마케팅레시피) · 하이퍼 리얼 일상 아카이빙(6건, 4개 매체) · 그랜플루언서(3건) 등.</p>
+</section>
+
+<!-- SECTION 6: 디벨롭 진행 상황 -->
+<section>
+  <div class="section-num">06</div>
+  <h2>디벨롭 진행 상황</h2>
+  <p class="section-sub">발견한 한계와 개선 방향. 두 항목은 적용 완료, 하나는 검토중.</p>
+
+  <div class="field-groups">
+
+    <div class="field-group">
+      <div class="field-group-head"><span class="field-group-title" style="color:var(--accent)">① 멀티 토픽 글 분리 로직</span><span class="field-group-count" style="background:#fef2ec; color:var(--accent)">검토중</span></div>
+      <ul style="display:flex; flex-direction:column; gap:6px">
+        <li style="display:block; padding:6px 0"><span class="highlight">현재 문제 :</span> 한 아티클 안에 여러 기사가 묶여 있을 때(예: 캐릿 '이주의 유행템 4개'), 한 개만 대표로 가져오는 경향. 글마다 추출되는 양상이 제각각이라 트렌드 누락 발생.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">추천 방안 A :</span> PROMPT에 "multi-topic 글 감지 시 <code>sub_articles[]</code>로 분리 출력" 규칙 추가 — Gemini가 본문 안에서 분리해서 N개 분석 결과로 반환.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">추천 방안 B :</span> 본문 H2/H3 + "1. ... 2. ..." 패턴으로 사전 분할 후 각 섹션을 독립 글로 처리. 캐릿·The Edit의 큐레이션 글 구조에 잘 맞음.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">추천 방안 C :</span> <code>topics[]</code> · <code>brands_products[]</code>를 trend 추출 단계에서 다시 분리 — 글 단위가 아닌 토픽 단위로 cross_trends 재구성.</li>
+      </ul>
+    </div>
+
+    <div class="field-group">
+      <div class="field-group-head"><span class="field-group-title" style="color:var(--teal)">② 대표 이미지 선정 로직</span><span class="field-group-count" style="background:#eaf2f2; color:var(--teal)">✓ 적용 완료</span></div>
+      <ul style="display:flex; flex-direction:column; gap:6px">
+        <li style="display:block; padding:6px 0"><span class="highlight">채택 방안 :</span> Gemini PROMPT에 <code>hero_image_index</code> 필드를 추가해 "가장 핵심 시각 표현 이미지 1장(배너·CTA·로고 제외)" 자동 선정. 본문 맥락 기반 선정이라 가장 정확.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">적용 결과 :</span> 분석 필드 19 → 20개로 확장. <code>build_dashboard.py</code>가 카드 빌드 시 <code>hero_image_index</code>를 읽어 <code>image_urls[idx]</code>로 카드 대표 이미지를 자동 교체.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">기존 데이터 백필 :</span> 별도 스크립트(<code>backfill_hero.py</code>)로 기존 91건의 hero_image_index를 일괄 채움. 이미지 다시 보내지 않고 <code>image_by_image[]</code> 묘사 텍스트만 보고 빠르게 선정.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">자동화 :</span> <code>run_daily.py</code>에 흐름 추가 — 매일 자동 실행 시 새 글이 분석되면서 hero 자동 적용, 2차 dashboard 빌드까지 자동.</li>
+      </ul>
+    </div>
+
+    <div class="field-group">
+      <div class="field-group-head"><span class="field-group-title" style="color:var(--olive)">③ 분석 모델 비교 테스트</span><span class="field-group-count" style="background:#f0f4ea; color:var(--olive)">✓ 테스트 완료</span></div>
+      <ul style="display:flex; flex-direction:column; gap:6px">
+        <li style="display:block; padding:6px 0"><span class="highlight">테스트 방식 :</span> 동일 글 20건 + 일관성 5건을 Gemini Pro와 Claude Sonnet 4.6 두 모델로 동일 PROMPT 병렬 분석. 5가지 지표 측정.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">결과 — 응답 시간 :</span> Gemini Pro <b>46.8초</b> vs Claude Sonnet 4.6 49.7초. Gemini 우위.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">결과 — 비용(20글) :</span> Gemini Pro <b>$0.50</b> vs Claude Sonnet 4.6 $1.10 (2.2배). Gemini 우위.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">결과 — 카테고리 일관성 :</span> 두 모델 모두 <b>100%</b> 동률. 같은 글 2회 분석 시 카테고리 분류가 항상 일치.</li>
+        <li style="display:block; padding:6px 0"><span class="highlight">의사결정 :</span> 운영 모델은 <b>Gemini 3.5 flash</b>(현행) 유지가 합리적. 글별 상세 비교 + Jaccard 유사도 등은 <code>docs/model_compare.html</code> 참조.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div>트렌드 모니터링 에이전트 · 사내 보고용</div>
+  <div class="ver">v2.0 · 2026-06-04 · F&amp;F Innovation</div>
+</footer>
+
+</div>
+</body>
+</html>

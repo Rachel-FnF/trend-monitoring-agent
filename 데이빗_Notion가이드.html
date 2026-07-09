@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>트렌드 통합 DB (Notion) — 데이빗 가이드</title>
+<style>
+  :root{
+    --bg:#0f1221; --card:#1a1f35; --card2:#232a45; --ink:#e8ebf5; --muted:#9aa3c0;
+    --line:#2e3656; --accent:#6c8cff; --green:#3ddc97; --amber:#ffcf6b; --pink:#ff8fb1;
+    --code:#0b0e1a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(160deg,#0f1221,#141937);color:var(--ink);
+    font-family:"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",sans-serif;line-height:1.65;
+    -webkit-font-smoothing:antialiased;padding:40px 16px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;margin-bottom:30px}
+  h1{font-size:29px;margin:0 0 8px;letter-spacing:-.5px}
+  .sub{color:var(--muted);font-size:15px}
+  .intro{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin-bottom:24px}
+  .intro ul{margin:8px 0 0;padding-left:20px}
+  .intro li{margin:5px 0;color:#cfd6ef}
+  .flow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:18px 0 26px}
+  .fbox{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 16px;
+    font-size:13px;text-align:center}
+  .fbox b{display:block;color:#fff;font-size:14px;margin-bottom:2px}
+  .arrow{align-self:center;color:var(--muted);font-size:20px}
+  .big{background:linear-gradient(135deg,#1d2547,#26305a);border:1px solid var(--accent);
+    border-radius:16px;padding:22px 26px;margin-bottom:24px;text-align:center}
+  .big a{display:inline-block;margin-top:10px;background:var(--accent);color:#fff;text-decoration:none;
+    padding:11px 22px;border-radius:10px;font-weight:700;font-size:15px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:24px 26px;margin-bottom:22px;position:relative;overflow:hidden}
+  .step::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px}
+  .s1::before{background:var(--green)} .s2::before{background:var(--accent)} .s3::before{background:var(--amber)}
+  .tag{display:inline-block;font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;margin-bottom:10px}
+  .t1{background:rgba(61,220,151,.18);color:#7ff0c2} .t2{background:rgba(108,140,255,.18);color:#aebcff}
+  .t3{background:rgba(255,207,107,.18);color:#ffe0a0}
+  h2{font-size:21px;margin:0 0 14px}
+  h3{font-size:16px;margin:18px 0 8px;color:#dfe4f7}
+  .num{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--card2);
+    color:#fff;font-size:13px;font-weight:700;align-items:center;justify-content:center;margin-right:8px}
+  p{margin:6px 0}
+  code.inl{background:var(--card2);padding:2px 7px;border-radius:6px;font-size:13.5px;color:#ffd7a8;
+    font-family:"Consolas","D2Coding",monospace}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+    overflow-x:auto;margin:8px 0;font-size:13.5px;font-family:"Consolas","D2Coding",monospace;color:#d6e9ff}
+  pre .c{color:#6f7aa3}
+  .note{background:rgba(108,140,255,.10);border-left:3px solid var(--accent);padding:10px 14px;border-radius:8px;margin:12px 0;font-size:14px;color:#cdd6f5}
+  .warn{background:rgba(255,207,107,.10);border-left:3px solid var(--amber);padding:10px 14px;border-radius:8px;margin:12px 0;font-size:14px;color:#f0e2c0}
+  .cheat{background:var(--code);border:1px solid var(--accent);border-radius:14px;padding:18px 22px}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>📊 트렌드 통합 DB (Notion) — 데이빗 가이드</h1>
+    <div class="sub">이제 파일 주고받기(merge) 없이, <b>하나의 Notion DB</b>를 둘이 같이 봅니다</div>
+  </header>
+
+  <div class="intro">
+    <ul>
+      <li>레이첼(웹 트렌드)·데이빗(SNS 트렌드)이 <b>같은 Notion DB 한 곳</b>에 데이터를 올려요</li>
+      <li>같은 글은 <b>article_id로 자동 중복 제거</b>, <code class="inl">수집자</code> 칸에 rachel/david 표시</li>
+      <li><b>merge 단계가 사라졌어요</b> — 각자 올리면 같은 표에 실시간으로 쌓이고, 둘 다 브라우저에서 봄</li>
+    </ul>
+  </div>
+
+  <div class="flow">
+    <div class="fbox"><b>레이첼</b>매일 자동 push</div>
+    <div class="arrow">↘</div>
+    <div class="fbox"><b>Notion 통합 DB</b>한 곳에서 같이 봄</div>
+    <div class="arrow">↙</div>
+    <div class="fbox"><b>데이빗</b>push</div>
+  </div>
+
+  <!-- 바로 보기 -->
+  <div class="big">
+    <div style="font-size:15px;color:#cdd6f5">우선 <b>보기만</b> 하려면 — 설치 필요 없이 이 링크만:</div>
+    <a href="https://app.notion.com/p/37efd8bcf55881df9475c58ee6709c41">📊 트렌드 통합 DB 열기</a>
+    <div style="font-size:13px;color:var(--muted);margin-top:10px">
+      안 열리면 레이첼이 이 페이지를 데이빗 노션 계정으로 <b>공유(Share)</b> 해줘야 해요.
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step s1">
+    <span class="tag t1">1단계 · 보기</span>
+    <h2>같이 보고 활용하기 (설치 0)</h2>
+    <p>위 링크로 들어가면 레이첼이 모은 트렌드가 표로 쌓여 있어요. 노션에서 바로:</p>
+    <ul>
+      <li><b>필터</b>: <code class="inl">수집자 = david</code> / <code class="inl">카테고리 = 패션</code> 등</li>
+      <li><b>정렬</b>: <code class="inl">DB등록일</code> 최신순 → "요즘 새로 들어온 트렌드"</li>
+      <li><b>보드뷰</b>: 카테고리별 칸반으로 보기</li>
+    </ul>
+    <div class="note">여기까지는 데이빗이 아무것도 설치 안 해도 돼요. 트렌드를 <b>받아보기만</b> 한다면 1단계로 끝.</div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step s2">
+    <span class="tag t2">2단계 · 한 번만</span>
+    <h2>내 데이터도 올리려면 — PC 세팅</h2>
+
+    <h3><span class="num">1</span>Python 설치</h3>
+    <p><a style="color:var(--accent)" href="https://www.python.org/downloads/">python.org/downloads</a> →
+       설치 화면 <b>"Add Python to PATH" 체크</b> ✅ (추가 설치 불필요)</p>
+
+    <h3><span class="num">2</span>레이첼이 준 파일 3개를 폴더에 두기</h3>
+    <p>아래 구조 그대로 만들어 주세요 (경로가 중요해요):</p>
+    <pre>C:\트렌드\
+   ├─ .env                      <span class="c"># 토큰/DB id (아래 4번)</span>
+   └─ src\service\
+        ├─ trenddb.py           <span class="c"># 내 분석결과 → trends.db</span>
+        └─ notion_push.py       <span class="c"># trends.db → Notion 업로드</span></pre>
+
+    <h3><span class="num">3</span>PowerShell 열고 폴더로 이동 + 이름표 설정 (1회)</h3>
+    <pre>cd C:\트렌드
+python src\service\trenddb.py set-owner david</pre>
+
+    <h3><span class="num">4</span><code class="inl">.env</code> 파일 만들기 (메모장)</h3>
+    <p><code class="inl">C:\트렌드\.env</code> 에 아래 2줄 — <b>값은 레이첼에게 받기</b>:</p>
+    <pre>TEAM_NOTION_TOKEN=레이첼에게-받은-토큰
+NOTION_TREND_DB_ID=37efd8bc-f558-81df-9475-c58ee6709c41</pre>
+    <div class="warn">🔐 토큰은 비밀번호 같은 거예요 — 공개 채널에 올리지 말고 레이첼에게 <b>1:1(DM)로만</b> 받으세요.</div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step s3">
+    <span class="tag t3">3단계 · 올리기</span>
+    <h2>내 트렌드를 Notion에 올리기</h2>
+    <pre><span class="c"># 1) 내 SNS 분석결과(JSON 폴더)로 trends.db 만들기</span>
+python src\service\trenddb.py export --from "C:\내가\SNS분석결과JSON폴더"
+
+<span class="c"># 2) Notion 공유 DB로 올리기</span>
+python src\service\notion_push.py</pre>
+    <p>→ 끝! 노션 DB에 <code class="inl">david</code> 이름표로 글이 올라가요. 같은 글을 레이첼도 모았으면 한 줄로 합쳐지고 <code class="inl">rachel, david</code> 둘 다 표시됩니다.</p>
+    <div class="warn">⏳ <b>미팅에서 정할 것:</b> 데이빗은 SNS(인스타·X·틱톡), 레이첼은 웹 기반이라 칸 구성이 달라요.
+      데이빗 전용 칸(조회수·좋아요·플랫폼 등)을 어떻게 담을지 <b>공통 양식을 정한 뒤</b> 레이첼이 맞춰줄 예정.
+      그 전엔 <b>1단계(보기)</b>만 해도 충분하고, 올리기는 미팅 후 확정해요.</div>
+  </div>
+
+  <div class="cheat">
+    <h2 style="margin-top:0">⚡ 치트시트</h2>
+    <pre><span class="c"># 보기만 → 설치 없이 링크 클릭</span>
+https://app.notion.com/p/37efd8bcf55881df9475c58ee6709c41
+
+<span class="c"># 처음 1회</span>
+python src\service\trenddb.py set-owner david
+<span class="c"># .env 에 TEAM_NOTION_TOKEN, NOTION_TREND_DB_ID 입력 (레이첼에게 받기)</span>
+
+<span class="c"># 올릴 때마다</span>
+python src\service\trenddb.py export --from "C:\내SNS분석폴더"
+python src\service\notion_push.py</pre>
+  </div>
+
+  <div class="warn" style="margin-top:22px">
+    <b>⚠️ 내부용으로만.</b> 레이첼 데이터에 유료 미디어(캐릿) 분석이 들어있어요 → 외부 공유·유출 금지.
+  </div>
+
+  <footer>트렌드 모니터링 · 레이첼 ↔ 데이빗 Notion 공유 DB</footer>
+
+</div>
+</body>
+</html>

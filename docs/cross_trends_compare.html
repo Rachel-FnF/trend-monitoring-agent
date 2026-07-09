@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교차검증 트렌드 · Deep Think A/B 성능 테스트</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+<style>
+  :root{--ink:#15110e;--bg:#fafaf6;--surface:#fff;--line:#e7e3dc;--muted:#8a847c;--d:#3d6b6e;--c:#b9742a;--pill:#f4f0e8;--win:#fbf4df}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-size:16px;line-height:1.6;font-family:"Pretendard Variable",Pretendard,-apple-system,sans-serif}
+  .wrap{max-width:1140px;margin:0 auto;padding:56px 36px 96px}
+  .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c);background:#fdf1e6;padding:5px 12px;border-radius:99px;margin-bottom:18px}
+  h1{font-size:38px;font-weight:800;letter-spacing:-.025em;line-height:1.2;margin-bottom:12px}
+  .lede{font-size:17px;color:#3a342f;max-width:780px;margin-bottom:30px}
+  .meta{display:flex;gap:22px;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:40px;font-size:14px;color:var(--muted)}
+  .meta b{color:var(--ink);font-weight:600}
+  h2{font-size:24px;font-weight:800;margin:46px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;font-size:15px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line)}
+  thead th{background:var(--pill);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  tbody th{font-weight:600;color:#4a443d;width:34%}
+  td.d,td.c{font-variant-numeric:tabular-nums;font-weight:600}
+  td.d{color:var(--d)} td.c{color:var(--c)}
+  td.win{background:var(--win)}
+  td.win::after{content:" ★";color:#a87a17}
+  .colhead{display:flex;gap:0}
+  .legend{display:flex;gap:20px;margin:14px 0 0;font-size:13px;color:var(--muted)}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:99px;margin-right:6px;vertical-align:middle}
+  .dot.d{background:var(--d)} .dot.c{background:var(--c)}
+  .note{background:#fdf1e6;border-left:4px solid var(--c);padding:13px 18px;border-radius:6px;margin:18px 0;font-size:14.5px}
+  .kwbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:14px 0}
+  .kwbox h3{font-size:15px;margin-bottom:10px}
+  .pill{display:inline-block;font-size:13px;padding:5px 11px;border-radius:99px;margin:0 6px 8px 0}
+  .pill.d{background:#eaf2f2;color:var(--d)} .pill.c{background:#fdeee0;color:var(--c)} .pill.x{background:var(--pill);color:#4a443d}
+  .muted{color:var(--muted)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .panel.dh{border-top:3px solid var(--d)} .panel.ch{border-top:3px solid var(--c)}
+  .panel h3{font-size:16px;margin-bottom:4px} .panel .sub{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .trend{border-bottom:1px solid var(--line);padding:12px 0}
+  .trend:last-child{border-bottom:none}
+  .kw{font-weight:700;font-size:15.5px;margin-bottom:5px}
+  .wh{font-size:13.5px;color:#3a342f;margin:2px 0} .wh b{color:var(--muted);font-weight:600;margin-right:5px}
+  .src{font-size:12px;color:var(--muted);margin-top:5px}
+  .arts{list-style:none;margin-top:6px} .arts li{font-size:12px;margin:2px 0} .arts a{color:var(--muted);text-decoration:none} .arts a:hover{color:var(--c)}
+  footer{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style></head><body><div class="wrap">
+
+<span class="tag">A/B Performance Test · Cross-Trend Extraction</span>
+<h1>교차검증 트렌드 — Deep Think 성능 테스트</h1>
+<p class="lede">동일한 입력 글 <b>194건</b>(2026-04-07 ~ 2026-07-08)을 같은 프롬프트로 두 설정에 돌려, 트렌드 추출 품질·속도·비용을 비교한 결과입니다.</p>
+
+<div class="meta">
+  <div><b>실험군(적용)</b> · gemini-3.1-pro-preview · thinking=high</div>
+  <div><b>대조군(미적용)</b> · gemini-3.5-flash · thinking 없음</div>
+  <div><b>실행</b> · 2026-07-09T08:04:38</div>
+</div>
+
+<h2>성능 지표 비교</h2>
+<table>
+  <thead><tr><th>지표</th><th><span class="dot d"></span>Deep Think (적용)</th><th><span class="dot c"></span>기존 (미적용)</th></tr></thead>
+  <tbody>
+    <tr><th>추출 트렌드 수</th><td class="d">9</td><td class="c win">12</td></tr>
+    <tr><th>평균 '무엇' 설명 길이</th><td class="d win">74.2자</td><td class="c">70.8자</td></tr>
+    <tr><th>평균 '왜' 설명 길이</th><td class="d">75.2자</td><td class="c win">79.7자</td></tr>
+    <tr><th>트렌드당 평균 근거 글</th><td class="d win">4.56건</td><td class="c">3.58건</td></tr>
+    <tr><th>트렌드당 평균 교차 소스</th><td class="d win">3.11개</td><td class="c">3.0개</td></tr>
+    <tr><th>총 인용 글</th><td class="d">41건</td><td class="c win">43건</td></tr>
+    <tr><th>응답 시간</th><td class="d win">53.02s</td><td class="c">61.37s</td></tr>
+    <tr><th>추론(thinking) 토큰</th><td class="d">4990tok</td><td class="c win">7288tok</td></tr>
+    <tr><th>출력 토큰</th><td class="d win">2616tok</td><td class="c">2550tok</td></tr>
+    <tr><th>예상 비용</th><td class="d">0.1242 USD</td><td class="c win">0.0361 USD</td></tr>
+    </tbody>
+</table>
+<div class="legend">
+  <span><span class="dot d"></span>Deep Think = gemini-3.1-pro-preview</span>
+  <span><span class="dot c"></span>기존 = gemini-3.5-flash</span>
+  <span>★ = 해당 지표 우위</span>
+</div>
+<div class="note">★는 그 항목에서 더 나은 쪽. <b>시간·비용은 낮을수록</b>, 설명 길이·근거 글·교차 소스는 <b>높을수록</b> 좋다고 가정합니다. 추론 토큰은 Deep Think가 '생각'에 쓴 양으로, 비용↑의 원인이자 품질↑의 근거입니다.</div>
+
+<h2>키워드 비교 — 개념 겹침 50%</h2>
+<div class="note">표현이 달라도 같은 개념(예: '럭키맥싱'과 '럭키맥싱(Luckymaxxing)')이면 공통으로 셉니다. 겹치는 개념은 두 모델이 모두 잡은 '확실한' 트렌드, Deep Think 단독은 더 깊은 추론으로 추가로 잡아낸 것입니다.</div>
+<div class="kwbox">
+  <h3>공통 발견 (6) — 양쪽 모두 잡은 확실한 트렌드</h3>
+  <span class="pill x">럭키맥싱과 불교코어</span><span class="pill x">촉감 소비와 멘탈 케어</span><span class="pill x">텍스트힙과 리딩 파티</span><span class="pill x">포토 덤프와 날것의 일상</span><span class="pill x">시니어 크리에이터의 약진</span><span class="pill x">가족 중심 소비, 엄미새</span>
+</div>
+<div class="kwbox">
+  <h3><span class="dot d"></span>Deep Think 만 발견 (3) — 더 깊은 추론으로 잡아낸 것</h3>
+  <span class="pill d">신(新) 커스텀 문화, 젤꾸와 신꾸</span><span class="pill d">천연 위고비와 맞춤형 헬스케어</span><span class="pill d">바이브 코딩 (Vibe Coding)</span>
+</div>
+<div class="kwbox">
+  <h3><span class="dot c"></span>기존 만 발견 (6)</h3>
+  <span class="pill c">콰이어트케이션 (Quiet-cation)</span><span class="pill c">젤꾸 (젤리슈즈 커스터마이징)</span><span class="pill c">리커버리노믹스 (Recoverynomics)</span><span class="pill c">뉴트로 옥 장신구</span><span class="pill c">지도 큐레이션 마케팅</span><span class="pill c">아이돌 자체 제작 콘텐츠 (자컨)</span>
+</div>
+
+<h2>실제 추출 결과 (나란히 보기)</h2>
+<div class="cols">
+  <div class="panel dh">
+    <h3>Deep Think (적용) — 실제 결과물</h3>
+    <div class="sub">2026년 2분기 라이프스타일 및 소비 교차검증 트렌드 리포트</div>
+    
+        <div class="trend">
+          <div class="kw">럭키맥싱과 불교코어</div>
+          <div class="wh"><b>무엇</b> 주도적으로 운을 끌어당기는 '럭키맥싱(Luckymaxxing)'과 템플스테이, 불교 굿즈 등을 힙한 문화로 소비하는 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 불확실한 현실 속에서 도파민 디톡스를 실천하며, 스스로 마음의 안정을 찾고 긍정적인 에너지를 모으려는 Z세대의 심리가 반영되었습니다.</div>
+          <div class="src">소스 3 · 캐릿, 마케팅레시피, 고슴이의 비트 · 글 6건</div>
+          <ul class="arts"><li><a href="https://www.careet.net/1876" target="_blank">캐릿 · 그거 아세요? 요즘 Z세대의 가장 뜨거운 화두가 ‘운모으기’라는 사실.</a></li><li><a href="https://www.careet.net/1917" target="_blank">캐릿 · 1. [한국조폐공사] 출시 직후 품절된 행운 굿즈의 정체는?</a></li><li><a href="https://maily.so/marketingrecipe/posts/wdr9qq8lolx" target="_blank">마케팅레시피 · Z세대가 관악산으로 향하는 이유: 운까지 모으는 요즘 트렌드, ‘럭키맥싱’</a></li><li><a href="https://www.careet.net/1883" target="_blank">캐릿 · 카톡 선물하기 랭킹 1위가 ‘붓다 굿즈’? 이주의 유행템 4</a></li><li><a href="https://maily.so/marketingrecipe/posts/1gz2e69xz3q" target="_blank">마케팅레시피 · 템플스테이가 트렌드라고? 번아웃 시대 무자극 휴식, 콰이어트케이션</a></li><li><a href="https://stib.ee/1CIN" target="_blank">고슴이의 비트 · 고요한 사찰에서의 머무름, 템플스테이 추천 🪷</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">촉감 소비와 멘탈 케어</div>
+          <div class="wh"><b>무엇</b> 스트레스볼, 말랑이, 워리스톤 등 손끝의 촉감을 자극하는 아날로그 완구를 구매해 일상 속에서 정서적 위안을 얻는 현상입니다.</div>
+          <div class="wh"><b>왜</b> 디지털 피로감과 번아웃이 극에 달하면서, 시공간 제약 없이 즉각적이고 무해하게 스트레스를 해소하려는 니즈가 커졌기 때문입니다.</div>
+          <div class="src">소스 4 · 고구마팜, 캐릿, Insight, 고슴이의 비트 · 글 6건</div>
+          <ul class="arts"><li><a href="https://gogumafarm.kr/z%ec%84%b8%eb%8c%80%ea%b0%80-%eb%a7%90%eb%9e%91%ec%9d%b4%eb%a5%bc-%ec%b0%be%eb%8a%94-%ec%9d%b4%ec%9c%a0-%ec%b4%89%ea%b0%90-%ec%86%8c%eb%b9%84-%ed%8a%b8%eb%a0%8c%eb%93%9c-%eb%9c%af%ec%96%b4%eb%b3%b4/" target="_blank">고구마팜 · Z세대가 말랑이를 찾는 이유! 촉감 소비 트렌드 뜯어보기</a></li><li><a href="https://www.careet.net/1893" target="_blank">캐릿 · 해외판 감튀 모임 등장? 9백만 뷰 찍은 오프라인 트렌드부터</a></li><li><a href="https://gogumafarm.kr/%eb%8b%a4%ed%81%ac-%ec%83%a4%ec%9b%8c%c2%b7%ec%9b%8c%eb%a6%ac%ec%8a%a4%ed%86%a4%c2%b7%eb%b6%88%ec%95%88-%ea%b0%80%eb%b0%a9-z%ec%84%b8%eb%8c%80-%eb%a9%98%ed%83%88-%ec%bc%80%ec%96%b4-%ed%8a%b8/" target="_blank">고구마팜 · 다크 샤워·워리스톤·불안 가방… Z세대 멘탈 케어 트렌드 모음</a></li><li><a href="https://www.insight.co.kr/news/559619" target="_blank">Insight · 키캡키링·스트레스볼·워리스톤까지... MZ '손끝 힐링템' 인기</a></li><li><a href="https://www.insight.co.kr/news/560331" target="_blank">Insight · 블랙핑크 로제가 쥔 '작은 공' 하나에... 촉감 완구 시장이 들썩인다</a></li><li><a href="https://stib.ee/S7FM" target="_blank">고슴이의 비트 · 내 주위 2030 여자들 다 말랑이에 진심이다</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">텍스트힙과 리딩 파티</div>
+          <div class="wh"><b>무엇</b> 독서와 기록을 힙한 취향으로 여기며, 이색 도서관 방문이나 일회성 독서 모임(리딩 파티), 북페어에 열광하는 아날로그 회귀 문화입니다.</div>
+          <div class="wh"><b>왜</b> 자극적이고 휘발성이 강한 숏폼 콘텐츠에 지친 청년층이 '읽고 쓰는 행위' 자체를 지적이고 매력적인 자기표현 수단으로 삼고 있습니다.</div>
+          <div class="src">소스 4 · HeyPop, 고슴이의 비트, 캐릿, Insight · 글 6건</div>
+          <ul class="arts"><li><a href="https://heypop.kr/n/137180" target="_blank">HeyPop · 힙한 도서관의 탄생, 여의도브라이튼</a></li><li><a href="https://stib.ee/l6IN" target="_blank">고슴이의 비트 · Z세대의 새로운 독서법, '리딩 파티' 트렌드의 모든 것 📚</a></li><li><a href="https://stib.ee/7kRN" target="_blank">고슴이의 비트 · 출판사 직원이 알려주는 재밌는 책 고르는 꿀팁 🍯📚</a></li><li><a href="https://heypop.kr/n/138654" target="_blank">HeyPop · AI 시대에도 ‘서울국제도서전’은 열린다</a></li><li><a href="https://www.careet.net/1936" target="_blank">캐릿 · 참여 수 10만 건 돌파! 화제의 플랫폼부터 도서전 인기 부스까지 SNS 유행템 7</a></li><li><a href="https://www.insight.co.kr/news/557167" target="_blank">Insight · AI 시대의 역설... 가짜 넘쳐나자 '진짜' 찾는 사람들, '근본이즘' 뜬다</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">포토 덤프와 날것의 일상</div>
+          <div class="wh"><b>무엇</b> 완벽하게 보정된 사진 대신 흔들리거나 정제되지 않은 일상 사진을 '셋로그', '비리얼' 등의 앱을 통해 꾸밈없이 공유하는 기록 방식입니다.</div>
+          <div class="wh"><b>왜</b> SNS의 보여주기식 압박과 AI 보정의 인위성에 피로를 느낀 유저들이 타인의 시선에서 벗어나 진정성 있는 느슨한 연대를 추구하기 때문입니다.</div>
+          <div class="src">소스 4 · 마케팅레시피, 고구마팜, 고슴이의 비트, Insight · 글 5건</div>
+          <ul class="arts"><li><a href="https://maily.so/marketingrecipe/posts/92zekw6nzep" target="_blank">마케팅레시피 · 셋로그·비리얼이 알려준 Z세대의 일상</a></li><li><a href="https://gogumafarm.kr/%ec%9a%94%ec%a6%98-z%ec%84%b8%eb%8c%80%eb%8a%94-%ec%b9%9c%ea%b5%ac%eb%9e%91-2%ec%b4%88%ec%94%a9-%ed%95%98%eb%a3%a8%eb%a5%bc-%ea%b3%b5%ec%9c%a0%ed%95%9c%eb%8b%a4-%ec%a7%80%ea%b8%88-z%ec%84%b8%eb%8c%80/" target="_blank">고구마팜 · 요즘 Z세대는 친구랑 2초씩 하루를 공유한다? 지금 Z세대 사이에서 뜨는 앱 3가지</a></li><li><a href="https://stib.ee/IdgN" target="_blank">고슴이의 비트 · 셋로그 유행 놓쳤어? 다음은 '일상 기록 앱'! (+🎁 캔바 무료체험권)</a></li><li><a href="https://stib.ee/ArXN" target="_blank">고슴이의 비트 · 요즘 도쿄 여행은 근교 소도시가 진짜라던데... 🏯</a></li><li><a href="https://www.insight.co.kr/news/558525" target="_blank">Insight · AI 보정 사진에 질린 Z세대... '디지털카메라' 열풍에 가격도 급등</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">신(新) 커스텀 문화, 젤꾸와 신꾸</div>
+          <div class="wh"><b>무엇</b> 젤리슈즈에 파츠를 달거나 가방에 다채로운 키링과 인형을 매달아 기성품을 자신만의 아이템으로 개조하는 D.I.Y 패션 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> Y2K 감성의 연장선으로, 남들과 똑같은 제품을 쓰기보다 자신의 미세한 취향을 반영해 개성을 극대화하려는 Z세대의 표현 욕구가 담겨있습니다.</div>
+          <div class="src">소스 2 · Insight, 고구마팜 · 글 4건</div>
+          <ul class="arts"><li><a href="https://www.insight.co.kr/news/557722" target="_blank">Insight · 다시 돌아온 젤리슈즈, 패션 아이템으로 부활... Z세대 '젤꾸' 열풍</a></li><li><a href="https://www.insight.co.kr/news/560202" target="_blank">Insight · "200종 파츠로 '젤꾸' 할사람!?"... MZ가 반한 품절 대란 '젤리슈즈' 롯데百에 떴다</a></li><li><a href="https://www.insight.co.kr/news/559743" target="_blank">Insight · 장원영·카리나가 증명한 '발끝 패션'... 양말이 필수템 된 이유</a></li><li><a href="https://gogumafarm.kr/%ed%9e%88%ed%8d%bc%c2%b7%ed%83%9c%eb%8b%9d%ec%8a%a4%ed%8b%b0%ec%bb%a4%c2%b7%eb%a9%94%ec%a7%80%eb%a3%a8%ec%8b%9c-%ea%b5%bf%ec%a6%88-%ea%b8%b0%ed%9a%8d-%ec%a4%91%ec%9d%b4%eb%9d%bc%eb%a9%b4-%eb%b4%90/" target="_blank">고구마팜 · 히퍼·태닝스티커·메지루시! 굿즈 기획 중이라면 봐야 할 품절 대란 굿즈 10가지</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">시니어 크리에이터의 약진</div>
+          <div class="wh"><b>무엇</b> 친근함과 인생의 연륜을 무기로 한 숏폼 시니어 크리에이터(그랜플루언서)들이 젊은 층의 알고리즘을 장악하며 트렌드 아이콘으로 부상했습니다.</div>
+          <div class="wh"><b>왜</b> 각종 필터와 작위적인 밈에 지친 대중에게, 이들의 솔직하고 여유로운 소통 방식이 오히려 신선한 공감과 힐링으로 다가갔기 때문입니다.</div>
+          <div class="src">소스 4 · 마케팅레시피, 고구마팜, 고슴이의 비트, 캐릿 · 글 4건</div>
+          <ul class="arts"><li><a href="https://maily.so/marketingrecipe/posts/knrj1lk7rld" target="_blank">마케팅레시피 · 시니어 인플루언서, Z세대가 찾는 공감과 정</a></li><li><a href="https://gogumafarm.kr/%ec%95%8c%ea%b3%a0%eb%a6%ac%ec%a6%98%ec%9d%84-%ec%9e%a5%ec%95%85%ed%95%9c-%ec%8b%9c%eb%8b%88%ec%96%b4-%ec%88%8f%ed%8f%bc-%ed%81%ac%eb%a6%ac%ec%97%90%ec%9d%b4%ed%84%b0-15%ec%9d%b8-%ec%b4%9d%ec%a0%95/" target="_blank">고구마팜 · 알고리즘을 장악한 시니어 숏폼 크리에이터 15인 총정리</a></li><li><a href="https://stib.ee/VTkN" target="_blank">고슴이의 비트 · 요즘 핫한 여자라면 다 나온다는 '이 페스티벌'의 정체 ❤️‍🔥</a></li><li><a href="https://www.careet.net/1941" target="_blank">캐릿 · 조회수 100만 회는 기본? 화제의 릴스 포맷부터 뜨는 핫플까지, 이주의 유행템 4</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">천연 위고비와 맞춤형 헬스케어</div>
+          <div class="wh"><b>무엇</b> 단기적 다이어트에서 벗어나, 혈당과 수면을 관리하고 '천연 위고비'라 불리는 건강 식단을 찾는 등 일상적이고 개인화된 웰니스 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 비만 치료제 열풍 속에서 건강의 중요성이 재조명되며, 일상에서 무리 없이 지속 가능한 본인만의 최적화된 건강 관리법을 찾고 있습니다.</div>
+          <div class="src">소스 2 · 캐릿, 20대연구소 · 글 4건</div>
+          <ul class="arts"><li><a href="https://www.careet.net/1919" target="_blank">캐릿 · 이 콘텐츠를 꼭 읽어야 하는 분</a></li><li><a href="https://www.20slab.org/Archives/39092" target="_blank">20대연구소 · 대학내일20대연구소 | 위고비, 마운자로 얼마나 대중화됐을까? 데이터로 보는 연령별 건강관리 트렌드 로그인 모바일메뉴 보고서 데이터 칼럼 인사이</a></li><li><a href="https://www.careet.net/1908" target="_blank">캐릿 · 위고비 대신 천연 위고비? 글로벌 Z세대 저격한 화제의 유행템 4</a></li><li><a href="https://www.careet.net/1929" target="_blank">캐릿 · 릴스 조회수 100만 보장! SNS 담당자가 써먹기 좋은 밈 모음</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">바이브 코딩 (Vibe Coding)</div>
+          <div class="wh"><b>무엇</b> 비개발자도 복잡한 코드 없이 기획 의도와 분위기(Vibe)만 프롬프트로 설명하면 AI가 앱이나 웹사이트를 뚝딱 만들어주는 현상입니다.</div>
+          <div class="wh"><b>왜</b> 생성형 AI 도구가 비약적으로 고도화되면서 기술 장벽이 허물어지고, 누구나 자신의 엉뚱한 상상력과 아이디어를 쉽게 실현할 수 있게 되었습니다.</div>
+          <div class="src">소스 3 · 20대연구소, 마케팅레시피, 고구마팜 · 글 4건</div>
+          <ul class="arts"><li><a href="https://www.20slab.org/Archives/39090" target="_blank">20대연구소 · 출근하면 AI부터 켜는 직장인 주목!</a></li><li><a href="https://www.20slab.org/Archives/39084" target="_blank">20대연구소 · 대학내일20대연구소 | 학벌·스펙보다 AI 활용 능력? 직장인이 꼽은 커리어 경쟁력의 새 공식 로그인 모바일메뉴 보고서 데이터 칼럼 인사이트 칼</a></li><li><a href="https://maily.so/marketingrecipe/posts/g0zmlwq7rql" target="_blank">마케팅레시피 · 바이브코딩: 비개발자도 게임·앱 만드는 시대</a></li><li><a href="https://gogumafarm.kr/%ea%b0%80%ec%a7%9c-%eb%b0%b0%eb%8b%ac-%ec%95%b1%eb%b6%80%ed%84%b0-%ec%98%a8%eb%9d%bc%ec%9d%b8-%eb%8b%b4%ed%83%80%ea%b9%8c%ec%a7%80-%ec%9a%94%ec%a6%98-z%ec%84%b8%eb%8c%80%ea%b0%80-%eb%b9%a0%ec%a7%84/" target="_blank">고구마팜 · 가짜 배달 앱부터 온라인 담타까지, 요즘 Z세대가 빠진 웹 사이트 21가지</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">가족 중심 소비, 엄미새</div>
+          <div class="wh"><b>무엇</b> 연인이나 얕은 지인 대신 엄마, 자매 등 가까운 가족과 쇼핑, 여행, 여가를 깊이 있게 즐기는 2030세대의 라이프스타일 페르소나입니다.</div>
+          <div class="wh"><b>왜</b> 새로운 인간관계를 맺는 데서 오는 감정적 피로를 피해, 가장 편안하고 정서적으로 든든한 '무조건적인 내 편'을 찾으려는 성향이 강해졌습니다.</div>
+          <div class="src">소스 2 · 캐릿, Insight · 글 2건</div>
+          <ul class="arts"><li><a href="https://www.careet.net/1910" target="_blank">캐릿 · 여성 소비자를 사로잡는 신선한 마케팅이 필요하다면? ‘엄미새’, ‘언미새’ 트렌드에 주목하세요!</a></li><li><a href="https://www.insight.co.kr/news/560607" target="_blank">Insight · Z세대, 남미새 아닌 '엄미새' 열풍... 엄마와 쇼핑·여행이 연애보다 편하다</a></li></ul>
+        </div>
+  </div>
+  <div class="panel ch">
+    <h3>기존 Flash (미적용) — 대조군</h3>
+    <div class="sub">2026년 5월~6월 교차검증 트렌드 메타 분석 보고서</div>
+    
+        <div class="trend">
+          <div class="kw">럭키맥싱 (Lucky Maxxing)</div>
+          <div class="wh"><b>무엇</b> 불확실한 미래 속에서 적극적으로 행운을 모으고 개척해 마음의 안정을 찾으려는 Z세대의 주체적인 행동 양식입니다.</div>
+          <div class="wh"><b>왜</b> 경기 침체와 사회적 불안감이 장기화되면서, 사주나 풍수지리, 행운의 마그넷 등 소소한 기운에 의지해 위안과 에너지를 얻고자 합니다.</div>
+          <div class="src">소스 3 · 캐릿, 마케팅레시피, 고슴이의 비트 · 글 4건</div>
+          <ul class="arts"><li><a href="https://www.careet.net/1917" target="_blank">캐릿 · 1. [한국조폐공사] 출시 직후 품절된 행운 굿즈의 정체는?</a></li><li><a href="https://maily.so/marketingrecipe/posts/wdr9qq8lolx" target="_blank">마케팅레시피 · Z세대가 관악산으로 향하는 이유: 운까지 모으는 요즘 트렌드, ‘럭키맥싱’</a></li><li><a href="https://www.careet.net/1876" target="_blank">캐릿 · 그거 아세요? 요즘 Z세대의 가장 뜨거운 화두가 ‘운모으기’라는 사실.</a></li><li><a href="https://stib.ee/SfHM" target="_blank">고슴이의 비트 · 나만 도서전 못 갔어? 괜찮아 남은 행사 뭐 있냐면 📚</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">손끝 힐링 (촉감 소비)</div>
+          <div class="wh"><b>무엇</b> 말랑이나 스트레스 볼, 키캡 키링처럼 손끝의 감각을 자극해 긴장감을 덜어내는 정서적 안정 목적의 완구 소비 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 디지털 피로와 일상의 번아웃에 직면한 소비자들이 아날로그적인 물리적 자극을 통해 직관적이고 무해한 정서적 휴식을 취하고자 합니다.</div>
+          <div class="src">소스 4 · 고구마팜, Insight, 고슴이의 비트, 20대연구소 · 글 5건</div>
+          <ul class="arts"><li><a href="https://gogumafarm.kr/z%ec%84%b8%eb%8c%80%ea%b0%80-%eb%a7%90%eb%9e%91%ec%9d%b4%eb%a5%bc-%ec%b0%be%eb%8a%94-%ec%9d%b4%ec%9c%a0-%ec%b4%89%ea%b0%90-%ec%86%8c%eb%b9%84-%ed%8a%b8%eb%a0%8c%eb%93%9c-%eb%9c%af%ec%96%b4%eb%b3%b4/" target="_blank">고구마팜 · Z세대가 말랑이를 찾는 이유! 촉감 소비 트렌드 뜯어보기</a></li><li><a href="https://www.insight.co.kr/news/559619" target="_blank">Insight · 키캡키링·스트레스볼·워리스톤까지... MZ '손끝 힐링템' 인기</a></li><li><a href="https://stib.ee/S7FM" target="_blank">고슴이의 비트 · 내 주위 2030 여자들 다 말랑이에 진심이다</a></li><li><a href="https://www.insight.co.kr/news/560331" target="_blank">Insight · 블랙핑크 로제가 쥔 '작은 공' 하나에... 촉감 완구 시장이 들썩인다</a></li><li><a href="https://www.20slab.org/Archives/39080" target="_blank">20대연구소 · 4만 명을 성수에 모은 비결</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">포토 덤프와 셋로그(SETLOG)</div>
+          <div class="wh"><b>무엇</b> 완벽하게 연출된 정교한 연출 샷 대신, 가공되지 않은 날것의 일상 사진을 대량으로 한 번에 올리거나 간소하게 소통하는 기록 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 타인에게 보여주기식으로 꾸며진 소셜 미디어 플랫폼에 피로감을 느낀 사용자들이, 보다 친근하고 자연스러운 소통 방식을 추구하게 되었습니다.</div>
+          <div class="src">소스 4 · 고슴이의 비트, 마케팅레시피, 캐릿, 고구마팜 · 글 6건</div>
+          <ul class="arts"><li><a href="https://stib.ee/IdgN" target="_blank">고슴이의 비트 · 셋로그 유행 놓쳤어? 다음은 '일상 기록 앱'! (+🎁 캔바 무료체험권)</a></li><li><a href="https://stib.ee/ArXN" target="_blank">고슴이의 비트 · 요즘 도쿄 여행은 근교 소도시가 진짜라던데... 🏯</a></li><li><a href="https://maily.so/marketingrecipe/posts/92zekw6nzep" target="_blank">마케팅레시피 · 셋로그·비리얼이 알려준 Z세대의 일상</a></li><li><a href="https://www.careet.net/1895" target="_blank">캐릿 · 한국, 튀르키예, 인도네시아까지? 전 세계인 대통합시킨 글로벌 밈 모음</a></li><li><a href="https://www.careet.net/1893" target="_blank">캐릿 · 해외판 감튀 모임 등장? 9백만 뷰 찍은 오프라인 트렌드부터</a></li><li><a href="https://gogumafarm.kr/%ec%9a%94%ec%a6%98-z%ec%84%b8%eb%8c%80%eb%8a%94-%ec%b9%9c%ea%b5%ac%eb%9e%91-2%ec%b4%88%ec%94%a9-%ed%95%98%eb%a3%a8%eb%a5%bc-%ea%b3%b5%ec%9c%a0%ed%95%9c%eb%8b%a4-%ec%a7%80%ea%b8%88-z%ec%84%b8%eb%8c%80/" target="_blank">고구마팜 · 요즘 Z세대는 친구랑 2초씩 하루를 공유한다? 지금 Z세대 사이에서 뜨는 앱 3가지</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">텍스트힙 (Text Hip)</div>
+          <div class="wh"><b>무엇</b> 독서, 필사, 도서전 참관과 같이 활자와 종이책 기반의 문화 예술을 개성 넘치고 매력적인 스타일로 받아들이는 문화 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 인스턴트식 숏폼 소비의 중심에서 아날로그적 텍스트와 깊은 지적 큐레이션 활동이 오히려 신선하고 주체적인 자아 표현 수단으로 조명받기 때문입니다.</div>
+          <div class="src">소스 3 · HeyPop, 고슴이의 비트, Insight · 글 4건</div>
+          <ul class="arts"><li><a href="https://heypop.kr/n/137180" target="_blank">HeyPop · 힙한 도서관의 탄생, 여의도브라이튼</a></li><li><a href="https://stib.ee/7kRN" target="_blank">고슴이의 비트 · 출판사 직원이 알려주는 재밌는 책 고르는 꿀팁 🍯📚</a></li><li><a href="https://stib.ee/l6IN" target="_blank">고슴이의 비트 · Z세대의 새로운 독서법, '리딩 파티' 트렌드의 모든 것 📚</a></li><li><a href="https://www.insight.co.kr/news/557167" target="_blank">Insight · AI 시대의 역설... 가짜 넘쳐나자 '진짜' 찾는 사람들, '근본이즘' 뜬다</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">그랜플루언서 (시니어 크리에이터)</div>
+          <div class="wh"><b>무엇</b> 풍부한 연륜과 따뜻함을 지닌 노년층 크리에이터들이 숏폼 및 소셜 미디어를 장악하며 전 세대를 아우르는 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 인위적이고 지나치게 정제된 자극적인 디지털 콘텐츠 사이에서 시니어 인플루언서들의 무해한 유머와 소소한 일상이 세대를 뛰어넘는 진정성 있는 위로를 줍니다.</div>
+          <div class="src">소스 4 · 마케팅레시피, 고슴이의 비트, 고구마팜, 캐릿 · 글 4건</div>
+          <ul class="arts"><li><a href="https://maily.so/marketingrecipe/posts/knrj1lk7rld" target="_blank">마케팅레시피 · 시니어 인플루언서, Z세대가 찾는 공감과 정</a></li><li><a href="https://stib.ee/VTkN" target="_blank">고슴이의 비트 · 요즘 핫한 여자라면 다 나온다는 '이 페스티벌'의 정체 ❤️‍🔥</a></li><li><a href="https://gogumafarm.kr/%ec%95%8c%ea%b3%a0%eb%a6%ac%ec%a6%98%ec%9d%84-%ec%9e%a5%ec%95%85%ed%95%9c-%ec%8b%9c%eb%8b%88%ec%96%b4-%ec%88%8f%ed%8f%bc-%ed%81%ac%eb%a6%ac%ec%97%90%ec%9d%b4%ed%84%b0-15%ec%9d%b8-%ec%b4%9d%ec%a0%95/" target="_blank">고구마팜 · 알고리즘을 장악한 시니어 숏폼 크리에이터 15인 총정리</a></li><li><a href="https://www.careet.net/1941" target="_blank">캐릿 · 조회수 100만 회는 기본? 화제의 릴스 포맷부터 뜨는 핫플까지, 이주의 유행템 4</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">엄미새·언미새 패밀리십</div>
+          <div class="wh"><b>무엇</b> 엄마(엄미새)나 자매(언미새)를 가장 친밀한 친구처럼 여기고 이들과 쇼핑, 여행 등 거의 모든 일상을 밀착 공유하는 Z세대의 라이프스타일입니다.</div>
+          <div class="wh"><b>왜</b> 외부 관계 속에서 생기는 스트레스나 피로감을 피해, 가장 무조건적인 지지와 심리적 안정감을 안겨주는 혈연 기반의 연대 속에서 편안함을 추구하는 심리입니다.</div>
+          <div class="src">소스 2 · 캐릿, Insight · 글 2건</div>
+          <ul class="arts"><li><a href="https://www.careet.net/1910" target="_blank">캐릿 · 여성 소비자를 사로잡는 신선한 마케팅이 필요하다면? ‘엄미새’, ‘언미새’ 트렌드에 주목하세요!</a></li><li><a href="https://www.insight.co.kr/news/560607" target="_blank">Insight · Z세대, 남미새 아닌 '엄미새' 열풍... 엄마와 쇼핑·여행이 연애보다 편하다</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">콰이어트케이션 (Quiet-cation)</div>
+          <div class="wh"><b>무엇</b> 사찰, 템플스테이처럼 소음과 디지털 기기가 단절된 조용한 공간에 체류하며 휴식하는 여행 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 끊임없이 쏟아지는 스마트폰 알림과 업무 연락에서 탈피해, 자발적인 무자극 환경을 만들어 뇌의 피로를 최소화하고 디지털 디톡스를 하고자 합니다.</div>
+          <div class="src">소스 4 · 고슴이의 비트, 마케팅레시피, 캐릿, 고구마팜 · 글 4건</div>
+          <ul class="arts"><li><a href="https://stib.ee/1CIN" target="_blank">고슴이의 비트 · 고요한 사찰에서의 머무름, 템플스테이 추천 🪷</a></li><li><a href="https://maily.so/marketingrecipe/posts/1gz2e69xz3q" target="_blank">마케팅레시피 · 템플스테이가 트렌드라고? 번아웃 시대 무자극 휴식, 콰이어트케이션</a></li><li><a href="https://www.careet.net/1883" target="_blank">캐릿 · 카톡 선물하기 랭킹 1위가 ‘붓다 굿즈’? 이주의 유행템 4</a></li><li><a href="https://gogumafarm.kr/%eb%8b%a4%ed%81%ac-%ec%83%a4%ec%9b%8c%c2%b7%ec%9b%8c%eb%a6%ac%ec%8a%a4%ed%86%a4%c2%b7%eb%b6%88%ec%95%88-%ea%b0%80%eb%b0%a9-z%ec%84%b8%eb%8c%80-%eb%a9%98%ed%83%88-%ec%bc%80%ec%96%b4-%ed%8a%b8/" target="_blank">고구마팜 · 다크 샤워·워리스톤·불안 가방… Z세대 멘탈 케어 트렌드 모음</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">젤꾸 (젤리슈즈 커스터마이징)</div>
+          <div class="wh"><b>무엇</b> Y2K 복고 바람을 타고 재유행하는 젤리슈즈에 다양한 액세서리나 비즈 등을 달아 자신의 스타일에 맞게 직접 꾸미는 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 다이어리나 가방을 꾸미던 DIY 문화가 신발로 이어지면서, 기성품의 한계를 깨고 오직 나만의 희소성 있는 디자인을 소장하길 원하는 개성파 소비층의 움직임입니다.</div>
+          <div class="src">소스 2 · Insight, 캐릿 · 글 4건</div>
+          <ul class="arts"><li><a href="https://www.insight.co.kr/news/557722" target="_blank">Insight · 다시 돌아온 젤리슈즈, 패션 아이템으로 부활... Z세대 '젤꾸' 열풍</a></li><li><a href="https://www.insight.co.kr/news/560202" target="_blank">Insight · "200종 파츠로 '젤꾸' 할사람!?"... MZ가 반한 품절 대란 '젤리슈즈' 롯데百에 떴다</a></li><li><a href="https://www.careet.net/1914" target="_blank">캐릿 · 리셀가 5배 상승! 2030 남성 소비자 잠실에 모인 이유는? 이주의 유행템 4</a></li><li><a href="https://www.insight.co.kr/news/559743" target="_blank">Insight · 장원영·카리나가 증명한 '발끝 패션'... 양말이 필수템 된 이유</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">리커버리노믹스 (Recoverynomics)</div>
+          <div class="wh"><b>무엇</b> 도파민 디톡스나 쑥뜸, 사우나, 수면 관리 등 육체적·정신적인 온전한 '회복과 쉼'에 집중해 소비 가치를 매기는 라이프스타일 양상입니다.</div>
+          <div class="wh"><b>왜</b> 치열하게 성과를 쥐어짜는 과거의 자기계발 공식에서 벗어나 지치고 상처받은 나를 안전하게 충전하는 회복력이 최고의 경쟁력으로 급부상했기 때문입니다.</div>
+          <div class="src">소스 2 · 고슴이의 비트, 20대연구소 · 글 2건</div>
+          <ul class="arts"><li><a href="https://stib.ee/VzvN" target="_blank">고슴이의 비트 · 요즘 Z세대는 사우나 가고 쑥뜸 뜨면서 힐링한다고? 💆</a></li><li><a href="https://www.20slab.org/Archives/39102" target="_blank">20대연구소 · 웰니스 언급량이 2배 이상 증가한 이유는?</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">뉴트로 옥 장신구</div>
+          <div class="wh"><b>무엇</b> 최근 연예인들의 착용과 더불어 전통적이고 예스러웠던 '옥반지' 등의 장신구가 신세대들의 가성비 패션 포인트 소품으로 거듭난 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 원자재 금값 상승이라는 경제적 변수와 함께 한국 고유의 전통적이고 소박한 디자인을 힙하게 재해석하는 젊은 세대의 취향 소비가 결합되었습니다.</div>
+          <div class="src">소스 3 · 고슴이의 비트, Insight, 캐릿 · 글 3건</div>
+          <ul class="arts"><li><a href="https://stib.ee/xsUN" target="_blank">고슴이의 비트 · 연휴에 책 읽었나요? 네니오.. 👉 가볍고 짧은 책 6권 추천! 📚</a></li><li><a href="https://www.insight.co.kr/news/557417" target="_blank">Insight · BTS 뷔·임지연도 착용했다... MZ세대 새 트렌드로 급부상한 '패션 아이템'</a></li><li><a href="https://www.careet.net/1930" target="_blank">캐릿 · 20대가 옥반지를 찾는다고? BTS 픽 패션템부터 글로벌 유행템까지</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">지도 큐레이션 마케팅</div>
+          <div class="wh"><b>무엇</b> 단순한 길 찾기를 넘어 로컬 콘텐츠 전문가들의 정성스러운 추천 코스나 브랜드 철학을 가시화한 지도를 통해 경험을 소비하도록 하는 기획 방식입니다.</div>
+          <div class="wh"><b>왜</b> 정보의 과부하 속에서 진정성 있는 로컬 명소와 맞춤형 동선을 편리하게 제공받고 오프라인 매력 공간을 감각적으로 발견하려는 니즈가 큽니다.</div>
+          <div class="src">소스 2 · 20대연구소, HeyPop · 글 2건</div>
+          <ul class="arts"><li><a href="https://www.20slab.org/Archives/39095" target="_blank">20대연구소 · 요즘 핫플은 지도를 펼쳐야 알 수 있다고?</a></li><li><a href="https://heypop.kr/n/138524" target="_blank">HeyPop · 교보문고는 왜 로컬 지도를 만들었을까</a></li></ul>
+        </div>
+        <div class="trend">
+          <div class="kw">아이돌 자체 제작 콘텐츠 (자컨)</div>
+          <div class="wh"><b>무엇</b> 아이돌 그룹이 소속사 주도로 제작하는 자체 예능이나 일상 비하인드 등 정기 릴리즈 콘텐츠를 활용한 팬덤 브랜딩 트렌드입니다.</div>
+          <div class="wh"><b>왜</b> 화려한 공식 무대보다 무해하고 엉뚱한 자체 콘텐츠 속 관계성을 선호하는 대중과 팬덤의 심리가 맞아떨어지며 새로운 흥행과 마케팅의 축이 되었습니다.</div>
+          <div class="src">소스 3 · 고슴이의 비트, 마케팅레시피, 캐릿 · 글 3건</div>
+          <ul class="arts"><li><a href="https://stib.ee/Cs8M" target="_blank">고슴이의 비트 · 거제야호~ 리센느 자컨 봐야 트잘알이라던데.. 💅</a></li><li><a href="https://maily.so/marketingrecipe/posts/32z8dq3prn4" target="_blank">마케팅레시피 · “거제 야호”가 걸그룹 하나를 살렸다고? 자체 제작 콘텐츠가 쏘아올린 공</a></li><li><a href="https://www.careet.net/1916" target="_blank">캐릿 · 3개월 만에 40만 구독자 돌파한 계정은? 로컬 밈부터 최신 굿즈 트렌드까지 이주의 유행템 4</a></li></ul>
+        </div>
+  </div>
+</div>
+
+<footer>교차검증 트렌드 A/B 성능 테스트 · 사내 분석 자료 · 2026-07-09T08:04:38<br>
+비용은 2026년 추정 단가 기준의 상대 비교값입니다 (정확한 청구액 아님).</footer>
+
+</div></body></html>
