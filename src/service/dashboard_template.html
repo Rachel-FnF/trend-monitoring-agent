@@ -26,6 +26,10 @@
     --src-edit:#3d6b6e;               /* 다크 틸 */
     --src-heypop:#b8541f;             /* 번 오렌지 */
     --src-insight:#7a3d4a;             /* 다크 와인 */
+    --src-newneek:#6d5bd0;            /* 뉴닉 퍼플 */
+    --src-eyesmag:#37474f;            /* 청회색 */
+    --src-fashionbiz:#7d5a2e;         /* 브론즈 브라운 */
+    --src-vogue:#9b1b30;              /* 딥 크림슨 */
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
@@ -132,6 +136,10 @@
   .item[data-source="The Edit"]{border-top-color:var(--src-edit);--source-color:var(--src-edit)}
   .item[data-source="HeyPop"]{border-top-color:var(--src-heypop);--source-color:var(--src-heypop)}
   .item[data-source="Insight"]{border-top-color:var(--src-insight);--source-color:var(--src-insight)}
+  .item[data-source="뉴닉"]{border-top-color:var(--src-newneek);--source-color:var(--src-newneek)}
+  .item[data-source="Eyesmag"]{border-top-color:var(--src-eyesmag);--source-color:var(--src-eyesmag)}
+  .item[data-source="패션비즈"]{border-top-color:var(--src-fashionbiz);--source-color:var(--src-fashionbiz)}
+  .item[data-source="Vogue"]{border-top-color:var(--src-vogue);--source-color:var(--src-vogue)}
   .item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-family:'Fraunces',serif;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-muted);font-weight:700}
   .item-source{display:inline-flex;align-items:center;gap:8px;color:var(--source-color,var(--ink));font-weight:700}
   .item-source-dot{width:10px;height:10px;border-radius:50%;display:inline-block;box-shadow:0 0 0 1px rgba(26,22,18,.15)}
@@ -240,6 +248,7 @@ const SRC_COLOR = {
   "고구마팜":"#d4a017", "마케팅레시피":"#5a7a3e",
   "20대연구소":"#2c5a78", "고슴이의 비트":"#a04565",
   "The Edit":"#3d6b6e", "HeyPop":"#b8541f", "Insight":"#7a3d4a",
+  "뉴닉":"#6d5bd0", "Eyesmag":"#37474f", "패션비즈":"#7d5a2e", "Vogue":"#9b1b30",
 };
 const ALL_SRC = Object.keys(SRC_COLOR);
 const state = { sources: new Set(ALL_SRC) };

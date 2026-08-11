@@ -32,6 +32,19 @@ PROFILE = ROOT / "profile"
 MODEL = "gemini-3.5-flash"  # 공식 API ID (사용자 지정, GA)
 
 
+def article_id_from_url(url: str) -> str:
+    """URL → 파일명용 article_id.
+    날짜 permalink(보그 /2026/08/03/슬러그)는 연도가 id로 오인되므로 슬러그 기반 id 사용.
+    build_dashboard의 hero 매칭도 같은 규칙을 사용해야 함."""
+    m = re.search(r"/20\d{2}/\d{2}/\d{2}/([^/?#]+)", url)
+    if m:
+        from urllib.parse import unquote
+        slug = unquote(m.group(1))
+        return re.sub(r"[^\w가-힣-]", "_", slug)[:60]
+    m = re.search(r"/(\d+)(?:[?#/]|$)", url) or re.search(r"/([\w-]+)/?$", url)
+    return m.group(1) if m else re.sub(r"[^\w-]", "_", url[-30:])
+
+
 def _load_analysis():
     if ANALYSIS_FILE.exists():
         try:
@@ -228,8 +241,7 @@ def analyze_article(url, source_name="", title="", date=""):
         print(f"  retry (prev error): {url}")
 
     # article_id 추출
-    m = re.search(r"/(\d+)(?:[?#/]|$)", url) or re.search(r"/([\w-]+)/?$", url)
-    aid = m.group(1) if m else re.sub(r"[^\w-]", "_", url[-30:])
+    aid = article_id_from_url(url)
 
     print(f"\n[분석] {url} (id={aid}, source={source_name})")
     html, full_text = fetch_article_page(url)
@@ -304,8 +316,7 @@ def _save_raw_record(item):
     url = item.get("url", "")
     if not url:
         return
-    m = re.search(r"/(\d+)(?:[?#/]|$)", url) or re.search(r"/([\w-]+)/?$", url)
-    aid = m.group(1) if m else re.sub(r"[^\w-]", "_", url[-30:])
+    aid = article_id_from_url(url)
     p = RAW_DIR / f"{aid}.json"
     try:
         p.write_text(json.dumps(item, ensure_ascii=False, indent=1), encoding="utf-8")

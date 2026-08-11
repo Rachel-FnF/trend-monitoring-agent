@@ -64,6 +64,8 @@ _SOURCE_MAP = [
     ("maily.so/marketingrecipe", "마케팅레시피"), ("20slab.org", "20대연구소"),
     ("stib.ee", "고슴이의 비트"), ("the-edit.co.kr", "The Edit"),
     ("heypop.kr", "HeyPop"), ("insight.co.kr", "Insight"),
+    ("newneek.co", "뉴닉"), ("eyesmag.com", "Eyesmag"),
+    ("fashionbiz.co.kr", "패션비즈"), ("vogue.co.kr", "Vogue"),
 ]
 def _source_from_url(url):
     for k, v in _SOURCE_MAP:

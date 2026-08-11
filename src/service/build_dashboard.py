@@ -47,6 +47,10 @@ from service.stibee_gosumi import fetch_stibee_gosumi
 from service.the_edit import fetch_the_edit
 from service.heypop import fetch_heypop
 from service.insight import fetch_insight
+from service.newneek import fetch_newneek
+from service.eyesmag import fetch_eyesmag
+from service.fashionbiz import fetch_fashionbiz
+from service.vogue import fetch_vogue
 
 
 def safe(fn, name):
@@ -66,6 +70,10 @@ gosum = safe(fetch_stibee_gosumi, "gosumi")
 edit_ = safe(fetch_the_edit, "the_edit")
 heypop_ = safe(fetch_heypop, "heypop")
 insight_ = safe(fetch_insight, "insight")
+newneek_ = safe(fetch_newneek, "newneek")
+eyesmag_ = safe(fetch_eyesmag, "eyesmag")
+fashionbiz_ = safe(fetch_fashionbiz, "fashionbiz")
+vogue_ = safe(fetch_vogue, "vogue")
 
 # 3. Normalize all items
 items = []
@@ -179,6 +187,52 @@ for s in insight_:
         "image": s.get("image", ""),
     })
 
+for n in newneek_:
+    if not since(n.get("date", "")):
+        continue
+    items.append({
+        "source": "뉴닉", "date": n.get("date", ""),
+        "title": n.get("title", ""), "url": n.get("url", ""),
+        "category": "트렌드", "tags": [],
+        "excerpt": (n.get("excerpt", "") or "")[:300],
+        "image": n.get("image", ""),
+    })
+
+for e in eyesmag_:
+    if not since(e.get("date", "")):
+        continue
+    cat = (e.get("category", "") or "").strip()
+    items.append({
+        "source": "Eyesmag", "date": e.get("date", ""),
+        "title": e.get("title", ""), "url": e.get("url", ""),
+        "category": cat or "패션", "tags": e.get("tags", [])[:5],
+        "excerpt": (e.get("excerpt", "") or "")[:300],
+        "image": e.get("image", ""),
+    })
+
+for f in fashionbiz_:
+    if not since(f.get("date", "")):
+        continue
+    items.append({
+        "source": "패션비즈", "date": f.get("date", ""),
+        "title": f.get("title", ""), "url": f.get("url", ""),
+        "category": "패션 비즈니스", "tags": [],
+        "excerpt": (f.get("excerpt", "") or "")[:300],
+        "image": f.get("image", ""),
+    })
+
+for v in vogue_:
+    if not since(v.get("date", "")):
+        continue
+    cat = (v.get("category", "") or "").strip()
+    items.append({
+        "source": "Vogue", "date": v.get("date", ""),
+        "title": v.get("title", ""), "url": v.get("url", ""),
+        "category": cat, "tags": [cat] if cat else [],
+        "excerpt": (v.get("excerpt", "") or "")[:300],
+        "image": v.get("image", ""),
+    })
+
 items.sort(key=lambda x: x.get("date", ""), reverse=True)
 print(f"items total: {len(items)}")
 
@@ -212,13 +266,13 @@ _gt_terms = [g.get("term", "") for g in _gt_data]
 _match_signals(items, _gt_terms, [])
 
 # hero_image 적용 — analysis/<글ID>.json의 hero_image_index가 있으면 그 이미지를 카드 대표로 교체
+# article_id 규칙은 content_analyzer와 동일해야 매칭됨
 _ANALYSIS_DIR = ROOT / "src" / "data" / "analysis"
-import re as _re_aid
+from service.content_analyzer import article_id_from_url as _aid_from_url
 _hero_n = 0
 for _it in items:
     _url = _it.get("url", "") or ""
-    _m = _re_aid.search(r"/(\d+)(?:[?#/]|$)", _url) or _re_aid.search(r"/([\w-]+)/?$", _url)
-    _aid = _m.group(1) if _m else _re_aid.sub(r"[^\w-]", "_", _url[-30:])
+    _aid = _aid_from_url(_url)
     _p = _ANALYSIS_DIR / f"{_aid}.json"
     if not _p.exists():
         continue

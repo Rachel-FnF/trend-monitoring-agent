@@ -8,7 +8,7 @@
 ## 수집 소스 (사용자가 좁힌 카테고리만)
 | 소스 | URL · 범위 | 모듈 |
 |---|---|---|
-| 캐릿 | `/Content/Series/1` (요즘뜨는밈) + `/2` (Z세대 최신근황) + `/5` (이주의 유행템) — 시리즈 3개만 | `src/core/collect.py` (Playwright, 로그인) |
+| 캐릿 | `/Content/Series/1` (요즘뜨는밈) + `/2` (Z세대 최신근황) + `/5` (이주의 유행템) + `/TrendKeyword/TrendList?...라이프스타일` (소비 트렌드>라이프스타일) | `src/core/collect.py` (Playwright, 로그인) |
 | 고구마팜 | `/category/trends/feed/` (트렌드 RSS) | `src/service/gogumafarm.py` |
 | 마케팅레시피 | maily RSS → 카테고리 == `한-입 트렌드`만 필터 | `src/service/maily_marketingrecipe.py` |
 | 20대연구소 | `https://www.20slab.org/NewsLetter` (뉴스레터 페이지만) | `src/service/slab20.py` |
@@ -16,13 +16,17 @@
 | The Edit | `/category/style` (STYLE 카테고리 — 패션+뷰티) | `src/service/the_edit.py` |
 | HeyPop | `/n/?c=POP-UP` (POP-UP 카테고리만, 정적 4건 한계) | `src/service/heypop.py` |
 | 인사이트 | `/trend/` | `src/service/insight.py` |
+| 뉴닉 웹 트렌드 | `newneek.co/category/trend` — 뉴스레터 보완용 웹 섹션. Playwright로 리스팅(`/@핸들/article/<id>` 카드)만 렌더링, 상세는 공개 REST `api.newneek.co/product/v1/articles/<id>` (contentPlain 전문 포함) | `src/service/newneek.py` |
+| Eyesmag | 패션 카테고리. 공개 API `/api/v1/posts` (서버가 카테고리 파라미터 무시 → 최신 60건 받아 카테고리 id 444/445/509로 클라이언트 필터). 본문=TIPTAP JSON text 노드 | `src/service/eyesmag.py` |
+| 패션비즈 | `fashionbiz.co.kr` — `server-sitemap.xml` 최신 ~28건 + 기사 페이지 RSC(T-청크, hex=UTF-8 바이트 길이) 파싱. ⚠️ 카테고리 메타 비노출 → 카테고리 필터 불가(전체 최신 수집) | `src/service/fashionbiz.py` |
+| Vogue | `/fashion` `/beauty` `/living` — 각 페이지 ld+json ItemList로 리스팅, 기사 페이지 og 메타·`<p>`로 본문 보강. IG 대체용 | `src/service/vogue.py` |
 | 구글 트렌드 KR | 한국 급상승 RSS — 일일 누적 21일 history | `src/service/gtrends.py` |
 
 ⚠️ 네이버 데이터랩은 사용자 요청으로 **소스에서 제외** (코드 모듈은 남아있되 collect 진입점 없음).
 
 ## 실제 런타임 아키텍처
 - **수집**: `src/core/collect.py` — Playwright headless (캐릿용 지속 프로필 `profile/`) + urllib (외부 소스). SINCE_DATE = 오늘-21일 컷오프 적용. `src/data/collected_<날짜>.json` 출력. `src/data/seen.json`으로 글별 처음 포착일 추적.
-- **본문·이미지 분석**: `src/service/content_analyzer.py` — **Gemini 3.5 flash** vision으로 본문 텍스트 + 첨부 이미지 종합 분석. URL 단위 영구 캐시(`src/data/article_content_analysis.json`). 본문 → `src/data/articles/<id>.txt`, 이미지 → `src/data/article_images/<id>/img_*.jpg`. 결과 JSON 필드: `url`, `image_urls`, `body_text`, `one_line_summary`, `full_description`, `image_by_image[]`, `topics`, `brands_products`, `is_sponsored`, `marketing_insight` 등.
+- **본문·이미지 분석**: `src/service/content_analyzer.py` — **Gemini 3.5 flash** vision으로 본문 텍스트 + 첨부 이미지 종합 분석. article_id 규칙은 `article_id_from_url()` 공용 함수 — 날짜 permalink(보그 `/2026/08/03/슬러그`)는 연도 오인 방지 위해 슬러그 기반 id, build_dashboard hero 매칭도 같은 함수 사용. URL 단위 영구 캐시(`src/data/article_content_analysis.json`). 본문 → `src/data/articles/<id>.txt`, 이미지 → `src/data/article_images/<id>/img_*.jpg`. 결과 JSON 필드: `url`, `image_urls`, `body_text`, `one_line_summary`, `full_description`, `image_by_image[]`, `topics`, `brands_products`, `is_sponsored`, `marketing_insight` 등.
 - **대시보드**: `src/service/build_dashboard.py` + `dashboard_template.html` → `docs/dashboard.html`. 모든 카드 표시(광고 제외 조건은 제거됨). "⭐ 교차검증 트렌드" 섹션은 `cross_trends.json`(Gemini 교차분석)에서 2개+ 소스 트렌드를 읽어 렌더링 — 옛 하드코딩 컨셉 리스트는 21일 윈도우가 흐르면 매칭이 0으로 붕괴해서 제거(2026-07-08).
 - **트렌드 리포트 발송**: `src/service/send_report.py` — `cross_trends.json`을 슬랙 mrkdwn으로 정리해 `SLACK_WEBHOOK_URL`로 발송. `--dry`로 미리보기. 트렌드별 키워드/무엇/왜/출처/예시글 링크.
 - **(삭제됨) 점수화·옛 다이제스트**: `score.py`·`deliver.py` 파일 삭제, 파이프라인에서 제외. 옛 `docs/review/*.md`(digest·deepread) 전부 삭제.
@@ -39,6 +43,9 @@
 - `maily_image_cache.json` — 마케팅레시피 og:image
 - `stibee_image_cache.json` — 고슴이 image+body
 - `google_trends_history.json` — 구글 트렌드 21일 누적
+- `newneek_body_cache.json` — 뉴닉 기사 상세(제목·본문·썸네일)
+- `fashionbiz_body_cache.json` — 패션비즈 기사(제목·날짜·이미지·본문)
+- `vogue_meta_cache.json` — Vogue 기사(날짜·이미지·본문)
 - `article_content_analysis.json` — Gemini 분석 결과 (success/error 모두 저장, error는 다음 실행에 재시도)
 
 ## 핵심 게이트차 (중요)

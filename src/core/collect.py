@@ -41,11 +41,14 @@ def since(d: str) -> bool:
         return False
     return s >= SINCE_DATE
 
-# 사용자 요청: 캐릿 시리즈 3개만 (요즘뜨는밈 + Z세대 최신근황 + 이주의 유행템)
+# 사용자 요청: 캐릿 시리즈 3개 (요즘뜨는밈 + Z세대 최신근황 + 이주의 유행템)
+#             + 라이프스타일 키워드 리스트 (소비 트렌드 > 라이프스타일) — 2026-08-03 추가
 SERIES = {
     "요즘뜨는밈": "/Content/Series/1",
     "Z세대 최신근황": "/Content/Series/2",
     "이주의 유행템": "/Content/Series/5",
+    "라이프스타일": "/TrendKeyword/TrendList?KeywordName=%EC%86%8C%EB%B9%84%20%ED%8A%B8%EB%A0%8C%EB%93%9C"
+                  "&keywordSubName=%EB%9D%BC%EC%9D%B4%ED%94%84%EC%8A%A4%ED%83%80%EC%9D%BC",
 }
 CARD_JS = r"""ns => ns.filter(a=>/^\/\d+$/.test(a.getAttribute('href')||'')).map(a=>{
   let t=(a.innerText||'').replace(/\s+/g,' ').trim();
@@ -122,8 +125,8 @@ with sync_playwright() as pw:
             if not r.get(f) and rec.get(f):
                 r[f] = rec[f]
 
-    # 사용자 요청: 시리즈 3개 (요즘뜨는밈·Z세대 최신근황·이주의 유행템)
-    # 홈·MicroTrend·키워드 vertical은 제외.
+    # 사용자 요청: 시리즈 3개 (요즘뜨는밈·Z세대 최신근황·이주의 유행템) + 라이프스타일 키워드
+    # 홈·MicroTrend는 제외.
     micro = []  # MicroTrend 미사용
     for label, path in SERIES.items():
         page.goto(f"https://www.careet.net{path}", wait_until="domcontentloaded")
@@ -275,6 +278,43 @@ except Exception as e:
     insight = []
     p("insight_fail:", repr(e)[:100])
 
+# 뉴닉 웹 '트렌드' 카테고리 — 뉴스레터(고슴이의 비트) 보완 (Playwright 리스팅 + 공개 API 상세)
+# ※ 자체 sync_playwright()를 열기 때문에 반드시 캐릿 with 블록 밖에서 호출!
+try:
+    from service.newneek import fetch_newneek
+    newneek = fetch_newneek()
+    p(f"newneek: {len(newneek)}")
+except Exception as e:
+    newneek = []
+    p("newneek_fail:", repr(e)[:100])
+
+# Eyesmag (아이즈매거진) — 패션 카테고리 (공개 API)
+try:
+    from service.eyesmag import fetch_eyesmag
+    eyesmag = fetch_eyesmag()
+    p(f"eyesmag: {len(eyesmag)}")
+except Exception as e:
+    eyesmag = []
+    p("eyesmag_fail:", repr(e)[:100])
+
+# 패션비즈 — 패션 업계 뉴스 (server-sitemap 최신 기사, 카테고리 필터 불가)
+try:
+    from service.fashionbiz import fetch_fashionbiz
+    fashionbiz = fetch_fashionbiz()
+    p(f"fashionbiz: {len(fashionbiz)}")
+except Exception as e:
+    fashionbiz = []
+    p("fashionbiz_fail:", repr(e)[:100])
+
+# Vogue Korea — 패션·뷰티·리빙 (IG 대체 트렌드 정보, ld+json ItemList)
+try:
+    from service.vogue import fetch_vogue
+    vogue = fetch_vogue()
+    p(f"vogue: {len(vogue)}")
+except Exception as e:
+    vogue = []
+    p("vogue_fail:", repr(e)[:100])
+
 # SINCE_DATE filter — RSS·정적 소스도 컷오프 적용 (구글·네이버는 이미 최근 스냅샷이라 패스).
 gogumafarm = [g for g in gogumafarm if since(g.get("date", ""))]
 marketingrecipe = [m for m in marketingrecipe if since(m.get("date", ""))]
@@ -283,12 +323,16 @@ gosumi = [k for k in gosumi if since(k.get("date", ""))]
 the_edit = [t for t in the_edit if since(t.get("date", ""))]
 heypop = [h for h in heypop if since(h.get("date", ""))]  # date 비어있으면 통과
 insight = [i for i in insight if since(i.get("date", ""))]
-p(f"after SINCE_DATE({SINCE_DATE}): gogumafarm={len(gogumafarm)} marketingrecipe={len(marketingrecipe)} slab20={len(slab20)} gosumi={len(gosumi)} the_edit={len(the_edit)} heypop={len(heypop)} insight={len(insight)}")
+newneek = [n for n in newneek if since(n.get("date", ""))]
+eyesmag = [e for e in eyesmag if since(e.get("date", ""))]
+fashionbiz = [f for f in fashionbiz if since(f.get("date", ""))]
+vogue = [v for v in vogue if since(v.get("date", ""))]
+p(f"after SINCE_DATE({SINCE_DATE}): gogumafarm={len(gogumafarm)} marketingrecipe={len(marketingrecipe)} slab20={len(slab20)} gosumi={len(gosumi)} the_edit={len(the_edit)} heypop={len(heypop)} insight={len(insight)} newneek={len(newneek)} eyesmag={len(eyesmag)} fashionbiz={len(fashionbiz)} vogue={len(vogue)}")
 
 out = {
     "collected_at": TODAY,
     "since_date": SINCE_DATE,
-    "source": "캐릿(요즘뜨는밈+Z세대 최신근황+이주의 유행템) + Google Trends KR + 고구마팜(트렌드) + 마케팅레시피(한-입 트렌드) + 20대연구소(뉴스레터) + 고슴이의 비트 + The Edit(STYLE) + HeyPop(POP-UP) + Insight(트렌드)",
+    "source": "캐릿(요즘뜨는밈+Z세대 최신근황+이주의 유행템+라이프스타일) + Google Trends KR + 고구마팜(트렌드) + 마케팅레시피(한-입 트렌드) + 20대연구소(뉴스레터) + 고슴이의 비트 + The Edit(STYLE) + HeyPop(POP-UP) + Insight(트렌드) + 뉴닉(트렌드) + Eyesmag(패션) + 패션비즈 + Vogue(패션·뷰티·리빙)",
     "copyright_note": "캐릿 유료 미디어. 무단 전재·재배포 금지, 내부 분석용.",
     "counts": {
         "articles": len(articles), "micro_trends": len(micro), "new_today": len(new_ids),
@@ -296,6 +340,8 @@ out = {
         "gogumafarm": len(gogumafarm), "marketingrecipe": len(marketingrecipe),
         "slab20": len(slab20), "gosumi": len(gosumi),
         "the_edit": len(the_edit), "heypop": len(heypop), "insight": len(insight),
+        "newneek": len(newneek), "eyesmag": len(eyesmag),
+        "fashionbiz": len(fashionbiz), "vogue": len(vogue),
     },
     "micro_trends": micro,
     "google_trends": gtrends,
@@ -307,6 +353,10 @@ out = {
     "the_edit": the_edit,
     "heypop": heypop,
     "insight": insight,
+    "newneek": newneek,
+    "eyesmag": eyesmag,
+    "fashionbiz": fashionbiz,
+    "vogue": vogue,
     "articles": sorted(articles.values(), key=lambda r: r.get("date", ""), reverse=True),
 }
 collected_dir = DATA / "collected"
