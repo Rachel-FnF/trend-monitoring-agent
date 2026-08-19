@@ -80,7 +80,7 @@ section{margin-top:56px; padding-top:32px; border-top:1px solid var(--line)}
   padding:3px 10px; border-radius:999px; white-space:nowrap;
 }
 
-/* ── 쉬운 탭 컴포넌트 ── */
+/* ── 공용 컴포넌트 ── */
 .big-card{
   background:var(--accent-soft); border:1px solid var(--accent);
   border-radius:12px; padding:22px 26px; margin:1.2rem 0;
@@ -120,7 +120,6 @@ ul.plain li::marker{color:var(--accent)}
 .small{font-size:.9rem}
 kbd{font-family:"IBM Plex Mono",monospace; font-size:.8em; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:1px 5px; background:var(--card)}
 
-/* ── 상세 탭 컴포넌트 ── */
 nav.toc{
   margin:32px 0 0; padding:20px 24px; background:var(--card);
   border:1px solid var(--line); border-radius:10px;
@@ -155,14 +154,14 @@ figure{margin:26px 0; background:var(--card); border:1px solid var(--line); bord
 figure svg{display:block; min-width:640px; max-width:100%; height:auto; color:var(--ink)}
 figcaption{font-size:.84rem; color:var(--muted); margin-top:10px; padding-top:10px; border-top:1px solid var(--line); line-height:1.6}
 .pill-ok{color:var(--accent); font-weight:700}
-.pill-no{color:var(--warn); font-weight:700}
+.pill-ai{color:var(--warn); font-weight:700}
 h3.d{margin:2rem 0 .5rem}
 </style>
 
 <div class="wrap">
   <div class="eyebrow">트렌드 자동 수집 시스템 · 인수인계 · 2026-08-19 기준</div>
   <h1>트렌드 시트 안내서</h1>
-  <p class="lede">이 컴퓨터는 <strong>매일 아침 8시에 혼자 일합니다.</strong> 캐릿·뉴닉·Vogue 등 13곳에서 트렌드 글을 모아 AI가 요약하고, 결과를 <strong>구글 시트에 자동으로 쌓아줍니다.</strong> 평소 운영은 <strong>일상 안내</strong> 탭 한 장이면 충분하고, 파일 인계·설정 변경 같은 깊은 내용은 <strong>상세 매뉴얼</strong> 탭에 있습니다.</p>
+  <p class="lede">이 컴퓨터는 <strong>매일 아침 8시에 혼자 일합니다.</strong> 캐릿·뉴닉·Vogue 등 13곳에서 트렌드 글을 모아 AI가 요약하고, 결과를 <strong>구글 시트에 자동으로 쌓아줍니다.</strong> 평소 운영은 <strong>일상 안내</strong> 탭 한 장이면 충분하고, 인계·설치·설정 변경은 <strong>상세 매뉴얼</strong> 탭에 있습니다.</p>
 
   <div class="tabs" role="tablist">
     <button class="tab" id="tabbtn-easy" role="tab" aria-selected="true" aria-controls="pane-easy">☀️ 일상 안내</button>
@@ -265,125 +264,110 @@ h3.d{margin:2rem 0 .5rem}
   <section>
     <div class="sec-head"><span class="sec-no">5</span><h2>더 자세한 내용이 필요하면</h2></div>
     <ul class="plain">
-      <li><strong>파일을 인계받는 방법 / 새 컴퓨터에 설치 / 수집 시간·사이트·설정 바꾸기 / 시스템 구조</strong> → 위의 <a href="#pkg"><strong>📦 상세 매뉴얼 탭</strong></a>에 다 있습니다.</li>
+      <li><strong>파일·계정을 인계받는 방법 / 새 컴퓨터에 설치 / 설정 바꾸기 / 시스템 구조</strong> → 위의 <a href="#pkg"><strong>📦 상세 매뉴얼 탭</strong></a>에 다 있습니다.</li>
       <li>직접 하기 어려우면 Claude Code에 그대로 요청하면 됩니다 — 예: "수집 시간을 아침 7시로 바꿔줘".</li>
-      <li><strong>장애 대응 상세 절차</strong> → <code>docs\HANDOVER.md</code></li>
     </ul>
     <div class="note"><strong>기억할 것 한 줄</strong> — "아침에 시트만 확인하면 되고, 뭔가 이상하면 Claude Code에 <kbd>/trend-status</kbd>."</div>
   </section>
 
   </div><!-- /pane-easy -->
 
-  <!-- ════════════════════════ 탭 2 · 상세 매뉴얼 ════════════════════════ -->
+  <!-- ════════════════════════ 탭 2 · 상세 매뉴얼 (PM용) ════════════════════════ -->
   <div class="tabpane" id="pane-detail" role="tabpanel" aria-labelledby="tabbtn-detail">
 
   <nav class="toc">
     <div class="toc-title">상세 매뉴얼 목차</div>
     <ol>
-      <li><a href="#pkg">전달 패키지 — 파일·계정을 어떻게 넘기나 (★캐릿·구글시트 계정 이관)</a></li>
-      <li><a href="#arch">시스템 아키텍처</a></li>
-      <li><a href="#folder">폴더 구조</a></li>
-      <li><a href="#setup">새 PC 셋업 체크리스트</a></li>
-      <li><a href="#custom">커스터마이징 가이드 ★</a></li>
-      <li><a href="#security">보안·이용 규칙</a></li>
+      <li><a href="#pkg">파일·계정 넘겨받기 ★ (캐릿·구글시트)</a></li>
+      <li><a href="#arch">시스템이 매일 하는 일 (구조)</a></li>
+      <li><a href="#folder">꼭 알아야 할 파일·폴더</a></li>
+      <li><a href="#setup">새 컴퓨터에 설치하기</a></li>
+      <li><a href="#custom">바꿀 수 있는 설정들</a></li>
+      <li><a href="#security">보안 규칙</a></li>
     </ol>
   </nav>
-  <p class="small dim" style="margin-top:10px">※ 일상 운영·장애 대응은 ☀️ 일상 안내 탭에 있습니다. 이 탭은 인계·설치·설정 변경처럼 가끔 필요한 내용만 다룹니다. 어렵게 느껴지는 부분은 Claude Code에 이 문서를 보여주며 "이대로 해줘"라고 요청해도 됩니다.</p>
+  <p class="small dim" style="margin-top:10px">※ 개발 지식 없이 읽을 수 있게 썼습니다. 명령어가 나오면 그냥 복사해서 붙여넣으면 되고(실행법은 ☀️ 일상 안내 탭 3번 참고), 코드를 고쳐야 하는 일은 전부 <strong>Claude Code(AI 도우미)에게 한국어로 부탁</strong>하면 됩니다.</p>
 
-  <!-- 1. 전달 패키지 -->
+  <!-- 1. 파일·계정 넘겨받기 -->
   <section id="pkg">
-    <div class="sec-head"><span class="sec-no">1</span><h2>전달 패키지 — 파일·계정을 어떻게 넘기나</h2></div>
+    <div class="sec-head"><span class="sec-no">1</span><h2>파일·계정 넘겨받기</h2></div>
 
-    <p>이 프로젝트는 <strong>"git에 있는 것"과 "git 밖에 있는 것"의 2트랙</strong>으로 넘겨야 한다. 비밀키·브라우저 프로필·예약작업·가상환경은 의도적으로 git 밖에 있고, 그중 일부는 새 PC에서 <em>재생성</em>해야 하지 복사하면 안 된다.</p>
-
-    <h3 class="d">트랙 A — 코드 (git)</h3>
-    <p>가장 깔끔한 형태는 <strong>git 저장소 그대로</strong>다. 원격 저장소 접근 권한을 주거나, 원격이 곤란하면 히스토리까지 담긴 단일 파일로 만들어 전달한다:</p>
-    <pre><code># 히스토리 포함 단일 파일 (받는 쪽: git clone trend-agent.bundle 폴더명)
-git bundle create trend-agent.bundle --all</code></pre>
-    <p class="dim small">zip으로 폴더를 통째 복사해도 되지만, 그 경우 <code>venv\</code>·<code>profile\</code>은 반드시 빼고 보낼 것 — 어차피 새 PC에서 재생성해야 하는 것들이고, 특히 <code>profile\</code>(캐릿 세션)은 복사해도 기기 인증이 맞지 않다.</p>
-
-    <h3 class="d">트랙 B — 비밀·데이터 패키지 (DM/USB 전용, 절대 git 금지)</h3>
+    <p>인계받을 것은 <strong>두 묶음</strong>입니다.</p>
     <div class="tbl"><table>
-      <thead><tr><th>파일</th><th>내용</th><th>필수?</th></tr></thead>
+      <thead><tr><th>묶음</th><th>내용</th><th>받는 방법</th></tr></thead>
       <tbody>
-        <tr><td><code>.env</code></td><td>캐릿 계정·Gemini 키·시트 ID (5-2절에 전체 키 설명)</td><td><span class="pill-ok">필수</span></td></tr>
-        <tr><td><code>gcp_sa.json</code></td><td>구글 서비스계정 키 (시트 push 인증)</td><td><span class="pill-ok">필수</span></td></tr>
-        <tr><td><code>requirements.txt</code></td><td>구 PC에서 <code>venv\Scripts\pip.exe freeze &gt; requirements.txt</code>로 생성</td><td><span class="pill-ok">필수</span></td></tr>
-        <tr><td><code>trends.db</code></td><td>누적 SQLite DB — 새로 시작해도 시트에는 기록이 남아있으므로 선택</td><td>선택</td></tr>
-        <tr><td><code>trenddb_owner.txt</code></td><td>수집자 이름표 — 없으면 새 PC에서 <code>trenddb.py set-owner &lt;이름&gt;</code> 1회</td><td>선택</td></tr>
-        <tr><td><code>src\data\</code> 폴더 zip</td><td>본문 캐시 10종 + 분석 캐시 — 가져가면 첫 실행 때 재수집·재분석(Gemini 비용) 절약</td><td>권장</td></tr>
+        <tr><td><strong>① 프로젝트 폴더</strong></td><td>시스템의 모든 프로그램과 설명서. 과거 수정 이력까지 담겨 있음</td><td>전임자가 폴더째 전달 (또는 코드 저장소 접근 권한)</td></tr>
+        <tr><td><strong>② 비밀 파일 묶음</strong></td><td><code>.env</code>(비밀 설정 모음: 캐릿 계정·AI 열쇠·시트 주소) · <code>gcp_sa.json</code>(시트에 글 쓰는 로봇의 열쇠) · <code>requirements.txt</code>(설치 목록) · (선택) <code>trends.db</code>와 <code>src\data</code> 폴더(그동안 모은 자료 — 받으면 첫 실행 때 AI 비용 절약)</td><td><strong>반드시 1:1 메시지나 USB로만.</strong> 이메일·단체방 금지</td></tr>
       </tbody>
     </table></div>
+    <p class="small dim">받지 <em>않아도</em> 되는 것: <code>venv</code> 폴더(새로 설치), <code>profile</code> 폴더(캐릿 로그인 — 새 컴퓨터에서 새로 만듦), 아침 8시 자동 실행 설정(새로 등록). 모두 4절 설치 과정에서 만들어집니다.</p>
 
-    <h3 class="d">넘기지 <em>않는</em> 것 (새 PC에서 재생성)</h3>
-    <ul class="plain">
-      <li><code>venv\</code> — 파이썬 가상환경. requirements.txt로 재설치.</li>
-      <li><code>profile\</code> — 캐릿 Playwright 브라우저 프로필. <strong>새 PC에서 <code>setup_profile.py</code>로 기기 등록부터 다시</strong> (캐릿은 기기 4대 제한 + 이메일 OTP — 이관에서 제일 까다로운 단계).</li>
-      <li>Windows 예약작업 <code>FF-Trend-Daily</code> — 절대경로를 물고 있어 복사 불가. 4절의 명령으로 새로 등록.</li>
-    </ul>
+    <div class="warnbox"><strong>인계에서 가장 중요한 두 가지 = 계정 넘기기</strong> — ① 캐릿 유료 계정, ② 구글 시트(전임자 개인 계정으로 만들어져 있음). 아래에 "어디서 무엇을 바꾸는지"까지 절차로 정리했습니다. 둘 다 새 담당자 소유로 옮겨야, 전임자가 퇴사해도 시스템이 계속 살아있습니다.</div>
 
-    <div class="warnbox"><strong>인계에서 가장 중요한 두 가지 = 계정 이관</strong> — ① 캐릿 유료 계정(기기 등록), ② 구글 시트(개인 계정으로 만들어져 있음). 아래에 각각 "어느 파일의 무엇을 고치는지"까지 절차로 정리했다. 둘 다 새 담당자 소유로 옮겨야 전임자 퇴사·계정 정지에도 시스템이 살아있다.</div>
-
-    <h3 class="d" id="careet-move">1-A. 캐릿 계정·기기 이관 ★</h3>
-    <p>캐릿 관련 설정은 딱 두 곳에 있다. 코드에는 하드코딩된 것이 없다.</p>
+    <h3 class="d" id="careet-move">1-A. 캐릿 계정과 기기 등록 ★</h3>
+    <p>캐릿은 유료 회원제 + <strong>기기 4대 제한</strong>이 있는 사이트입니다. 관련 설정은 딱 두 곳:</p>
     <div class="tbl"><table>
       <thead><tr><th>무엇</th><th>어디에 있나</th><th>바꾸는 법</th></tr></thead>
       <tbody>
-        <tr><td>계정 아이디·비밀번호</td><td>프로젝트 루트 <code>.env</code>의 <code>CAREET_EMAIL</code> / <code>CAREET_PASSWORD</code> 두 줄</td><td>메모장으로 열어 값만 교체</td></tr>
-        <tr><td>기기 등록(로그인 세션)</td><td><code>profile\</code> 폴더 (자동화 전용 브라우저 프로필)</td><td>직접 수정 불가 — <code>setup_profile.py</code>가 만들어 줌</td></tr>
+        <tr><td>계정 아이디·비밀번호</td><td>프로젝트 폴더의 <code>.env</code> 파일 안 <code>CAREET_EMAIL</code> / <code>CAREET_PASSWORD</code> 두 줄</td><td>메모장으로 열어 값만 바꾸면 끝</td></tr>
+        <tr><td>기기 등록(로그인 상태)</td><td><code>profile</code> 폴더 (시스템 전용 브라우저)</td><td>직접 못 고침 — 아래 등록 절차가 만들어 줌</td></tr>
       </tbody>
     </table></div>
-    <p><strong>새 PC에서 기기 등록 절차</strong> (계정 그대로 쓰는 경우):</p>
+
+    <p><strong>새 컴퓨터에서 기기 등록하기</strong> (계정을 그대로 쓰는 경우):</p>
     <ol class="steps">
-      <li><code>venv\Scripts\python.exe src\service\setup_profile.py</code> 실행 → 브라우저가 열리며 자동 로그인. <strong>기기 슬롯(4대)이 꽉 차 있으면 스크립트가 기기 하나를 삭제해 자리를 만들고</strong> 인증번호 발송까지 자동 진행한다.</li>
-      <li>캐릿 계정 <strong>이메일로 온 인증번호</strong>를 프로젝트 루트에 <code>.otp</code> 파일로 저장(내용=숫자만) → 스크립트가 읽어 등록을 마친다 (기기 이름 <code>trend-agent</code>).</li>
-      <li>검증: <code>collect.py</code> 수동 실행이 성공하면 완료. ⚠️ 진행 중 브라우저를 강제로 닫지 말 것.</li>
+      <li>아래 명령을 실행하면 브라우저가 저절로 열리며 로그인합니다. <strong>기기 4대가 꽉 차 있으면 알아서 한 자리를 비우고</strong> 인증번호 발송까지 진행해요:
+<pre>venv\Scripts\python.exe src\service\setup_profile.py</pre></li>
+      <li>캐릿 계정 <strong>이메일로 온 인증번호</strong>를 프로젝트 폴더 안에 <code>.otp</code>라는 파일로 저장(내용=숫자만)하면 자동으로 등록이 끝납니다.</li>
+      <li>확인: ☀️ 탭의 "시트에 새 줄이 없어요" 명령을 한 번 돌려서 성공하면 완료. ⚠️ 진행 중 브라우저 창을 강제로 닫지 마세요.</li>
     </ol>
+
     <p><strong>계정 자체를 새 담당자 명의로 바꾸는 경우</strong> (한 단계 추가):</p>
     <ol class="steps">
-      <li><code>.env</code>의 <code>CAREET_EMAIL</code>/<code>CAREET_PASSWORD</code>를 새 계정 값으로 교체.</li>
-      <li><strong><code>profile\</code> 폴더를 삭제</strong>(또는 <code>profile_old</code>로 이름 변경해 백업) — 옛 계정의 로그인 세션이 남아 있어 지우지 않으면 옛 계정으로 계속 접속한다.</li>
-      <li>위의 기기 등록 절차 1~3 진행. 이제 OTP는 <strong>새 계정의 이메일</strong>로 온다.</li>
-      <li>마무리: 옛 계정의 캐릿 마이페이지에서 구 PC 기기(<code>trend-agent</code>)를 삭제해 슬롯 정리.</li>
+      <li><code>.env</code> 파일의 <code>CAREET_EMAIL</code>/<code>CAREET_PASSWORD</code>를 새 계정 값으로 교체.</li>
+      <li><strong><code>profile</code> 폴더를 삭제</strong> — 옛 계정의 로그인 정보가 남아 있어서, 지우지 않으면 계속 옛 계정으로 접속합니다. (불안하면 삭제 대신 <code>profile_old</code>로 이름을 바꿔 백업)</li>
+      <li>위의 "기기 등록하기" 1~3 진행. 인증번호는 이제 <strong>새 계정의 이메일</strong>로 옵니다.</li>
+      <li>마무리: 옛 계정으로 캐릿에 로그인해 마이페이지에서 예전 기기(<code>trend-agent</code>)를 삭제해 자리를 정리.</li>
     </ol>
 
-    <h3 class="d" id="sheet-move">1-B. 구글 시트 이관 — 쌓인 데이터 + 계정 ★</h3>
-    <p>먼저 구조 이해: 시스템은 사람 계정이 아니라 <strong>서비스계정(<code>gcp_sa.json</code>)으로 시트에 쓴다.</strong> 그래서 "시트가 누구 소유인가"와 무관하게, <strong>그 시트에 서비스계정 이메일이 편집자로 공유돼 있고 <code>.env</code>의 <code>SHEETS_TREND_ID</code>가 그 시트를 가리키기만 하면</strong> 동작한다. 이관은 이 두 가지를 맞추는 일이다.</p>
-    <div class="tbl"><table>
-      <thead><tr><th>무엇</th><th>어디에 있나</th></tr></thead>
-      <tbody>
-        <tr><td>어느 시트에 쓸지 (시트 ID)</td><td><code>.env</code>의 <code>SHEETS_TREND_ID</code> — 시트 URL의 <code>/d/</code>와 <code>/edit</code> 사이 긴 문자열</td></tr>
-        <tr><td>어느 탭에 쓸지</td><td><code>.env</code>의 <code>SHEETS_TAB</code> (기본 <code>trends</code>)</td></tr>
-        <tr><td>쓰기 권한(로봇 계정)</td><td><code>gcp_sa.json</code> — 이 파일 안 <code>client_email</code>이 로봇의 이메일 주소. 시트 공유 대상</td></tr>
-      </tbody>
-    </table></div>
+    <h3 class="d" id="sheet-move">1-B. 구글 시트 — 쌓인 데이터와 계정 넘기기 ★</h3>
+    <p>먼저 구조 이해: 시트에 매일 글을 쓰는 건 사람 계정이 아니라 <strong>"로봇 계정"</strong>입니다(열쇠 = <code>gcp_sa.json</code> 파일). 그래서 시트 주인이 누구든, <strong>그 시트에 로봇이 초대되어 있고 + <code>.env</code>에 적힌 시트 주소가 맞기만 하면</strong> 시스템은 계속 돌아갑니다. 이관은 이 두 가지를 맞추는 일이에요.</p>
 
-    <p><strong>방법 A — 시트 소유권만 이전 (권장, 데이터 이동 없음)</strong>: 개인 계정끼리라면 제일 간단하다.</p>
+    <p><strong>방법 A — 시트 주인만 바꾸기 (권장, 제일 간단)</strong></p>
     <ol class="steps">
-      <li>시트에서 <strong>공유 → 새 담당자 추가(편집자)</strong> → 사람 아이콘 메뉴에서 <strong>"소유권 이전"</strong> → 새 담당자가 이메일로 수락.</li>
-      <li>끝. 시트 주소(ID)가 그대로이므로 <strong><code>.env</code>는 아무것도 안 바꿔도 되고</strong>, 서비스계정 공유도 유지된다. 쌓인 데이터·사람 메모 전부 그 자리 그대로.</li>
-      <li class="dim">단, 개인 Gmail → 회사 계정처럼 도메인이 다르면 구글이 소유권 이전을 막는 경우가 있다 → 방법 B로.</li>
+      <li>시트 오른쪽 위 <strong>공유 → 새 담당자를 편집자로 추가 → 그 사람 옆 메뉴에서 "소유권 이전"</strong> → 새 담당자가 이메일에서 수락.</li>
+      <li>끝! 시트 주소가 안 바뀌니 <strong>아무 파일도 고칠 필요 없고</strong>, 쌓인 데이터·메모 전부 그대로입니다. 전임자는 이후 시트에서 나가도 무방해요.</li>
+      <li class="dim">단, 개인 Gmail → 회사 계정처럼 종류가 다르면 구글이 소유권 이전을 막을 수 있음 → 방법 B로.</li>
     </ol>
 
-    <p><strong>방법 B — 새 계정에서 새 시트로 복사</strong>: 소유권 이전이 안 될 때.</p>
+    <p><strong>방법 B — 새 계정에서 사본 만들기</strong> (방법 A가 안 될 때)</p>
     <ol class="steps">
-      <li>새 담당자 계정으로 로그인한 브라우저에서 기존 시트를 열고(공유받은 상태) <strong>파일 → 사본 만들기</strong>. <strong>반드시 '사본'으로 옮길 것</strong> — 빈 시트로 시작해도 자동 칸(A~N)은 시스템이 <code>trends.db</code>에서 전부 다시 채워주지만, <strong>사람이 시트에 쓴 메모(O열 이후)는 DB에 없어서 사본이 아니면 사라진다.</strong></li>
-      <li>새 시트에 <strong>서비스계정 이메일(<code>gcp_sa.json</code> 안 <code>client_email</code> 값)을 편집자로 공유.</strong></li>
-      <li><code>.env</code>의 <code>SHEETS_TREND_ID</code>를 <strong>새 시트의 ID로 교체</strong> (탭 이름을 바꿨다면 <code>SHEETS_TAB</code>도).</li>
-      <li>검증: <code>venv\Scripts\python.exe src\service\sheets_push.py --dry</code> → "추가예정 0 / 이미있음 N"이면 완벽(기존 데이터가 전부 인식됨). 추가예정이 크게 나오면 사본이 아니라 빈 시트를 가리키고 있는 것.</li>
+      <li>새 담당자 계정으로 로그인한 브라우저에서 기존 시트를 열고 <strong>파일 → 사본 만들기</strong>. <strong>반드시 '사본'이어야 합니다</strong> — 빈 시트로 시작하면 자동 데이터(A~N열)는 시스템이 다시 채워주지만, <strong>사람이 손으로 쓴 메모(O열 이후)는 영영 사라져요.</strong></li>
+      <li>새 시트의 공유에 <strong>로봇 계정을 편집자로 초대</strong> — 로봇의 이메일 주소는 <code>gcp_sa.json</code> 파일을 메모장으로 열면 <code>client_email</code> 항목에 있습니다 (<code>...iam.gserviceaccount.com</code>으로 끝남).</li>
+      <li><code>.env</code> 파일의 <code>SHEETS_TREND_ID</code> 값을 <strong>새 시트의 주소 ID로 교체</strong> — 시트 URL에서 <code>/d/</code>와 <code>/edit</code> 사이의 긴 문자열입니다.</li>
+      <li>확인: 아래 명령을 실행해 "추가예정 0"이 나오면 완벽 (기존 데이터를 전부 알아본 것):
+<pre>venv\Scripts\python.exe src\service\sheets_push.py --dry</pre></li>
     </ol>
-    <div class="callout"><strong>장기 과제(선택)</strong> — 서비스계정이 담긴 GCP 프로젝트도 전임자 개인 계정 소유라면, 새 담당자가 자기 계정으로 GCP 프로젝트+서비스계정을 새로 만들어 <code>gcp_sa.json</code>을 교체하고 시트에 새 로봇 이메일을 공유하면 완전히 독립된다. 급하지 않다 — 기존 키가 살아있는 동안은 그대로 동작한다.</div>
+
+    <div class="warnbox"><strong>⚠️ 새 담당자에게 꼭 전할 한 마디</strong> — 시트 공유 목록에 있는 <code>...iam.gserviceaccount.com</code> 계정은 <strong>시스템 로봇이니 절대 삭제 금지.</strong> 모르는 계정 같아서 정리하다 지우면 그날부터 시트에 글이 안 올라옵니다.</div>
+    <p class="small dim">참고(급하지 않음): 로봇 계정 자체도 전임자의 구글 계정에서 만든 것이라, 완전히 독립하려면 나중에 새 담당자 계정으로 로봇을 새로 만들어 <code>gcp_sa.json</code>을 교체하면 됩니다. Claude Code에 "구글 서비스계정 새로 만들어서 교체하고 싶어"라고 요청하면 안내해 줍니다.</p>
   </section>
 
-  <!-- 2. 아키텍처 -->
+  <!-- 2. 시스템이 매일 하는 일 -->
   <section id="arch">
-    <div class="sec-head"><span class="sec-no">2</span><h2>시스템 아키텍처</h2></div>
+    <div class="sec-head"><span class="sec-no">2</span><h2>시스템이 매일 하는 일 (구조)</h2></div>
 
-    <p>구조는 <strong>수집 → 분석 → 누적(시트)</strong>의 3층이다. 매일 08:00에 예약작업 하나(<code>FF-Trend-Daily</code>)가 <code>run_daily.py</code> 4단계를 순서대로 실행한다. 전 과정이 무인 실행된다.</p>
+    <p>매일 아침 8시, 컴퓨터가 4가지 일을 순서대로 합니다:</p>
+    <ol class="steps">
+      <li><strong>글 모으기</strong> — 13개 사이트에서 최근 3주 안의 트렌드 글을 수집. (캐릿이 첫 단계라, 캐릿 로그인이 풀리면 여기서 멈춤)</li>
+      <li><strong>AI 요약</strong> — 글마다 본문과 사진을 AI(Gemini)가 읽고 한줄요약·토픽·브랜드·마케팅 포인트를 뽑음. <span class="dim">한 번 요약한 글은 기억해 두므로, 새 글에만 비용이 듭니다.</span></li>
+      <li><strong>장부에 기록</strong> — 컴퓨터 안의 누적 장부(<code>trends.db</code>)에 저장. 여기는 지워지지 않고 계속 쌓입니다.</li>
+      <li><strong>시트에 올리기</strong> — 장부에서 <strong>시트에 아직 없는 새 글만</strong> 골라 맨 아래에 추가. 기존 줄은 절대 안 건드림.</li>
+    </ol>
 
     <figure>
       <div class="scroller">
-      <svg viewBox="0 0 820 520" role="img" aria-label="3층 아키텍처: 13개 소스를 기술 유형별로 묶은 수집층이 collect.py로 모이고, Gemini 분석층에서 글별 본문과 이미지를 분석한 뒤, 누적층에서 trends.db를 거쳐 구글 공유 시트에 새 글만 append된다.">
+      <svg viewBox="0 0 820 520" role="img" aria-label="3층 구조: 13개 사이트에서 글을 모으는 수집 단계가 있고, AI가 본문과 이미지를 요약하는 분석 단계를 거쳐, 컴퓨터 안 누적 장부에 기록한 뒤 구글 시트에 새 글만 추가된다.">
         <defs>
           <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
@@ -391,212 +375,142 @@ git bundle create trend-agent.bundle --all</code></pre>
         </defs>
         <g font-size="12" fill="currentColor">
           <rect x="30" y="20" width="760" height="150" rx="10" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-          <text x="50" y="46" font-weight="700">수집층 — ① collect.py <tspan font-size="11" opacity=".7">(FF-Trend-Daily 08:00 · 21일 창 · seen.json 최초포착 추적)</tspan></text>
+          <text x="50" y="46" font-weight="700">① 글 모으기 <tspan font-size="11" opacity=".7">— 매일 08:00 자동 · 최근 3주 글만</tspan></text>
           <g fill="none" stroke="currentColor" stroke-opacity=".6">
             <rect x="50" y="62" width="225" height="88" rx="7"/>
             <rect x="295" y="62" width="225" height="88" rx="7"/>
             <rect x="540" y="62" width="230" height="88" rx="7"/>
           </g>
           <g font-size="11" text-anchor="middle">
-            <text x="162" y="82" font-weight="700" font-size="11.5">Playwright 렌더링</text>
-            <text x="162" y="102" opacity=".75">캐릿 (로그인 프로필 · 시리즈 4종)</text>
-            <text x="162" y="119" opacity=".75">고슴이의 비트 (SPA)</text>
-            <text x="162" y="136" opacity=".75">뉴닉 웹 (+공개 REST 상세)</text>
-            <text x="407" y="82" font-weight="700" font-size="11.5">RSS · 공개 API</text>
+            <text x="162" y="82" font-weight="700" font-size="11.5">로그인해서 보는 곳</text>
+            <text x="162" y="102" opacity=".75">캐릿 (유료 회원제)</text>
+            <text x="162" y="119" opacity=".75">고슴이의 비트</text>
+            <text x="162" y="136" opacity=".75">뉴닉</text>
+            <text x="407" y="82" font-weight="700" font-size="11.5">뉴스레터·검색 신호</text>
             <text x="407" y="102" opacity=".75">고구마팜 · 마케팅레시피</text>
-            <text x="407" y="119" opacity=".75">Google Trends KR (21일 누적)</text>
-            <text x="407" y="136" opacity=".75">Eyesmag (posts API + 필터)</text>
-            <text x="655" y="82" font-weight="700" font-size="11.5">정적 HTML · 사이트맵</text>
+            <text x="407" y="119" opacity=".75">구글 트렌드 (급상승 검색어)</text>
+            <text x="407" y="136" opacity=".75">Eyesmag</text>
+            <text x="655" y="82" font-weight="700" font-size="11.5">매거진·업계 뉴스</text>
             <text x="655" y="102" opacity=".75">20대연구소 · The Edit · HeyPop</text>
-            <text x="655" y="119" opacity=".75">인사이트 · Vogue (ld+json)</text>
-            <text x="655" y="136" opacity=".75">패션비즈 (sitemap + RSC 파싱)</text>
+            <text x="655" y="119" opacity=".75">인사이트 · Vogue</text>
+            <text x="655" y="136" opacity=".75">패션비즈</text>
           </g>
 
           <line x1="410" y1="170" x2="410" y2="205" stroke="currentColor" marker-end="url(#arA)"/>
-          <text x="420" y="194" font-size="10.5" opacity=".65">collected_&lt;date&gt;.json + 소스별 영구 캐시 ×10 → article_items.collect_items()</text>
 
           <rect x="30" y="212" width="760" height="112" rx="10" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
-          <text x="50" y="238" font-weight="700" fill="var(--accent)">분석층 — ② content_analyzer.py (Gemini 3.5 flash vision)</text>
+          <text x="50" y="238" font-weight="700" fill="var(--accent)">② AI 요약 (Gemini)</text>
           <g font-size="11">
-            <text x="50" y="266" opacity=".8">· 글별 본문(6,000자) + 첨부 이미지(최대 12장) 종합 분석 — 요약·토픽·브랜드·마케팅 인사이트·광고 여부</text>
-            <text x="50" y="288" opacity=".8">· URL 단위 영구 캐시 → 이미 분석한 글은 스킵, 새 글만 비용 발생 · 실패분은 다음 실행 때 자동 재시도</text>
-            <text x="50" y="310" opacity=".8">· 산출: src\data\analysis\&lt;글ID&gt;.json (+ 본문 txt · 이미지 파일)</text>
+            <text x="50" y="266" opacity=".8">· 글마다 본문 + 사진(최대 12장)을 읽고 → 한줄요약 · 토픽 · 브랜드 · 마케팅 포인트 · 광고 여부</text>
+            <text x="50" y="288" opacity=".8">· 한 번 요약한 글은 기억해 둠 → 새 글에만 AI 비용 발생, 실패한 글은 다음 날 자동 재시도</text>
+            <text x="50" y="310" opacity=".8">· 시트의 "한줄요약~마케팅인사이트" 칸이 여기서 만들어짐</text>
           </g>
 
           <line x1="410" y1="324" x2="410" y2="359" stroke="currentColor" marker-end="url(#arA)"/>
 
           <rect x="30" y="366" width="760" height="130" rx="10" fill="none" stroke="currentColor" stroke-opacity=".45"/>
-          <text x="50" y="392" font-weight="700">누적층 — 최종 산출물</text>
+          <text x="50" y="392" font-weight="700">③④ 기록하고 올리기 — 최종 결과물</text>
           <g fill="none" stroke="currentColor" stroke-opacity=".6">
             <rect x="80" y="408" width="280" height="70" rx="7"/>
           </g>
           <rect x="460" y="408" width="280" height="70" rx="7" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
           <g font-size="11" text-anchor="middle">
-            <text x="220" y="432" font-weight="700" font-size="11.5">③ trends.db (SQLite)</text>
-            <text x="220" y="450" opacity=".75">분석 JSON → 영구 누적 upsert</text>
-            <text x="220" y="466" opacity=".75">날짜 4칸 · 수집자 이름표</text>
-            <text x="600" y="432" font-weight="700" font-size="11.5" fill="var(--accent)">④ Google Sheets ★</text>
-            <text x="600" y="450" opacity=".8">새 글만 append — 기존 행 불변</text>
-            <text x="600" y="466" opacity=".8">팀이 시트에서 직접 메모·편집</text>
+            <text x="220" y="432" font-weight="700" font-size="11.5">③ 누적 장부 (trends.db)</text>
+            <text x="220" y="450" opacity=".75">컴퓨터 안에 영구 보관</text>
+            <text x="220" y="466" opacity=".75">시트가 잘못돼도 여기서 복원 가능</text>
+            <text x="600" y="432" font-weight="700" font-size="11.5" fill="var(--accent)">④ 구글 시트 ★</text>
+            <text x="600" y="450" opacity=".8">새 글만 맨 아래 추가</text>
+            <text x="600" y="466" opacity=".8">기존 줄·사람 메모는 절대 안 건드림</text>
           </g>
           <line x1="360" y1="443" x2="453" y2="443" stroke="currentColor" marker-end="url(#arA)"/>
-          <text x="368" y="432" font-size="10.5" opacity=".65">sheets_push</text>
+          <text x="368" y="432" font-size="10.5" opacity=".65">로봇 계정이 씀</text>
         </g>
       </svg>
       </div>
-      <figcaption>3층 아키텍처: 소스가 늘어도 수집층 안에서만 흡수되고 아래 층은 그대로다 — 새 사이트 추가가 쉬운 이유(5-4절). "시트가 주인" 정책이라 push는 새 행만 추가하고 사람이 편집한 기존 행은 절대 건드리지 않는다.</figcaption>
+      <figcaption>13개 사이트 → AI 요약 → 시트. 하나가 실패해도 나머지 단계는 계속 진행되고, 실행 기록은 <code>src\data\run.log</code> 파일에 남습니다.</figcaption>
     </figure>
-
-    <h3 class="d">run_daily.py의 4단계</h3>
-    <ol class="steps">
-      <li><code>collect.py</code> — 13소스 수집, 21일 윈도우 컷오프. <strong>실패 시 전체 중단</strong>(대부분 캐릿 세션 만료).</li>
-      <li><code>content_analyzer.py --all</code> — <code>article_items.collect_items()</code>로 오늘의 글 목록을 만들고(수집 스냅샷 + 외부 소스 실시간 fetch → 정규화), 글별로 Gemini vision 분석. 캐시 hit는 자동 스킵.</li>
-      <li><code>trenddb.py export</code> — 분석 결과를 <code>trends.db</code>에 누적(upsert). DB는 영구 누적 — 삭제하지 않는다.</li>
-      <li><code>sheets_push.py</code> — 구글 시트에 <strong>새 글만 append</strong>. 기존 행은 절대 안 건드림.</li>
-    </ol>
-    <p class="dim small">2~4단계는 각각 try로 감싸져 있어 하나가 실패해도 나머지는 진행된다. 각 단계 exit 코드는 <code>src\data\run.log</code>에 남는다. 기술 상세(소스별 수집 방식·캐시 구조)는 <code>CLAUDE.md</code> 참조.</p>
   </section>
 
-  <!-- 3. 폴더 구조 -->
+  <!-- 3. 파일·폴더 -->
   <section id="folder">
-    <div class="sec-head"><span class="sec-no">3</span><h2>폴더 구조</h2></div>
-<pre><code>trend-monitoring-agent\
-├─ CLAUDE.md              # AI 작업 컨텍스트 = 사실상의 기술 명세서 (소스·캐시·정책 전부)
-├─ README.md
-├─ .env                   # 비밀키 (git 제외 — 트랙 B로 전달)
-├─ gcp_sa.json            # 구글 서비스계정 키 (git 제외)
-├─ trends.db              # 누적 SQLite DB (git 제외)
-├─ profile\               # 캐릿 브라우저 프로필 (git 제외 — 새 PC에서 재생성)
-├─ venv\                  # 파이썬 가상환경 (git 제외 — 재설치)
-├─ src\
-│  ├─ core\
-│  │  ├─ run_daily.py     # ★ 매일 08:00 오케스트레이터 (4단계)
-│  │  └─ collect.py       # 13소스 통합 수집 + 21일 컷오프 + seen.json
-│  ├─ service\
-│  │  ├─ &lt;소스명&gt;.py       # 소스별 수집 모듈 ×12 (gogumafarm, vogue, …)
-│  │  ├─ article_items.py # 수집 스냅샷 → 정규화된 글 목록 (분석기의 입력)
-│  │  ├─ content_analyzer.py    # Gemini vision 글 분석
-│  │  ├─ trenddb.py / sheets_push.py   # DB 누적 · 시트 push
-│  │  └─ setup_profile.py              # 캐릿 재로그인
-│  └─ data\               # (git 제외) 수집 스냅샷·캐시 10종·분석 결과·run.log
-└─ docs\
-   ├─ HANDOVER.md         # 운영 관점 인계 문서 (장애 대응 상세)
-   └─ handover-simple.html  # 이 문서 (일상 안내 + 상세 매뉴얼)</code></pre>
+    <div class="sec-head"><span class="sec-no">3</span><h2>꼭 알아야 할 파일·폴더</h2></div>
+    <p>프로젝트 폴더 안에 파일이 많지만, PM이 알아야 할 것은 이것뿐입니다:</p>
+    <div class="tbl"><table>
+      <thead><tr><th>이름</th><th>무엇인가</th><th>주의</th></tr></thead>
+      <tbody>
+        <tr><td><code>.env</code></td><td><strong>비밀 설정 모음</strong> — 캐릿 계정, AI 열쇠, 시트 주소가 한 파일에. 설정 변경 = 대부분 이 파일 수정</td><td>외부 전송 금지</td></tr>
+        <tr><td><code>gcp_sa.json</code></td><td>시트에 글 쓰는 <strong>로봇 계정의 열쇠</strong></td><td>외부 전송 금지</td></tr>
+        <tr><td><code>profile</code> 폴더</td><td>캐릿 로그인 상태 보관함</td><td>삭제 금지 (계정 바꿀 때만 삭제)</td></tr>
+        <tr><td><code>venv</code> 폴더</td><td>프로그램 실행 환경</td><td>삭제 금지</td></tr>
+        <tr><td><code>trends.db</code></td><td>누적 장부 — 모든 수집·요약 기록의 원본</td><td>삭제 금지</td></tr>
+        <tr><td><code>src\data\run.log</code></td><td>실행 일지 — 매일 몇 시에 뭘 했고 성공/실패했는지</td><td>문제 생기면 이 파일을 개발자/AI에게</td></tr>
+        <tr><td><code>src</code> 폴더</td><td>프로그램 코드 (13개 사이트별 수집기, AI 요약기 등)</td><td>수정은 Claude Code에게</td></tr>
+        <tr><td><code>docs</code> 폴더</td><td>설명서들 — 이 문서도 여기(<code>handover-simple.html</code>)</td><td></td></tr>
+      </tbody>
+    </table></div>
   </section>
 
-  <!-- 4. 셋업 -->
+  <!-- 4. 설치 -->
   <section id="setup">
-    <div class="sec-head"><span class="sec-no">4</span><h2>새 PC 셋업 체크리스트</h2></div>
+    <div class="sec-head"><span class="sec-no">4</span><h2>새 컴퓨터에 설치하기</h2></div>
+    <p>순서대로 따라 하면 30분~1시간이면 끝납니다. 명령은 전부 복사해 붙여넣기 (실행법: ☀️ 탭 3번). 막히면 Claude Code에 "설치 이어서 도와줘"라고 하세요.</p>
 
     <ol class="steps">
-      <li><strong>코드 배치</strong> — <code>git clone</code>(또는 bundle/zip 해제). 이후 명령은 모두 프로젝트 루트 기준.</li>
-      <li><strong>파이썬 환경</strong>:
-<pre><code>python -m venv venv
+      <li><strong>프로젝트 폴더 받기</strong> — 전임자에게 받은 폴더를 원하는 위치에 두기 (예: <code>C:\Users\내이름\Agent\trend-monitoring-agent</code>).</li>
+      <li><strong>비밀 파일 넣기</strong> — 1:1로 받은 <code>.env</code>·<code>gcp_sa.json</code>을 폴더 맨 위에, (받았다면) <code>trends.db</code>·<code>src\data</code> 폴더도 제자리에.</li>
+      <li><strong>실행 환경 설치</strong> — 아래 세 줄을 순서대로:
+<pre>python -m venv venv
 venv\Scripts\pip.exe install -r requirements.txt
-venv\Scripts\playwright.exe install chromium</code></pre></li>
-      <li><strong>비밀 파일 배치</strong> — 트랙 B로 받은 <code>.env</code>·<code>gcp_sa.json</code>을 프로젝트 루트에, (선택) <code>trends.db</code>·<code>src\data\</code> 캐시도 제자리에.</li>
-      <li><strong>캐릿 기기 등록</strong> (제일 까다로움): <code>venv\Scripts\python.exe src\service\setup_profile.py</code> 실행 → 로그인 중 인증번호 요구 시 캐릿 계정 이메일의 코드를 프로젝트 루트에 <code>.otp</code> 파일로 저장(내용=숫자만) → 기기 슬롯 4개가 꽉 찼다면 기존 기기 삭제 먼저. <em>일반 크롬에서 로그인해도 소용없다 — 자동화가 쓰는 그 프로필(<code>profile\</code>)에서 등록해야 유효.</em></li>
-      <li><strong>수동 테스트</strong>: <code>venv\Scripts\python.exe src\core\run_daily.py</code> → <code>src\data\run.log</code>에서 전 단계 exit=0 확인 → <code>sheets_push.py --dry</code>로 시트 연결 확인.</li>
-      <li><strong>예약작업 등록</strong> — 관리자 PowerShell에서 <code>$ROOT</code>만 실제 경로로:
-<pre><code>$ROOT = "C:\Users\&lt;사용자&gt;\Agent\trend-monitoring-agent"
+venv\Scripts\playwright.exe install chromium</pre></li>
+      <li><strong>캐릿 기기 등록</strong> — 1-A절의 절차 그대로 (제일 까다로운 단계).</li>
+      <li><strong>시험 운전</strong> — 전체를 한 번 수동 실행하고, 시트에 잘 올라가는지 확인:
+<pre>venv\Scripts\python.exe src\core\run_daily.py</pre></li>
+      <li><strong>매일 아침 8시 자동 실행 등록</strong> — 관리자 권한 PowerShell에서, 첫 줄의 경로만 실제 폴더 위치로 바꿔 실행:
+<pre>$ROOT = "C:\Users\&lt;내이름&gt;\Agent\trend-monitoring-agent"
 $PY = "$ROOT\venv\Scripts\python.exe"
-schtasks /Create /F /TN FF-Trend-Daily /SC DAILY /ST 08:00 /TR "`"$PY`" `"$ROOT\src\core\run_daily.py`""</code></pre></li>
-      <li><strong>다음날 아침 검증</strong> — 구글 시트 맨 아래에 오늘 날짜(DB등록일 칸)의 새 행이 있는지 확인. 정상이면 구 PC의 예약작업 삭제: <code>schtasks /Delete /F /TN FF-Trend-Daily</code>.</li>
+schtasks /Create /F /TN FF-Trend-Daily /SC DAILY /ST 08:00 /TR "`"$PY`" `"$ROOT\src\core\run_daily.py`""</pre></li>
+      <li><strong>다음날 아침 확인</strong> — 시트에 오늘 날짜 새 줄이 있으면 성공. 전임자 컴퓨터의 자동 실행은 꺼달라고 요청 (<code>schtasks /Delete /F /TN FF-Trend-Daily</code>).</li>
     </ol>
 
-    <div class="callout"><strong>전제 조건</strong>: 예약작업은 PC가 켜져 있고 해당 계정으로 로그인된 상태여야 실행된다. PC를 꺼두면 그날 수집은 건너뛰지만, 21일 윈도우 덕에 다음 실행 때 놓친 글이 자동 보충된다.</div>
+    <div class="callout"><strong>기억할 것</strong>: 자동 실행은 아침 8시에 컴퓨터가 켜져 있고 로그인된 상태여야 돕니다. 꺼뒀던 날은 다음 실행 때 최근 3주치에서 놓친 글을 알아서 보충합니다.</div>
   </section>
 
-  <!-- 5. 커스터마이징 -->
+  <!-- 5. 설정 변경 -->
   <section id="custom">
-    <div class="sec-head"><span class="sec-no">5</span><h2>커스터마이징 가이드 ★</h2></div>
-    <p>새 팀에 맞게 손댈 가능성이 높은 순서로 정리했다. 모든 수정 후에는 <code>run_daily.py</code> 수동 1회 실행으로 검증하는 것을 권장. <strong>직접 고치기 어려우면 Claude Code에 이 절의 해당 항목을 보여주며 요청하면 된다</strong> — 예: "수집 시간을 아침 7시로 바꿔줘", "○○사이트를 새 소스로 추가해줘".</p>
+    <div class="sec-head"><span class="sec-no">5</span><h2>바꿀 수 있는 설정들</h2></div>
+    <p>무엇을 바꿀 수 있고, <strong>직접 할 수 있는지 / AI에게 부탁할 일인지</strong>로 정리했습니다. AI에게 부탁 = 프로젝트 폴더에서 Claude Code를 열고 표의 문장을 그대로 말하면 됩니다.</p>
 
-    <h3 class="d" id="c1">5-1. 업데이트 주기(실행 시각) 변경</h3>
-    <p>주기는 코드가 아니라 <strong>Windows 예약작업</strong>에 있다. 시각만 바꾸려면:</p>
-    <pre><code>schtasks /Change /TN FF-Trend-Daily /ST 07:00</code></pre>
-    <ul class="plain">
-      <li>하루 2회 실행도 가능(예: 08:00 외에 <code>/SC DAILY /ST 16:00</code>으로 이름만 다른 작업 하나 더 등록). 분석은 URL 캐시, 시트는 append-only라 <strong>중복 비용·중복 행이 생기지 않는다</strong> — 오히려 낮에 발행된 글을 그날 잡는 효과.</li>
-      <li>현재 상태 확인: <code>schtasks /Query /TN FF-Trend-Daily /V /FO LIST</code></li>
-    </ul>
-
-    <h3 class="d" id="c2">5-2. .env 설정 — 전체 키와 "새 팀에서 바꿔야 하는 것"</h3>
     <div class="tbl"><table>
-      <thead><tr><th>키</th><th>용도</th><th>새 팀에서</th></tr></thead>
+      <thead><tr><th>바꾸고 싶은 것</th><th>방법</th><th>누가</th></tr></thead>
       <tbody>
-        <tr><td><code>CAREET_EMAIL</code> / <code>CAREET_PASSWORD</code></td><td>캐릿 유료 계정 로그인</td><td><span class="pill-no">교체 검토</span> — 계정 명의 이관 결정에 따름. 바꾸면 <code>setup_profile.py</code> 재실행 필수</td></tr>
-        <tr><td><code>GEMINI_API_KEY</code></td><td>분석층 전체 (vision 분석)</td><td><span class="pill-no">교체</span> — 새 팀의 키로 (과금 주체 분리)</td></tr>
-        <tr><td><code>GOOGLE_SA_KEY</code></td><td>서비스계정 키 경로 (기본 <code>gcp_sa.json</code>)</td><td>유지 가능 — 키 파일만 제자리에</td></tr>
-        <tr><td><code>SHEETS_TREND_ID</code> / <code>SHEETS_TAB</code></td><td>공유 시트 스프레드시트 ID · 탭명(기본 <code>trends</code>)</td><td><span class="pill-no">교체 검토</span> — 새 팀 시트를 만들면 ID 교체 + 그 시트에 서비스계정 이메일을 편집자로 공유</td></tr>
-        <tr><td><code>SINCE_DATE</code></td><td>(선택) 수집 컷오프 수동 지정 <code>YYYY-MM-DD</code></td><td>평소 미설정 — 백필 때만 임시로</td></tr>
+        <tr><td>자동 실행 시각 (기본 08:00)</td><td>명령 한 줄: <code>schtasks /Change /TN FF-Trend-Daily /ST 07:00</code></td><td><span class="pill-ok">직접 가능</span></td></tr>
+        <tr><td>하루 2번 실행 (오후에도)</td><td>"오후 4시에도 한 번 더 돌게 해줘" <span class="dim">— 여러 번 돌아도 중복·추가 비용 거의 없음</span></td><td><span class="pill-ai">AI에게</span></td></tr>
+        <tr><td>캐릿 계정 / 시트 주소 / AI 열쇠</td><td><code>.env</code> 파일을 메모장으로 열어 해당 줄 수정 (1-A·1-B절 참고)</td><td><span class="pill-ok">직접 가능</span></td></tr>
+        <tr><td>수집 기간 (기본: 최근 3주)</td><td>"수집 기간을 2주로 줄여줘" <span class="dim">— 줄이면 AI 비용·실행 시간 감소</span></td><td><span class="pill-ai">AI에게</span></td></tr>
+        <tr><td>사이트별 수집 개수</td><td>"패션비즈 수집 개수를 30개로 줄여줘" <span class="dim">— 현재는 사이트마다 8~50개</span></td><td><span class="pill-ai">AI에게</span></td></tr>
+        <tr><td><strong>새 사이트 추가</strong></td><td>"○○사이트(주소)를 새 수집처로 추가해줘" <span class="dim">— 구조상 추가가 쉬움. 끝나면 다음날 시트에 그 사이트 글이 등장</span></td><td><span class="pill-ai">AI에게</span></td></tr>
+        <tr><td>사이트 빼기</td><td>"○○사이트 수집 그만해줘"</td><td><span class="pill-ai">AI에게</span></td></tr>
+        <tr><td>광고 글을 시트에서 제외</td><td>"광고로 판정된 글은 시트에 안 올라가게 해줘" <span class="dim">— 지금은 광고도 올리고 '광고' 칸에 Y 표시만</span></td><td><span class="pill-ai">AI에게</span></td></tr>
+        <tr><td>AI 요약 비용 절감</td><td>"글당 분석하는 이미지 수를 줄여줘" <span class="dim">— 지금은 글당 최대 12장</span></td><td><span class="pill-ai">AI에게</span></td></tr>
       </tbody>
     </table></div>
 
-    <h3 class="d" id="c3">5-3. 수집 윈도우·리밋 조정</h3>
-    <p><strong>수집 윈도우(며칠 치를 유지할지)</strong>는 <code>src\core\collect.py</code>와 <code>src\service\article_items.py</code> 상단의 같은 한 줄이 지배한다:</p>
-    <pre><code># 기본 = 오늘로부터 21일 전 (최근 3주)
-SINCE_DATE = os.environ.get("SINCE_DATE") or (datetime.date.today() - datetime.timedelta(days=21)).isoformat()</code></pre>
-    <p><code>days=21</code>을 바꾸면(두 파일 모두) 수집·분석이 다루는 창이 함께 바뀐다. 줄이면 Gemini 비용·실행 시간 감소, 늘리면 놓친 글 보충 여지가 커진다. (DB·시트는 영구 누적이라 영향 없음.)</p>
-
-    <p><strong>소스별 하루 수집 리밋</strong>은 각 모듈의 <code>fetch_*()</code> 함수 기본값이다. 바꿀 땐 모듈 파일의 함수 시그니처를 수정하거나, 호출부(<code>collect.py</code>·<code>article_items.py</code>)에 인자를 주면 된다 (예: <code>fetch_gogumafarm(limit=40)</code>):</p>
-    <div class="tbl"><table>
-      <thead><tr><th>소스</th><th>위치</th><th>기본 리밋</th><th>비고</th></tr></thead>
-      <tbody>
-        <tr><td>캐릿</td><td><code>core\collect.py</code></td><td>본문 fetch 30건/일</td><td>176행 <code>[:30]</code> — 새 글 우선 + 캐시 miss 순. 유료 사이트 부하 배려로 보수적으로</td></tr>
-        <tr><td>고구마팜</td><td><code>service\gogumafarm.py</code></td><td>20</td><td>RSS</td></tr>
-        <tr><td>마케팅레시피</td><td><code>service\maily_marketingrecipe.py</code></td><td>15</td><td>"한-입 트렌드" 카테고리만 필터</td></tr>
-        <tr><td>20대연구소</td><td><code>service\slab20.py</code></td><td>12</td><td>뉴스레터 페이지</td></tr>
-        <tr><td>고슴이의 비트</td><td><code>service\stibee_gosumi.py</code></td><td>15</td><td>Playwright SPA</td></tr>
-        <tr><td>The Edit</td><td><code>service\the_edit.py</code></td><td>15</td><td>STYLE 카테고리</td></tr>
-        <tr><td>HeyPop</td><td><code>service\heypop.py</code></td><td>15</td><td>단, 사이트가 정적으로 4건만 노출 — 리밋 올려도 4건</td></tr>
-        <tr><td>인사이트</td><td><code>service\insight.py</code></td><td>15</td><td>/trend/</td></tr>
-        <tr><td>뉴닉 웹</td><td><code>service\newneek.py</code></td><td>15</td><td>Playwright 리스팅 + REST 상세</td></tr>
-        <tr><td>Eyesmag</td><td><code>service\eyesmag.py</code></td><td>15 (scan 60)</td><td>API가 카테고리를 무시 → 최신 60건 받아 클라이언트 필터. 리밋 올리면 scan도 함께</td></tr>
-        <tr><td>패션비즈</td><td><code>service\fashionbiz.py</code></td><td>50</td><td>사이트맵 최신 ~28건 전부 커버 목적 (낮 발행분 유실 방지)</td></tr>
-        <tr><td>Vogue</td><td><code>service\vogue.py</code></td><td>카테고리당 8</td><td>fashion·beauty·living ×8 = 최대 24</td></tr>
-        <tr><td>구글 트렌드</td><td><code>service\gtrends.py</code></td><td>20 (fetch 30)</td><td>일일 급상승, 21일 누적 history</td></tr>
-      </tbody>
-    </table></div>
-
-    <p><strong>분석층 리밋</strong> (<code>service\content_analyzer.py</code>): 모델 <code>MODEL = "gemini-3.5-flash"</code>(32행), 글당 첨부 이미지 <code>_MAX_IMAGES = 12</code>(173행), 본문은 6,000자까지 프롬프트에 포함. 비용을 줄이려면 이미지 수를 먼저 줄이는 게 효과가 크다. 분석은 URL 단위 영구 캐시라 <strong>이미 분석된 글은 리밋을 바꿔도 재분석되지 않는다</strong> — 재분석하려면 <code>src\data\article_content_analysis.json</code>에서 해당 URL 항목을 지우고 실행.</p>
-
-    <h3 class="d" id="c4">5-4. 새로운 사이트(소스) 추가 — 4단계</h3>
-    <p>아키텍처상 새 소스는 수집층에만 손대면 된다. 분석·DB·시트는 자동으로 따라온다.</p>
-    <ol class="steps">
-      <li><strong>수집 모듈 작성</strong> — <code>src\service\&lt;사이트&gt;.py</code>에 <code>fetch_&lt;사이트&gt;(limit=15)</code> 함수. 반환은 dict 리스트이고 최소 필드는 <code>title · url · date(YYYY-MM-DD) · excerpt</code>, 있으면 <code>image · category</code>. <em>맨땅에서 만들지 말고 가장 비슷한 기존 모듈을 복사해서 시작할 것</em>:
-        <ul class="plain">
-          <li>RSS 제공 → <code>gogumafarm.py</code> 참고</li>
-          <li>정적 HTML 리스팅 → <code>insight.py</code> · <code>the_edit.py</code></li>
-          <li>공개 JSON API → <code>eyesmag.py</code></li>
-          <li>JS 렌더링 필요(SPA) → <code>newneek.py</code> (Playwright)</li>
-          <li>사이트맵 기반 → <code>fashionbiz.py</code></li>
-        </ul>
-        본문이 리스팅에 없으면 기존 모듈들의 <strong>영구 캐시 패턴</strong>(<code>src\data\&lt;사이트&gt;_body_cache.json</code>, 캐시 hit면 스킵·miss만 fetch)을 그대로 따를 것 — 매일 도는 시스템이라 캐시 없으면 상대 서버에 민폐고 실행도 느려진다.</li>
-      <li><strong><code>src\core\collect.py</code> 연결</strong> — 기존 소스 블록(패션비즈·Vogue 부분)을 복사해 3곳 수정: ① try/except 수집 블록 추가(실패해도 전체가 죽지 않는 구조 유지), ② <code>SINCE_DATE</code> 필터 한 줄, ③ <code>out</code> dict의 <code>counts</code>와 본문에 키 추가. <em>주의: Playwright를 쓰는 소스는 캐릿 with 블록 밖에서 호출해야 한다(뉴닉 블록의 주석 참조).</em></li>
-      <li><strong><code>src\service\article_items.py</code> 연결</strong> — 상단 import 목록에 추가하고, 기존 소스처럼 normalize 블록(source명·날짜·발췌 300자·카테고리 매핑) 추가. <strong>여기 등록돼야 분석기가 그 소스의 글을 분석하고 시트까지 올라간다</strong> — 이 단계를 빼먹으면 수집만 되고 시트에 안 나온다.</li>
-      <li><strong><code>CLAUDE.md</code> 문서 갱신</strong> — 소스 표와 캐시 목록에 추가. AI 도구로 유지보수하는 프로젝트라 이 파일이 곧 명세서다. 이후 <code>run_daily.py</code> 1회 실행으로 검증.</li>
-    </ol>
-    <div class="callout"><strong>팁</strong>: Claude Code에 "CLAUDE.md의 소스 표 형식대로 ○○사이트를 새 소스로 추가해줘"라고 요청하면 위 4단계를 한 번에 처리할 수 있다. 다만 2~3단계의 연결 지점이 맞는지 diff는 직접 확인할 것.</div>
-
-    <p><strong>소스 제거</strong>는 반대로: <code>collect.py</code>·<code>article_items.py</code>의 해당 블록을 지우면 끝(모듈 파일은 남겨둬도 무해 — 네이버 데이터랩이 그 방식으로 비활성화돼 있다).</p>
-
-    <h3 class="d" id="c5">5-5. 시트 커스터마이징</h3>
+    <h3 class="d">시트 관련 규칙 (다시 한 번)</h3>
     <ul class="plain">
-      <li><strong>컬럼 규칙</strong> — 자동 칸 A~N(제목·article_id·URL·카테고리·요약·토픽·브랜드·인사이트·날짜 4종·수집자·광고)은 <strong>순서 변경·중간 삭제 금지</strong>(append가 왼쪽부터 채움). 사람용 칸(메모·활용아이디어·상태 등)은 O열 이후 오른쪽에만 추가 — 기존 행은 push가 절대 덮어쓰지 않으므로 자유롭게 편집 가능.</li>
-      <li><strong>수집자 이름표</strong> — 새 담당자 PC에서 <code>venv\Scripts\python.exe src\service\trenddb.py set-owner &lt;이름&gt;</code> 1회. 이후 모든 export에 그 이름이 붙는다.</li>
-      <li><strong>광고 글 처리</strong> — 현재 정책은 "필터하지 않고 광고 칸에 Y 표시만"(is_sponsored 마킹). 광고를 시트에서 빼고 싶으면 <code>sheets_push.py</code>에 필터 조건을 추가하는 방식으로.</li>
-      <li><strong>여러 PC 협업</strong> — 여러 PC가 같은 시트에 push해도 안전하다(article_id 중복 체크). 각 PC에서 set-owner만 해두면 수집자 칸으로 구분된다.</li>
+      <li>자동 칸 A~N: <strong>순서 바꾸기·중간 삭제 금지.</strong> 사람 칸(메모 등)은 O열부터 오른쪽으로 자유롭게.</li>
+      <li>여러 사람 컴퓨터에서 같은 시트에 올려도 안전합니다(중복 확인 후 추가). "수집자" 칸으로 누가 모았는지 구분돼요.</li>
+      <li>AI 요약이 만든 내용이 마음에 안 들면 시트에서 직접 고쳐도 됩니다 — 시스템이 덮어쓰지 않아요.</li>
     </ul>
   </section>
 
   <!-- 6. 보안 -->
   <section id="security">
-    <div class="sec-head"><span class="sec-no">6</span><h2>보안·이용 규칙</h2></div>
+    <div class="sec-head"><span class="sec-no">6</span><h2>보안 규칙</h2></div>
     <ul class="plain">
-      <li><strong>캐릿은 유료 미디어</strong> — 수집 본문은 내부 분석용으로만. 외부 재배포·원문 복붙 금지(10% 초과 인용 불가). 이 정책 때문에 <code>trends.db</code>·시트에도 본문 전문은 저장하지 않는다.</li>
-      <li><code>.env</code>·<code>gcp_sa.json</code>·<code>*.db</code>·<code>profile\</code>은 <strong>git 커밋 절대 금지</strong> (.gitignore에 등록돼 있음). 전달은 DM/USB로만.</li>
-      <li>커밋 전 <code>git status</code>로 민감 파일 스테이징 여부를 확인하는 습관.</li>
-      <li>이관 완료 후 전임자는: 구 PC 예약작업 삭제 → 캐릿 기기 슬롯에서 구 PC 제거 → (계정을 넘겼다면) 비밀번호 변경을 새 담당자에게 안내.</li>
+      <li><strong>캐릿은 유료 콘텐츠</strong> — 모은 본문은 내부 분석용으로만. 외부 공유·원문 복사 금지. (그래서 시트에도 본문 전문은 안 올라갑니다)</li>
+      <li><code>.env</code>·<code>gcp_sa.json</code>은 <strong>비밀 열쇠</strong> — 이메일·단체방 전송 금지, 주고받을 땐 1:1로만.</li>
+      <li>시트 공유 목록의 로봇 계정(<code>...iam.gserviceaccount.com</code>) 삭제 금지.</li>
+      <li>인계가 끝나면 전임자가 할 마무리: 자기 컴퓨터의 자동 실행 끄기 → 캐릿 기기 목록에서 자기 컴퓨터 삭제 → (계정을 넘겼다면) 비밀번호 변경.</li>
     </ul>
   </section>
 
