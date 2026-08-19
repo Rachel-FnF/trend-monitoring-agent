@@ -114,8 +114,8 @@ schtasks /Create /F /TN FF-Trend-Daily /SC DAILY /ST 08:00 /TR "`"$PY`" `"$ROOT\
 
 ### 7-4. 인계 전 결정할 것
 
-- [ ] **캐릿 유료 계정 명의** — 계정 이메일로 OTP가 오므로, 계정 주인이 바뀌면 새 계정으로 프로필 셋업을 처음부터 다시 해야 한다
-- [ ] 구글 시트·서비스계정 편집 권한
+- [ ] **캐릿 유료 계정 명의** — 계정을 바꾸면: `.env`의 CAREET_EMAIL/PASSWORD 교체 → `profile\` 폴더 삭제(옛 세션 제거) → `setup_profile.py` 재실행(OTP는 새 계정 이메일로 옴) → 옛 계정에서 구 기기 삭제
+- [ ] **구글 시트 소유권** — ①시트 공유 메뉴에서 새 담당자에게 소유권 이전(데이터·메모 그대로, .env 수정 불필요) 또는 ②새 계정에서 '사본 만들기'(사람 메모 보존을 위해 반드시 사본) → 새 시트에 서비스계정 이메일(gcp_sa.json의 client_email) 편집자 공유 → `.env`의 SHEETS_TREND_ID 교체 → `sheets_push.py --dry`로 "추가예정 0" 확인. 상세는 `docs/handover-simple.html` 상세 매뉴얼 탭 1-A/1-B
 
 ## 8. 보안·이용 규칙 (반드시 지킬 것)
 
