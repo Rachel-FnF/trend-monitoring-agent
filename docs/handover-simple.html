@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>트렌드 시트 안내서</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F5F7F6; --card:#FFFFFF; --ink:#1C2624; --muted:#5C6B67;
+  --line:#D8E0DD; --accent:#0E7A6E; --accent-soft:#E3F0ED;
+  --warn:#8A5A17; --warn-soft:#F7EEDD;
+  --danger:#A63D3D; --danger-soft:#F6E9E9;
+  --chip:#EDF1F0; --codebg:#1E2A27; --codeink:#D9E6E2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#131917; --card:#1A211F; --ink:#E6ECEA; --muted:#93A29D;
+    --line:#2A3431; --accent:#4CC8B4; --accent-soft:#17332E;
+    --warn:#E0B36A; --warn-soft:#332A18;
+    --danger:#E08A8A; --danger-soft:#33201F;
+    --chip:#212B28; --codebg:#0E1513; --codeink:#C9D8D3;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131917; --card:#1A211F; --ink:#E6ECEA; --muted:#93A29D;
+  --line:#2A3431; --accent:#4CC8B4; --accent-soft:#17332E;
+  --warn:#E0B36A; --warn-soft:#332A18;
+  --danger:#E08A8A; --danger-soft:#33201F;
+  --chip:#212B28; --codebg:#0E1513; --codeink:#C9D8D3;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans KR",-apple-system,"Malgun Gothic",sans-serif;
+  font-size:17px; line-height:1.85;
+}
+.wrap{max-width:760px; margin:0 auto; padding:56px 24px 100px}
+h1,h2,h3{font-family:"Hahmlet","IBM Plex Sans KR",serif; line-height:1.35; text-wrap:balance; margin:0}
+h1{font-size:2rem; font-weight:700}
+h2{font-size:1.35rem; font-weight:700}
+h3{font-size:1.05rem; font-weight:600; margin-bottom:.3rem}
+p{margin:.8rem 0; max-width:66ch}
+.eyebrow{font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:.6rem}
+.lede{color:var(--muted); font-size:1.05rem; max-width:60ch}
+code{font-family:"IBM Plex Mono","IBM Plex Sans KR",monospace; font-size:.85em; background:var(--chip); padding:.1em .4em; border-radius:4px}
+pre{
+  background:var(--codebg); color:var(--codeink); border-radius:8px;
+  padding:14px 16px; overflow-x:auto; font-size:.85rem; line-height:1.7;
+  font-family:"IBM Plex Mono",monospace; margin:.6rem 0;
+}
+
+section{margin-top:56px; padding-top:32px; border-top:1px solid var(--line)}
+.sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:.8rem}
+.sec-no{
+  font-family:"IBM Plex Mono",monospace; font-size:.8rem; font-weight:500;
+  color:var(--accent); background:var(--accent-soft);
+  padding:3px 10px; border-radius:999px; white-space:nowrap;
+}
+
+.big-card{
+  background:var(--accent-soft); border:1px solid var(--accent);
+  border-radius:12px; padding:22px 26px; margin:1.2rem 0;
+}
+.big-card .headline{font-size:1.15rem; font-weight:700; color:var(--accent)}
+.card{
+  background:var(--card); border:1px solid var(--line);
+  border-radius:12px; padding:18px 22px; margin:1rem 0;
+}
+.card h3 .q{color:var(--accent)}
+.steps-easy{margin:.5rem 0 0; padding-left:1.3rem}
+.steps-easy li{margin:.55rem 0; max-width:64ch}
+.steps-easy li::marker{color:var(--accent); font-weight:700}
+ul.plain{margin:.5rem 0 0; padding-left:1.2rem}
+ul.plain li{margin:.5rem 0; max-width:64ch}
+ul.plain li::marker{color:var(--accent)}
+
+.do-dont{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:1rem 0}
+@media (max-width:600px){ .do-dont{grid-template-columns:1fr} }
+.do,.dont{border-radius:12px; padding:16px 20px}
+.do{background:var(--accent-soft); border:1px solid var(--accent)}
+.dont{background:var(--danger-soft); border:1px solid var(--danger)}
+.do .tag{color:var(--accent); font-weight:700; font-size:.85rem; letter-spacing:.08em}
+.dont .tag{color:var(--danger); font-weight:700; font-size:.85rem; letter-spacing:.08em}
+.do ul,.dont ul{margin:.4rem 0 0; padding-left:1.2rem}
+.do li,.dont li{margin:.4rem 0; font-size:.95rem}
+
+.note{
+  background:var(--warn-soft); border-left:3px solid var(--warn);
+  border-radius:0 8px 8px 0; padding:12px 18px; margin:1rem 0;
+  font-size:.94rem; max-width:66ch;
+}
+.dim{color:var(--muted)}
+.small{font-size:.9rem}
+kbd{font-family:"IBM Plex Mono",monospace; font-size:.8em; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:1px 5px; background:var(--card)}
+.howto{
+  border:1px dashed var(--line); border-radius:10px; padding:14px 18px;
+  margin:.8rem 0; font-size:.92rem; color:var(--muted); max-width:66ch;
+}
+.howto strong{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">트렌드 자동 수집 시스템 · 인수인계 (비개발자용)</div>
+  <h1>트렌드 시트 안내서</h1>
+  <p class="lede">이 컴퓨터는 <strong>매일 아침 8시에 혼자 일합니다.</strong> 캐릿·뉴닉·Vogue 등 13곳에서 트렌드 글을 모아 AI가 요약하고, 결과를 <strong>구글 시트에 자동으로 쌓아줍니다.</strong> 여러분이 할 일은 거의 없어요 — 이 문서 한 장이면 충분합니다.</p>
+
+  <!-- 1. 매일 할 일 -->
+  <section>
+    <div class="sec-head"><span class="sec-no">1</span><h2>매일 할 일 — 딱 한 가지</h2></div>
+    <div class="big-card">
+      <div class="headline">☀️ 아침에 구글 시트를 열고, 맨 아래에 오늘 날짜의 새 줄이 생겼는지 본다.</div>
+      <p style="margin-bottom:0">새 줄이 있으면 → <strong>끝!</strong> 오늘은 아무것도 안 해도 됩니다.<br>
+      새 줄이 없으면 → 아래 <a href="#trouble">3번 "문제가 생겼어요"</a>를 보세요.</p>
+    </div>
+    <p class="small dim">※ 구글 시트 주소는 인계자에게 받아서 브라우저 즐겨찾기에 저장해 두세요. 시트의 "DB등록일" 칸이 오늘 날짜인 줄이 새로 들어온 글입니다.</p>
+
+    <h3 style="margin-top:1.6rem">시트는 자유롭게 써도 됩니다</h3>
+    <ul class="plain">
+      <li>글마다 <strong>메모·활용 아이디어·상태</strong>를 적는 칸(O열 이후)이 있어요. 마음껏 쓰세요.</li>
+      <li>이미 들어온 줄의 내용을 고쳐도 괜찮습니다. <strong>시스템은 새 글만 아래에 추가할 뿐, 있는 줄은 절대 건드리지 않아요.</strong> 여러분이 쓴 메모가 지워질 일은 없습니다.</li>
+      <li>딱 하나만 지켜주세요: <strong>왼쪽 A~N열의 순서를 바꾸거나 중간 열을 삭제하지 않기.</strong> (시스템이 왼쪽부터 순서대로 채우기 때문) 새 칸이 필요하면 항상 오른쪽 끝에 추가하세요.</li>
+    </ul>
+  </section>
+
+  <!-- 2. 컴퓨터 규칙 -->
+  <section>
+    <div class="sec-head"><span class="sec-no">2</span><h2>컴퓨터 규칙 — 두 가지만</h2></div>
+    <ul class="plain">
+      <li><strong>아침 8시에 이 컴퓨터가 켜져 있고, 담당 계정으로 로그인되어 있어야</strong> 자동 실행이 돕니다. (잠금 화면은 괜찮아요. 꺼져 있거나 로그아웃 상태면 안 돌아요.)</li>
+      <li>휴가 등으로 컴퓨터를 꺼뒀다면? 괜찮습니다. <strong>최근 3주치를 기억하고 있어서</strong>, 다음에 실행될 때 놓친 글을 자동으로 보충해요. 다만 그날 아침엔 시트에 새 줄이 없겠죠.</li>
+    </ul>
+  </section>
+
+  <!-- 3. 문제 상황 -->
+  <section id="trouble">
+    <div class="sec-head"><span class="sec-no">3</span><h2>문제가 생겼어요 — 상황별 해결</h2></div>
+
+    <div class="howto">
+      <strong>💻 명령을 실행하는 법 (아래 카드들에서 사용)</strong><br>
+      ① 바탕화면에서 이 프로젝트 폴더(<code>trend-monitoring-agent</code>)를 연다 → ② 폴더 위쪽 <strong>주소창을 클릭하고 <code>powershell</code>이라고 입력 후 엔터</strong> → ③ 검은 창이 뜨면 아래 명령을 복사해 붙여넣고(마우스 우클릭=붙여넣기) 엔터.
+    </div>
+
+    <div class="card">
+      <h3><span class="q">Q.</span> 시트에 오늘 새 줄이 없어요</h3>
+      <ol class="steps-easy">
+        <li>오늘 아침 8시에 컴퓨터가 꺼져 있었다면 → 그게 원인이에요. 아래 명령으로 지금 한 번 돌려주세요 (10~25분 걸림):
+<pre>venv\Scripts\python.exe src\core\run_daily.py</pre></li>
+        <li>끝나면 시트를 새로고침해서 새 줄이 생겼는지 확인. <span class="dim">몇 번을 다시 돌려도 중복으로 쌓이지 않으니 걱정 마세요.</span></li>
+        <li>그래도 안 되면 → 아래 "잘 모르겠어요" 카드로.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3><span class="q">Q.</span> "캐릿 로그인이 풀렸다"고 해요 (수집 실패)</h3>
+      <p class="small">캐릿은 유료 사이트라 가끔 로그인이 풀립니다. 이때만 사람 손이 한 번 필요해요.</p>
+      <ol class="steps-easy">
+        <li>아래 명령을 실행 → 브라우저가 저절로 열리며 로그인을 진행합니다:
+<pre>venv\Scripts\python.exe src\service\setup_profile.py</pre></li>
+        <li>"인증번호를 입력하라"고 하면 → 캐릿 계정 <strong>이메일로 온 숫자 코드</strong>를 확인하고, 프로젝트 폴더 안에 <strong><code>.otp</code>라는 이름의 파일을 만들어 그 숫자만 적어 저장</strong>하세요. (메모장에서 저장 시 파일 이름을 <code>".otp"</code> 따옴표 포함으로 저장하면 됩니다)</li>
+        <li>"기기가 꽉 찼다"는 화면이 나오면 → 화면에서 안 쓰는 기기를 삭제하고 계속 진행.</li>
+        <li>끝나면 위의 "시트에 새 줄이 없어요" 카드의 명령으로 오늘 치를 한 번 돌려주세요.</li>
+      </ol>
+      <p class="small dim">⚠️ 진행 중에 열린 브라우저 창을 강제로 닫지 마세요 — 로그인이 저장되기 전에 날아갑니다.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="q">Q.</span> 잘 모르겠어요 / 다른 오류가 떠요</h3>
+      <ol class="steps-easy">
+        <li>이 컴퓨터에 <strong>Claude Code</strong>(AI 도우미)가 설치되어 있어요. 프로젝트 폴더에서 Claude Code를 열고 <kbd>/trend-status</kbd> 라고 입력하면, <strong>AI가 스스로 검사하고 무엇이 문제인지·어떻게 고치는지 알려줍니다.</strong></li>
+        <li>또는 그냥 한국어로 물어봐도 됩니다: "오늘 시트에 글이 안 올라왔어, 확인해줘"</li>
+        <li>AI로도 해결이 안 되면 개발 담당자에게 <code>src\data\run.log</code> 파일(실행 기록)과 함께 문의하세요.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. 해도 되는 것 / 안 되는 것 -->
+  <section>
+    <div class="sec-head"><span class="sec-no">4</span><h2>해도 되는 것 · 하면 안 되는 것</h2></div>
+    <div class="do-dont">
+      <div class="do">
+        <div class="tag">✓ 해도 됩니다</div>
+        <ul>
+          <li>시트에 메모·상태 자유롭게 쓰기 (O열 이후)</li>
+          <li>시트의 기존 줄 내용 고치기</li>
+          <li>같은 날 여러 번 수동 실행 (중복 안 생김)</li>
+          <li>컴퓨터 잠금 화면으로 두기</li>
+        </ul>
+      </div>
+      <div class="dont">
+        <div class="tag">✕ 하면 안 됩니다</div>
+        <ul>
+          <li>시트 A~N열 순서 바꾸기·중간 열 삭제</li>
+          <li><code>.env</code>·<code>gcp_sa.json</code> 파일을 메일·메신저로 외부에 보내기 (비밀 열쇠예요 — 인계 시에는 반드시 1:1 DM으로만)</li>
+          <li>캐릿 글 본문을 회사 밖으로 공유·복붙 (유료 콘텐츠, 내부 분석용만)</li>
+          <li>프로젝트 폴더 안 <code>profile</code>·<code>venv</code>·<code>src\data</code> 폴더 삭제</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 더 알아보기 -->
+  <section>
+    <div class="sec-head"><span class="sec-no">5</span><h2>더 자세한 내용이 필요하면</h2></div>
+    <ul class="plain">
+      <li><strong>수집 시간을 바꾸고 싶다 / 수집 사이트를 추가하고 싶다 / 다른 컴퓨터로 옮기고 싶다</strong> → 개발자·AI용 상세 매뉴얼: <code>docs\handover-manual.html</code> (더블클릭으로 열림). 직접 하기 어려우면 Claude Code에 그대로 요청하면 됩니다 — 예: "수집 시간을 아침 7시로 바꿔줘".</li>
+      <li><strong>장애 대응 상세 절차</strong> → <code>docs\HANDOVER.md</code></li>
+      <li>이 시스템의 모든 코드는 이 폴더 안에 있고, 과거 기록은 git(버전 관리)에 보존되어 있습니다.</li>
+    </ul>
+    <div class="note"><strong>기억할 것 한 줄</strong> — "아침에 시트만 확인하면 되고, 뭔가 이상하면 Claude Code에 <kbd>/trend-status</kbd>."</div>
+  </section>
+</div>
+
+</html>

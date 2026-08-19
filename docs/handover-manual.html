@@ -249,7 +249,7 @@ git bundle create trend-agent.bundle --all</code></pre>
     <div class="sec-head"><span class="sec-no">3</span><h2>폴더 구조</h2></div>
 <pre><code>trend-monitoring-agent\
 ├─ CLAUDE.md              # AI 작업 컨텍스트 = 사실상의 기술 명세서 (소스·캐시·정책 전부)
-├─ README.md / TODO.md
+├─ README.md
 ├─ .env                   # 비밀키 (git 제외 — 트랙 B로 전달)
 ├─ gcp_sa.json            # 구글 서비스계정 키 (git 제외)
 ├─ trends.db              # 누적 SQLite DB (git 제외)
@@ -267,8 +267,9 @@ git bundle create trend-agent.bundle --all</code></pre>
 │  │  └─ setup_profile.py              # 캐릿 재로그인
 │  └─ data\               # (git 제외) 수집 스냅샷·캐시 10종·분석 결과·run.log
 └─ docs\
-   ├─ HANDOVER.md         # 운영 관점 인계 문서 (장애 대응 상세)
-   └─ handover-manual.html  # 이 문서</code></pre>
+   ├─ HANDOVER.md           # 운영 관점 인계 문서 (장애 대응 상세)
+   ├─ handover-simple.html   # 비개발자용 안내서 (일상 운영만, 쉬운 말)
+   └─ handover-manual.html   # 이 문서</code></pre>
   </section>
 
   <!-- ═══════════ 4. 셋업 ═══════════ -->
