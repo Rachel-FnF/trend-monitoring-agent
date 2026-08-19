@@ -34,29 +34,53 @@ body{
   font-family:"IBM Plex Sans KR",-apple-system,"Malgun Gothic",sans-serif;
   font-size:17px; line-height:1.85;
 }
-.wrap{max-width:760px; margin:0 auto; padding:56px 24px 100px}
-h1,h2,h3{font-family:"Hahmlet","IBM Plex Sans KR",serif; line-height:1.35; text-wrap:balance; margin:0}
+.wrap{max-width:880px; margin:0 auto; padding:48px 24px 100px}
+h1,h2,h3,h4{font-family:"Hahmlet","IBM Plex Sans KR",serif; line-height:1.35; text-wrap:balance; margin:0}
 h1{font-size:2rem; font-weight:700}
 h2{font-size:1.35rem; font-weight:700}
 h3{font-size:1.05rem; font-weight:600; margin-bottom:.3rem}
-p{margin:.8rem 0; max-width:66ch}
+p{margin:.8rem 0; max-width:70ch}
+a{color:var(--accent)}
 .eyebrow{font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:.6rem}
-.lede{color:var(--muted); font-size:1.05rem; max-width:60ch}
+.lede{color:var(--muted); font-size:1.05rem; max-width:62ch}
 code{font-family:"IBM Plex Mono","IBM Plex Sans KR",monospace; font-size:.85em; background:var(--chip); padding:.1em .4em; border-radius:4px}
 pre{
   background:var(--codebg); color:var(--codeink); border-radius:8px;
   padding:14px 16px; overflow-x:auto; font-size:.85rem; line-height:1.7;
   font-family:"IBM Plex Mono",monospace; margin:.6rem 0;
 }
+pre code{background:none; padding:0; color:inherit}
+
+/* ── 탭 ── */
+.tabs{
+  position:sticky; top:0; z-index:10; display:flex; gap:8px;
+  background:var(--paper); padding:14px 0 0; margin-top:28px;
+  border-bottom:2px solid var(--line);
+}
+.tab{
+  font-family:inherit; font-size:1rem; font-weight:700; line-height:1;
+  color:var(--muted); background:transparent; border:none; cursor:pointer;
+  padding:12px 18px 14px; border-radius:10px 10px 0 0; position:relative;
+}
+.tab:hover{color:var(--ink); background:var(--chip)}
+.tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tab[aria-selected="true"]{color:var(--accent); background:var(--card)}
+.tab[aria-selected="true"]::after{
+  content:""; position:absolute; left:0; right:0; bottom:-2px; height:3px;
+  background:var(--accent); border-radius:2px;
+}
+.tabpane{display:none}
+.tabpane.active{display:block}
 
 section{margin-top:56px; padding-top:32px; border-top:1px solid var(--line)}
-.sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:.8rem}
+.sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:.8rem; flex-wrap:wrap}
 .sec-no{
   font-family:"IBM Plex Mono",monospace; font-size:.8rem; font-weight:500;
   color:var(--accent); background:var(--accent-soft);
   padding:3px 10px; border-radius:999px; white-space:nowrap;
 }
 
+/* ── 쉬운 탭 컴포넌트 ── */
 .big-card{
   background:var(--accent-soft); border:1px solid var(--accent);
   border-radius:12px; padding:22px 26px; margin:1.2rem 0;
@@ -68,12 +92,11 @@ section{margin-top:56px; padding-top:32px; border-top:1px solid var(--line)}
 }
 .card h3 .q{color:var(--accent)}
 .steps-easy{margin:.5rem 0 0; padding-left:1.3rem}
-.steps-easy li{margin:.55rem 0; max-width:64ch}
+.steps-easy li{margin:.55rem 0; max-width:66ch}
 .steps-easy li::marker{color:var(--accent); font-weight:700}
 ul.plain{margin:.5rem 0 0; padding-left:1.2rem}
-ul.plain li{margin:.5rem 0; max-width:64ch}
+ul.plain li{margin:.5rem 0; max-width:68ch}
 ul.plain li::marker{color:var(--accent)}
-
 .do-dont{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:1rem 0}
 @media (max-width:600px){ .do-dont{grid-template-columns:1fr} }
 .do,.dont{border-radius:12px; padding:16px 20px}
@@ -83,28 +106,72 @@ ul.plain li::marker{color:var(--accent)}
 .dont .tag{color:var(--danger); font-weight:700; font-size:.85rem; letter-spacing:.08em}
 .do ul,.dont ul{margin:.4rem 0 0; padding-left:1.2rem}
 .do li,.dont li{margin:.4rem 0; font-size:.95rem}
-
 .note{
   background:var(--warn-soft); border-left:3px solid var(--warn);
   border-radius:0 8px 8px 0; padding:12px 18px; margin:1rem 0;
-  font-size:.94rem; max-width:66ch;
+  font-size:.94rem; max-width:70ch;
 }
+.howto{
+  border:1px dashed var(--line); border-radius:10px; padding:14px 18px;
+  margin:.8rem 0; font-size:.92rem; color:var(--muted); max-width:70ch;
+}
+.howto strong{color:var(--ink)}
 .dim{color:var(--muted)}
 .small{font-size:.9rem}
 kbd{font-family:"IBM Plex Mono",monospace; font-size:.8em; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:1px 5px; background:var(--card)}
-.howto{
-  border:1px dashed var(--line); border-radius:10px; padding:14px 18px;
-  margin:.8rem 0; font-size:.92rem; color:var(--muted); max-width:66ch;
+
+/* ── 상세 탭 컴포넌트 ── */
+nav.toc{
+  margin:32px 0 0; padding:20px 24px; background:var(--card);
+  border:1px solid var(--line); border-radius:10px;
 }
-.howto strong{color:var(--ink)}
+nav.toc .toc-title{font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:500; margin-bottom:8px}
+nav.toc ol{margin:0; padding-left:1.3rem; columns:2; column-gap:2.5rem}
+nav.toc li{margin:.3rem 0; font-size:.94rem}
+nav.toc a{text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+@media (max-width:640px){ nav.toc ol{columns:1} }
+table{border-collapse:collapse; width:100%; font-size:.9rem; margin:.8rem 0}
+th,td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:500; white-space:nowrap}
+.tbl{overflow-x:auto}
+td code{white-space:nowrap}
+ol.steps{margin:.6rem 0 0; padding-left:1.4rem}
+ol.steps li{margin:.6rem 0; max-width:74ch}
+ol.steps li::marker{color:var(--accent); font-weight:700}
+.callout{
+  background:var(--accent-soft); border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0; padding:12px 18px; margin:1.2rem 0;
+  font-size:.94rem; max-width:76ch;
+}
+.warnbox{
+  background:var(--warn-soft); border-left:3px solid var(--warn);
+  border-radius:0 8px 8px 0; padding:12px 18px; margin:1.2rem 0;
+  font-size:.94rem; max-width:76ch;
+}
+.warnbox strong:first-child{color:var(--warn)}
+figure{margin:26px 0; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:22px 18px 12px}
+.scroller{overflow-x:auto}
+figure svg{display:block; min-width:640px; max-width:100%; height:auto; color:var(--ink)}
+figcaption{font-size:.84rem; color:var(--muted); margin-top:10px; padding-top:10px; border-top:1px solid var(--line); line-height:1.6}
+.pill-ok{color:var(--accent); font-weight:700}
+.pill-no{color:var(--warn); font-weight:700}
+h3.d{margin:2rem 0 .5rem}
 </style>
 
 <div class="wrap">
-  <div class="eyebrow">트렌드 자동 수집 시스템 · 인수인계 (비개발자용)</div>
+  <div class="eyebrow">트렌드 자동 수집 시스템 · 인수인계 · 2026-08-19 기준</div>
   <h1>트렌드 시트 안내서</h1>
-  <p class="lede">이 컴퓨터는 <strong>매일 아침 8시에 혼자 일합니다.</strong> 캐릿·뉴닉·Vogue 등 13곳에서 트렌드 글을 모아 AI가 요약하고, 결과를 <strong>구글 시트에 자동으로 쌓아줍니다.</strong> 여러분이 할 일은 거의 없어요 — 이 문서 한 장이면 충분합니다.</p>
+  <p class="lede">이 컴퓨터는 <strong>매일 아침 8시에 혼자 일합니다.</strong> 캐릿·뉴닉·Vogue 등 13곳에서 트렌드 글을 모아 AI가 요약하고, 결과를 <strong>구글 시트에 자동으로 쌓아줍니다.</strong> 평소 운영은 <strong>일상 안내</strong> 탭 한 장이면 충분하고, 파일 인계·설정 변경 같은 깊은 내용은 <strong>상세 매뉴얼</strong> 탭에 있습니다.</p>
 
-  <!-- 1. 매일 할 일 -->
+  <div class="tabs" role="tablist">
+    <button class="tab" id="tabbtn-easy" role="tab" aria-selected="true" aria-controls="pane-easy">☀️ 일상 안내</button>
+    <button class="tab" id="tabbtn-detail" role="tab" aria-selected="false" aria-controls="pane-detail">📦 상세 매뉴얼</button>
+  </div>
+
+  <!-- ════════════════════════ 탭 1 · 일상 안내 ════════════════════════ -->
+  <div class="tabpane active" id="pane-easy" role="tabpanel" aria-labelledby="tabbtn-easy">
+
   <section>
     <div class="sec-head"><span class="sec-no">1</span><h2>매일 할 일 — 딱 한 가지</h2></div>
     <div class="big-card">
@@ -122,7 +189,6 @@ kbd{font-family:"IBM Plex Mono",monospace; font-size:.8em; border:1px solid var(
     </ul>
   </section>
 
-  <!-- 2. 컴퓨터 규칙 -->
   <section>
     <div class="sec-head"><span class="sec-no">2</span><h2>컴퓨터 규칙 — 두 가지만</h2></div>
     <ul class="plain">
@@ -131,7 +197,6 @@ kbd{font-family:"IBM Plex Mono",monospace; font-size:.8em; border:1px solid var(
     </ul>
   </section>
 
-  <!-- 3. 문제 상황 -->
   <section id="trouble">
     <div class="sec-head"><span class="sec-no">3</span><h2>문제가 생겼어요 — 상황별 해결</h2></div>
 
@@ -173,7 +238,6 @@ kbd{font-family:"IBM Plex Mono",monospace; font-size:.8em; border:1px solid var(
     </div>
   </section>
 
-  <!-- 4. 해도 되는 것 / 안 되는 것 -->
   <section>
     <div class="sec-head"><span class="sec-no">4</span><h2>해도 되는 것 · 하면 안 되는 것</h2></div>
     <div class="do-dont">
@@ -198,16 +262,325 @@ kbd{font-family:"IBM Plex Mono",monospace; font-size:.8em; border:1px solid var(
     </div>
   </section>
 
-  <!-- 5. 더 알아보기 -->
   <section>
     <div class="sec-head"><span class="sec-no">5</span><h2>더 자세한 내용이 필요하면</h2></div>
     <ul class="plain">
-      <li><strong>수집 시간을 바꾸고 싶다 / 수집 사이트를 추가하고 싶다 / 다른 컴퓨터로 옮기고 싶다</strong> → 개발자·AI용 상세 매뉴얼: <code>docs\handover-manual.html</code> (더블클릭으로 열림). 직접 하기 어려우면 Claude Code에 그대로 요청하면 됩니다 — 예: "수집 시간을 아침 7시로 바꿔줘".</li>
+      <li><strong>파일을 인계받는 방법 / 새 컴퓨터에 설치 / 수집 시간·사이트·설정 바꾸기 / 시스템 구조</strong> → 위의 <a href="#pkg"><strong>📦 상세 매뉴얼 탭</strong></a>에 다 있습니다.</li>
+      <li>직접 하기 어려우면 Claude Code에 그대로 요청하면 됩니다 — 예: "수집 시간을 아침 7시로 바꿔줘".</li>
       <li><strong>장애 대응 상세 절차</strong> → <code>docs\HANDOVER.md</code></li>
-      <li>이 시스템의 모든 코드는 이 폴더 안에 있고, 과거 기록은 git(버전 관리)에 보존되어 있습니다.</li>
     </ul>
     <div class="note"><strong>기억할 것 한 줄</strong> — "아침에 시트만 확인하면 되고, 뭔가 이상하면 Claude Code에 <kbd>/trend-status</kbd>."</div>
   </section>
+
+  </div><!-- /pane-easy -->
+
+  <!-- ════════════════════════ 탭 2 · 상세 매뉴얼 ════════════════════════ -->
+  <div class="tabpane" id="pane-detail" role="tabpanel" aria-labelledby="tabbtn-detail">
+
+  <nav class="toc">
+    <div class="toc-title">상세 매뉴얼 목차</div>
+    <ol>
+      <li><a href="#pkg">전달 패키지 — 파일을 어떤 형태로 주고받나</a></li>
+      <li><a href="#arch">시스템 아키텍처</a></li>
+      <li><a href="#folder">폴더 구조</a></li>
+      <li><a href="#setup">새 PC 셋업 체크리스트</a></li>
+      <li><a href="#custom">커스터마이징 가이드 ★</a></li>
+      <li><a href="#security">보안·이용 규칙</a></li>
+    </ol>
+  </nav>
+  <p class="small dim" style="margin-top:10px">※ 일상 운영·장애 대응은 ☀️ 일상 안내 탭에 있습니다. 이 탭은 인계·설치·설정 변경처럼 가끔 필요한 내용만 다룹니다. 어렵게 느껴지는 부분은 Claude Code에 이 문서를 보여주며 "이대로 해줘"라고 요청해도 됩니다.</p>
+
+  <!-- 1. 전달 패키지 -->
+  <section id="pkg">
+    <div class="sec-head"><span class="sec-no">1</span><h2>전달 패키지 — 파일을 어떤 형태로 주고받나</h2></div>
+
+    <p>이 프로젝트는 <strong>"git에 있는 것"과 "git 밖에 있는 것"의 2트랙</strong>으로 넘겨야 한다. 비밀키·브라우저 프로필·예약작업·가상환경은 의도적으로 git 밖에 있고, 그중 일부는 새 PC에서 <em>재생성</em>해야 하지 복사하면 안 된다.</p>
+
+    <h3 class="d">트랙 A — 코드 (git)</h3>
+    <p>가장 깔끔한 형태는 <strong>git 저장소 그대로</strong>다. 원격 저장소 접근 권한을 주거나, 원격이 곤란하면 히스토리까지 담긴 단일 파일로 만들어 전달한다:</p>
+    <pre><code># 히스토리 포함 단일 파일 (받는 쪽: git clone trend-agent.bundle 폴더명)
+git bundle create trend-agent.bundle --all</code></pre>
+    <p class="dim small">zip으로 폴더를 통째 복사해도 되지만, 그 경우 <code>venv\</code>·<code>profile\</code>은 반드시 빼고 보낼 것 — 어차피 새 PC에서 재생성해야 하는 것들이고, 특히 <code>profile\</code>(캐릿 세션)은 복사해도 기기 인증이 맞지 않다.</p>
+
+    <h3 class="d">트랙 B — 비밀·데이터 패키지 (DM/USB 전용, 절대 git 금지)</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>파일</th><th>내용</th><th>필수?</th></tr></thead>
+      <tbody>
+        <tr><td><code>.env</code></td><td>캐릿 계정·Gemini 키·시트 ID (5-2절에 전체 키 설명)</td><td><span class="pill-ok">필수</span></td></tr>
+        <tr><td><code>gcp_sa.json</code></td><td>구글 서비스계정 키 (시트 push 인증)</td><td><span class="pill-ok">필수</span></td></tr>
+        <tr><td><code>requirements.txt</code></td><td>구 PC에서 <code>venv\Scripts\pip.exe freeze &gt; requirements.txt</code>로 생성</td><td><span class="pill-ok">필수</span></td></tr>
+        <tr><td><code>trends.db</code></td><td>누적 SQLite DB — 새로 시작해도 시트에는 기록이 남아있으므로 선택</td><td>선택</td></tr>
+        <tr><td><code>trenddb_owner.txt</code></td><td>수집자 이름표 — 없으면 새 PC에서 <code>trenddb.py set-owner &lt;이름&gt;</code> 1회</td><td>선택</td></tr>
+        <tr><td><code>src\data\</code> 폴더 zip</td><td>본문 캐시 10종 + 분석 캐시 — 가져가면 첫 실행 때 재수집·재분석(Gemini 비용) 절약</td><td>권장</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 class="d">넘기지 <em>않는</em> 것 (새 PC에서 재생성)</h3>
+    <ul class="plain">
+      <li><code>venv\</code> — 파이썬 가상환경. requirements.txt로 재설치.</li>
+      <li><code>profile\</code> — 캐릿 Playwright 브라우저 프로필. <strong>새 PC에서 <code>setup_profile.py</code>로 기기 등록부터 다시</strong> (캐릿은 기기 4대 제한 + 이메일 OTP — 이관에서 제일 까다로운 단계).</li>
+      <li>Windows 예약작업 <code>FF-Trend-Daily</code> — 절대경로를 물고 있어 복사 불가. 4절의 명령으로 새로 등록.</li>
+    </ul>
+
+    <div class="warnbox"><strong>인계 전 반드시 결정할 소유권 2가지</strong> — ① 캐릿 유료 계정 명의(OTP가 계정 이메일로 오므로 계정이 바뀌면 프로필 셋업을 처음부터), ② 구글 시트·서비스계정의 편집 권한. 둘 다 새 담당자 소유로 옮기는 것을 권장한다 — 그래야 전임자 퇴사·계정 정지에도 시스템이 살아있다.</div>
+  </section>
+
+  <!-- 2. 아키텍처 -->
+  <section id="arch">
+    <div class="sec-head"><span class="sec-no">2</span><h2>시스템 아키텍처</h2></div>
+
+    <p>구조는 <strong>수집 → 분석 → 누적(시트)</strong>의 3층이다. 매일 08:00에 예약작업 하나(<code>FF-Trend-Daily</code>)가 <code>run_daily.py</code> 4단계를 순서대로 실행한다. 전 과정이 무인 실행된다.</p>
+
+    <figure>
+      <div class="scroller">
+      <svg viewBox="0 0 820 520" role="img" aria-label="3층 아키텍처: 13개 소스를 기술 유형별로 묶은 수집층이 collect.py로 모이고, Gemini 분석층에서 글별 본문과 이미지를 분석한 뒤, 누적층에서 trends.db를 거쳐 구글 공유 시트에 새 글만 append된다.">
+        <defs>
+          <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g font-size="12" fill="currentColor">
+          <rect x="30" y="20" width="760" height="150" rx="10" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+          <text x="50" y="46" font-weight="700">수집층 — ① collect.py <tspan font-size="11" opacity=".7">(FF-Trend-Daily 08:00 · 21일 창 · seen.json 최초포착 추적)</tspan></text>
+          <g fill="none" stroke="currentColor" stroke-opacity=".6">
+            <rect x="50" y="62" width="225" height="88" rx="7"/>
+            <rect x="295" y="62" width="225" height="88" rx="7"/>
+            <rect x="540" y="62" width="230" height="88" rx="7"/>
+          </g>
+          <g font-size="11" text-anchor="middle">
+            <text x="162" y="82" font-weight="700" font-size="11.5">Playwright 렌더링</text>
+            <text x="162" y="102" opacity=".75">캐릿 (로그인 프로필 · 시리즈 4종)</text>
+            <text x="162" y="119" opacity=".75">고슴이의 비트 (SPA)</text>
+            <text x="162" y="136" opacity=".75">뉴닉 웹 (+공개 REST 상세)</text>
+            <text x="407" y="82" font-weight="700" font-size="11.5">RSS · 공개 API</text>
+            <text x="407" y="102" opacity=".75">고구마팜 · 마케팅레시피</text>
+            <text x="407" y="119" opacity=".75">Google Trends KR (21일 누적)</text>
+            <text x="407" y="136" opacity=".75">Eyesmag (posts API + 필터)</text>
+            <text x="655" y="82" font-weight="700" font-size="11.5">정적 HTML · 사이트맵</text>
+            <text x="655" y="102" opacity=".75">20대연구소 · The Edit · HeyPop</text>
+            <text x="655" y="119" opacity=".75">인사이트 · Vogue (ld+json)</text>
+            <text x="655" y="136" opacity=".75">패션비즈 (sitemap + RSC 파싱)</text>
+          </g>
+
+          <line x1="410" y1="170" x2="410" y2="205" stroke="currentColor" marker-end="url(#arA)"/>
+          <text x="420" y="194" font-size="10.5" opacity=".65">collected_&lt;date&gt;.json + 소스별 영구 캐시 ×10 → article_items.collect_items()</text>
+
+          <rect x="30" y="212" width="760" height="112" rx="10" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="50" y="238" font-weight="700" fill="var(--accent)">분석층 — ② content_analyzer.py (Gemini 3.5 flash vision)</text>
+          <g font-size="11">
+            <text x="50" y="266" opacity=".8">· 글별 본문(6,000자) + 첨부 이미지(최대 12장) 종합 분석 — 요약·토픽·브랜드·마케팅 인사이트·광고 여부</text>
+            <text x="50" y="288" opacity=".8">· URL 단위 영구 캐시 → 이미 분석한 글은 스킵, 새 글만 비용 발생 · 실패분은 다음 실행 때 자동 재시도</text>
+            <text x="50" y="310" opacity=".8">· 산출: src\data\analysis\&lt;글ID&gt;.json (+ 본문 txt · 이미지 파일)</text>
+          </g>
+
+          <line x1="410" y1="324" x2="410" y2="359" stroke="currentColor" marker-end="url(#arA)"/>
+
+          <rect x="30" y="366" width="760" height="130" rx="10" fill="none" stroke="currentColor" stroke-opacity=".45"/>
+          <text x="50" y="392" font-weight="700">누적층 — 최종 산출물</text>
+          <g fill="none" stroke="currentColor" stroke-opacity=".6">
+            <rect x="80" y="408" width="280" height="70" rx="7"/>
+          </g>
+          <rect x="460" y="408" width="280" height="70" rx="7" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+          <g font-size="11" text-anchor="middle">
+            <text x="220" y="432" font-weight="700" font-size="11.5">③ trends.db (SQLite)</text>
+            <text x="220" y="450" opacity=".75">분석 JSON → 영구 누적 upsert</text>
+            <text x="220" y="466" opacity=".75">날짜 4칸 · 수집자 이름표</text>
+            <text x="600" y="432" font-weight="700" font-size="11.5" fill="var(--accent)">④ Google Sheets ★</text>
+            <text x="600" y="450" opacity=".8">새 글만 append — 기존 행 불변</text>
+            <text x="600" y="466" opacity=".8">팀이 시트에서 직접 메모·편집</text>
+          </g>
+          <line x1="360" y1="443" x2="453" y2="443" stroke="currentColor" marker-end="url(#arA)"/>
+          <text x="368" y="432" font-size="10.5" opacity=".65">sheets_push</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>3층 아키텍처: 소스가 늘어도 수집층 안에서만 흡수되고 아래 층은 그대로다 — 새 사이트 추가가 쉬운 이유(5-4절). "시트가 주인" 정책이라 push는 새 행만 추가하고 사람이 편집한 기존 행은 절대 건드리지 않는다.</figcaption>
+    </figure>
+
+    <h3 class="d">run_daily.py의 4단계</h3>
+    <ol class="steps">
+      <li><code>collect.py</code> — 13소스 수집, 21일 윈도우 컷오프. <strong>실패 시 전체 중단</strong>(대부분 캐릿 세션 만료).</li>
+      <li><code>content_analyzer.py --all</code> — <code>article_items.collect_items()</code>로 오늘의 글 목록을 만들고(수집 스냅샷 + 외부 소스 실시간 fetch → 정규화), 글별로 Gemini vision 분석. 캐시 hit는 자동 스킵.</li>
+      <li><code>trenddb.py export</code> — 분석 결과를 <code>trends.db</code>에 누적(upsert). DB는 영구 누적 — 삭제하지 않는다.</li>
+      <li><code>sheets_push.py</code> — 구글 시트에 <strong>새 글만 append</strong>. 기존 행은 절대 안 건드림.</li>
+    </ol>
+    <p class="dim small">2~4단계는 각각 try로 감싸져 있어 하나가 실패해도 나머지는 진행된다. 각 단계 exit 코드는 <code>src\data\run.log</code>에 남는다. 기술 상세(소스별 수집 방식·캐시 구조)는 <code>CLAUDE.md</code> 참조.</p>
+  </section>
+
+  <!-- 3. 폴더 구조 -->
+  <section id="folder">
+    <div class="sec-head"><span class="sec-no">3</span><h2>폴더 구조</h2></div>
+<pre><code>trend-monitoring-agent\
+├─ CLAUDE.md              # AI 작업 컨텍스트 = 사실상의 기술 명세서 (소스·캐시·정책 전부)
+├─ README.md
+├─ .env                   # 비밀키 (git 제외 — 트랙 B로 전달)
+├─ gcp_sa.json            # 구글 서비스계정 키 (git 제외)
+├─ trends.db              # 누적 SQLite DB (git 제외)
+├─ profile\               # 캐릿 브라우저 프로필 (git 제외 — 새 PC에서 재생성)
+├─ venv\                  # 파이썬 가상환경 (git 제외 — 재설치)
+├─ src\
+│  ├─ core\
+│  │  ├─ run_daily.py     # ★ 매일 08:00 오케스트레이터 (4단계)
+│  │  └─ collect.py       # 13소스 통합 수집 + 21일 컷오프 + seen.json
+│  ├─ service\
+│  │  ├─ &lt;소스명&gt;.py       # 소스별 수집 모듈 ×12 (gogumafarm, vogue, …)
+│  │  ├─ article_items.py # 수집 스냅샷 → 정규화된 글 목록 (분석기의 입력)
+│  │  ├─ content_analyzer.py    # Gemini vision 글 분석
+│  │  ├─ trenddb.py / sheets_push.py   # DB 누적 · 시트 push
+│  │  └─ setup_profile.py              # 캐릿 재로그인
+│  └─ data\               # (git 제외) 수집 스냅샷·캐시 10종·분석 결과·run.log
+└─ docs\
+   ├─ HANDOVER.md         # 운영 관점 인계 문서 (장애 대응 상세)
+   └─ handover-simple.html  # 이 문서 (일상 안내 + 상세 매뉴얼)</code></pre>
+  </section>
+
+  <!-- 4. 셋업 -->
+  <section id="setup">
+    <div class="sec-head"><span class="sec-no">4</span><h2>새 PC 셋업 체크리스트</h2></div>
+
+    <ol class="steps">
+      <li><strong>코드 배치</strong> — <code>git clone</code>(또는 bundle/zip 해제). 이후 명령은 모두 프로젝트 루트 기준.</li>
+      <li><strong>파이썬 환경</strong>:
+<pre><code>python -m venv venv
+venv\Scripts\pip.exe install -r requirements.txt
+venv\Scripts\playwright.exe install chromium</code></pre></li>
+      <li><strong>비밀 파일 배치</strong> — 트랙 B로 받은 <code>.env</code>·<code>gcp_sa.json</code>을 프로젝트 루트에, (선택) <code>trends.db</code>·<code>src\data\</code> 캐시도 제자리에.</li>
+      <li><strong>캐릿 기기 등록</strong> (제일 까다로움): <code>venv\Scripts\python.exe src\service\setup_profile.py</code> 실행 → 로그인 중 인증번호 요구 시 캐릿 계정 이메일의 코드를 프로젝트 루트에 <code>.otp</code> 파일로 저장(내용=숫자만) → 기기 슬롯 4개가 꽉 찼다면 기존 기기 삭제 먼저. <em>일반 크롬에서 로그인해도 소용없다 — 자동화가 쓰는 그 프로필(<code>profile\</code>)에서 등록해야 유효.</em></li>
+      <li><strong>수동 테스트</strong>: <code>venv\Scripts\python.exe src\core\run_daily.py</code> → <code>src\data\run.log</code>에서 전 단계 exit=0 확인 → <code>sheets_push.py --dry</code>로 시트 연결 확인.</li>
+      <li><strong>예약작업 등록</strong> — 관리자 PowerShell에서 <code>$ROOT</code>만 실제 경로로:
+<pre><code>$ROOT = "C:\Users\&lt;사용자&gt;\Agent\trend-monitoring-agent"
+$PY = "$ROOT\venv\Scripts\python.exe"
+schtasks /Create /F /TN FF-Trend-Daily /SC DAILY /ST 08:00 /TR "`"$PY`" `"$ROOT\src\core\run_daily.py`""</code></pre></li>
+      <li><strong>다음날 아침 검증</strong> — 구글 시트 맨 아래에 오늘 날짜(DB등록일 칸)의 새 행이 있는지 확인. 정상이면 구 PC의 예약작업 삭제: <code>schtasks /Delete /F /TN FF-Trend-Daily</code>.</li>
+    </ol>
+
+    <div class="callout"><strong>전제 조건</strong>: 예약작업은 PC가 켜져 있고 해당 계정으로 로그인된 상태여야 실행된다. PC를 꺼두면 그날 수집은 건너뛰지만, 21일 윈도우 덕에 다음 실행 때 놓친 글이 자동 보충된다.</div>
+  </section>
+
+  <!-- 5. 커스터마이징 -->
+  <section id="custom">
+    <div class="sec-head"><span class="sec-no">5</span><h2>커스터마이징 가이드 ★</h2></div>
+    <p>새 팀에 맞게 손댈 가능성이 높은 순서로 정리했다. 모든 수정 후에는 <code>run_daily.py</code> 수동 1회 실행으로 검증하는 것을 권장. <strong>직접 고치기 어려우면 Claude Code에 이 절의 해당 항목을 보여주며 요청하면 된다</strong> — 예: "수집 시간을 아침 7시로 바꿔줘", "○○사이트를 새 소스로 추가해줘".</p>
+
+    <h3 class="d" id="c1">5-1. 업데이트 주기(실행 시각) 변경</h3>
+    <p>주기는 코드가 아니라 <strong>Windows 예약작업</strong>에 있다. 시각만 바꾸려면:</p>
+    <pre><code>schtasks /Change /TN FF-Trend-Daily /ST 07:00</code></pre>
+    <ul class="plain">
+      <li>하루 2회 실행도 가능(예: 08:00 외에 <code>/SC DAILY /ST 16:00</code>으로 이름만 다른 작업 하나 더 등록). 분석은 URL 캐시, 시트는 append-only라 <strong>중복 비용·중복 행이 생기지 않는다</strong> — 오히려 낮에 발행된 글을 그날 잡는 효과.</li>
+      <li>현재 상태 확인: <code>schtasks /Query /TN FF-Trend-Daily /V /FO LIST</code></li>
+    </ul>
+
+    <h3 class="d" id="c2">5-2. .env 설정 — 전체 키와 "새 팀에서 바꿔야 하는 것"</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>키</th><th>용도</th><th>새 팀에서</th></tr></thead>
+      <tbody>
+        <tr><td><code>CAREET_EMAIL</code> / <code>CAREET_PASSWORD</code></td><td>캐릿 유료 계정 로그인</td><td><span class="pill-no">교체 검토</span> — 계정 명의 이관 결정에 따름. 바꾸면 <code>setup_profile.py</code> 재실행 필수</td></tr>
+        <tr><td><code>GEMINI_API_KEY</code></td><td>분석층 전체 (vision 분석)</td><td><span class="pill-no">교체</span> — 새 팀의 키로 (과금 주체 분리)</td></tr>
+        <tr><td><code>GOOGLE_SA_KEY</code></td><td>서비스계정 키 경로 (기본 <code>gcp_sa.json</code>)</td><td>유지 가능 — 키 파일만 제자리에</td></tr>
+        <tr><td><code>SHEETS_TREND_ID</code> / <code>SHEETS_TAB</code></td><td>공유 시트 스프레드시트 ID · 탭명(기본 <code>trends</code>)</td><td><span class="pill-no">교체 검토</span> — 새 팀 시트를 만들면 ID 교체 + 그 시트에 서비스계정 이메일을 편집자로 공유</td></tr>
+        <tr><td><code>SINCE_DATE</code></td><td>(선택) 수집 컷오프 수동 지정 <code>YYYY-MM-DD</code></td><td>평소 미설정 — 백필 때만 임시로</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 class="d" id="c3">5-3. 수집 윈도우·리밋 조정</h3>
+    <p><strong>수집 윈도우(며칠 치를 유지할지)</strong>는 <code>src\core\collect.py</code>와 <code>src\service\article_items.py</code> 상단의 같은 한 줄이 지배한다:</p>
+    <pre><code># 기본 = 오늘로부터 21일 전 (최근 3주)
+SINCE_DATE = os.environ.get("SINCE_DATE") or (datetime.date.today() - datetime.timedelta(days=21)).isoformat()</code></pre>
+    <p><code>days=21</code>을 바꾸면(두 파일 모두) 수집·분석이 다루는 창이 함께 바뀐다. 줄이면 Gemini 비용·실행 시간 감소, 늘리면 놓친 글 보충 여지가 커진다. (DB·시트는 영구 누적이라 영향 없음.)</p>
+
+    <p><strong>소스별 하루 수집 리밋</strong>은 각 모듈의 <code>fetch_*()</code> 함수 기본값이다. 바꿀 땐 모듈 파일의 함수 시그니처를 수정하거나, 호출부(<code>collect.py</code>·<code>article_items.py</code>)에 인자를 주면 된다 (예: <code>fetch_gogumafarm(limit=40)</code>):</p>
+    <div class="tbl"><table>
+      <thead><tr><th>소스</th><th>위치</th><th>기본 리밋</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>캐릿</td><td><code>core\collect.py</code></td><td>본문 fetch 30건/일</td><td>176행 <code>[:30]</code> — 새 글 우선 + 캐시 miss 순. 유료 사이트 부하 배려로 보수적으로</td></tr>
+        <tr><td>고구마팜</td><td><code>service\gogumafarm.py</code></td><td>20</td><td>RSS</td></tr>
+        <tr><td>마케팅레시피</td><td><code>service\maily_marketingrecipe.py</code></td><td>15</td><td>"한-입 트렌드" 카테고리만 필터</td></tr>
+        <tr><td>20대연구소</td><td><code>service\slab20.py</code></td><td>12</td><td>뉴스레터 페이지</td></tr>
+        <tr><td>고슴이의 비트</td><td><code>service\stibee_gosumi.py</code></td><td>15</td><td>Playwright SPA</td></tr>
+        <tr><td>The Edit</td><td><code>service\the_edit.py</code></td><td>15</td><td>STYLE 카테고리</td></tr>
+        <tr><td>HeyPop</td><td><code>service\heypop.py</code></td><td>15</td><td>단, 사이트가 정적으로 4건만 노출 — 리밋 올려도 4건</td></tr>
+        <tr><td>인사이트</td><td><code>service\insight.py</code></td><td>15</td><td>/trend/</td></tr>
+        <tr><td>뉴닉 웹</td><td><code>service\newneek.py</code></td><td>15</td><td>Playwright 리스팅 + REST 상세</td></tr>
+        <tr><td>Eyesmag</td><td><code>service\eyesmag.py</code></td><td>15 (scan 60)</td><td>API가 카테고리를 무시 → 최신 60건 받아 클라이언트 필터. 리밋 올리면 scan도 함께</td></tr>
+        <tr><td>패션비즈</td><td><code>service\fashionbiz.py</code></td><td>50</td><td>사이트맵 최신 ~28건 전부 커버 목적 (낮 발행분 유실 방지)</td></tr>
+        <tr><td>Vogue</td><td><code>service\vogue.py</code></td><td>카테고리당 8</td><td>fashion·beauty·living ×8 = 최대 24</td></tr>
+        <tr><td>구글 트렌드</td><td><code>service\gtrends.py</code></td><td>20 (fetch 30)</td><td>일일 급상승, 21일 누적 history</td></tr>
+      </tbody>
+    </table></div>
+
+    <p><strong>분석층 리밋</strong> (<code>service\content_analyzer.py</code>): 모델 <code>MODEL = "gemini-3.5-flash"</code>(32행), 글당 첨부 이미지 <code>_MAX_IMAGES = 12</code>(173행), 본문은 6,000자까지 프롬프트에 포함. 비용을 줄이려면 이미지 수를 먼저 줄이는 게 효과가 크다. 분석은 URL 단위 영구 캐시라 <strong>이미 분석된 글은 리밋을 바꿔도 재분석되지 않는다</strong> — 재분석하려면 <code>src\data\article_content_analysis.json</code>에서 해당 URL 항목을 지우고 실행.</p>
+
+    <h3 class="d" id="c4">5-4. 새로운 사이트(소스) 추가 — 4단계</h3>
+    <p>아키텍처상 새 소스는 수집층에만 손대면 된다. 분석·DB·시트는 자동으로 따라온다.</p>
+    <ol class="steps">
+      <li><strong>수집 모듈 작성</strong> — <code>src\service\&lt;사이트&gt;.py</code>에 <code>fetch_&lt;사이트&gt;(limit=15)</code> 함수. 반환은 dict 리스트이고 최소 필드는 <code>title · url · date(YYYY-MM-DD) · excerpt</code>, 있으면 <code>image · category</code>. <em>맨땅에서 만들지 말고 가장 비슷한 기존 모듈을 복사해서 시작할 것</em>:
+        <ul class="plain">
+          <li>RSS 제공 → <code>gogumafarm.py</code> 참고</li>
+          <li>정적 HTML 리스팅 → <code>insight.py</code> · <code>the_edit.py</code></li>
+          <li>공개 JSON API → <code>eyesmag.py</code></li>
+          <li>JS 렌더링 필요(SPA) → <code>newneek.py</code> (Playwright)</li>
+          <li>사이트맵 기반 → <code>fashionbiz.py</code></li>
+        </ul>
+        본문이 리스팅에 없으면 기존 모듈들의 <strong>영구 캐시 패턴</strong>(<code>src\data\&lt;사이트&gt;_body_cache.json</code>, 캐시 hit면 스킵·miss만 fetch)을 그대로 따를 것 — 매일 도는 시스템이라 캐시 없으면 상대 서버에 민폐고 실행도 느려진다.</li>
+      <li><strong><code>src\core\collect.py</code> 연결</strong> — 기존 소스 블록(패션비즈·Vogue 부분)을 복사해 3곳 수정: ① try/except 수집 블록 추가(실패해도 전체가 죽지 않는 구조 유지), ② <code>SINCE_DATE</code> 필터 한 줄, ③ <code>out</code> dict의 <code>counts</code>와 본문에 키 추가. <em>주의: Playwright를 쓰는 소스는 캐릿 with 블록 밖에서 호출해야 한다(뉴닉 블록의 주석 참조).</em></li>
+      <li><strong><code>src\service\article_items.py</code> 연결</strong> — 상단 import 목록에 추가하고, 기존 소스처럼 normalize 블록(source명·날짜·발췌 300자·카테고리 매핑) 추가. <strong>여기 등록돼야 분석기가 그 소스의 글을 분석하고 시트까지 올라간다</strong> — 이 단계를 빼먹으면 수집만 되고 시트에 안 나온다.</li>
+      <li><strong><code>CLAUDE.md</code> 문서 갱신</strong> — 소스 표와 캐시 목록에 추가. AI 도구로 유지보수하는 프로젝트라 이 파일이 곧 명세서다. 이후 <code>run_daily.py</code> 1회 실행으로 검증.</li>
+    </ol>
+    <div class="callout"><strong>팁</strong>: Claude Code에 "CLAUDE.md의 소스 표 형식대로 ○○사이트를 새 소스로 추가해줘"라고 요청하면 위 4단계를 한 번에 처리할 수 있다. 다만 2~3단계의 연결 지점이 맞는지 diff는 직접 확인할 것.</div>
+
+    <p><strong>소스 제거</strong>는 반대로: <code>collect.py</code>·<code>article_items.py</code>의 해당 블록을 지우면 끝(모듈 파일은 남겨둬도 무해 — 네이버 데이터랩이 그 방식으로 비활성화돼 있다).</p>
+
+    <h3 class="d" id="c5">5-5. 시트 커스터마이징</h3>
+    <ul class="plain">
+      <li><strong>컬럼 규칙</strong> — 자동 칸 A~N(제목·article_id·URL·카테고리·요약·토픽·브랜드·인사이트·날짜 4종·수집자·광고)은 <strong>순서 변경·중간 삭제 금지</strong>(append가 왼쪽부터 채움). 사람용 칸(메모·활용아이디어·상태 등)은 O열 이후 오른쪽에만 추가 — 기존 행은 push가 절대 덮어쓰지 않으므로 자유롭게 편집 가능.</li>
+      <li><strong>수집자 이름표</strong> — 새 담당자 PC에서 <code>venv\Scripts\python.exe src\service\trenddb.py set-owner &lt;이름&gt;</code> 1회. 이후 모든 export에 그 이름이 붙는다.</li>
+      <li><strong>광고 글 처리</strong> — 현재 정책은 "필터하지 않고 광고 칸에 Y 표시만"(is_sponsored 마킹). 광고를 시트에서 빼고 싶으면 <code>sheets_push.py</code>에 필터 조건을 추가하는 방식으로.</li>
+      <li><strong>여러 PC 협업</strong> — 여러 PC가 같은 시트에 push해도 안전하다(article_id 중복 체크). 각 PC에서 set-owner만 해두면 수집자 칸으로 구분된다.</li>
+    </ul>
+  </section>
+
+  <!-- 6. 보안 -->
+  <section id="security">
+    <div class="sec-head"><span class="sec-no">6</span><h2>보안·이용 규칙</h2></div>
+    <ul class="plain">
+      <li><strong>캐릿은 유료 미디어</strong> — 수집 본문은 내부 분석용으로만. 외부 재배포·원문 복붙 금지(10% 초과 인용 불가). 이 정책 때문에 <code>trends.db</code>·시트에도 본문 전문은 저장하지 않는다.</li>
+      <li><code>.env</code>·<code>gcp_sa.json</code>·<code>*.db</code>·<code>profile\</code>은 <strong>git 커밋 절대 금지</strong> (.gitignore에 등록돼 있음). 전달은 DM/USB로만.</li>
+      <li>커밋 전 <code>git status</code>로 민감 파일 스테이징 여부를 확인하는 습관.</li>
+      <li>이관 완료 후 전임자는: 구 PC 예약작업 삭제 → 캐릿 기기 슬롯에서 구 PC 제거 → (계정을 넘겼다면) 비밀번호 변경을 새 담당자에게 안내.</li>
+    </ul>
+  </section>
+
+  </div><!-- /pane-detail -->
 </div>
+
+<script>
+(function(){
+  var panes = { easy: document.getElementById('pane-easy'), detail: document.getElementById('pane-detail') };
+  var btns = { easy: document.getElementById('tabbtn-easy'), detail: document.getElementById('tabbtn-detail') };
+  function show(name){
+    for (var k in panes){
+      var on = (k === name);
+      panes[k].classList.toggle('active', on);
+      btns[k].setAttribute('aria-selected', on ? 'true' : 'false');
+    }
+  }
+  btns.easy.addEventListener('click', function(){ show('easy'); });
+  btns.detail.addEventListener('click', function(){ show('detail'); });
+  // 앵커 링크가 다른 탭의 섹션을 가리키면 그 탭을 먼저 연다
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    var target = document.getElementById(a.getAttribute('href').slice(1));
+    if (!target) return;
+    if (panes.detail.contains(target)) show('detail');
+    else if (panes.easy.contains(target)) show('easy');
+  });
+  // URL 해시로 바로 진입한 경우
+  if (location.hash){
+    var t = document.getElementById(location.hash.slice(1));
+    if (t && panes.detail.contains(t)) show('detail');
+  }
+})();
+</script>
 
 </html>

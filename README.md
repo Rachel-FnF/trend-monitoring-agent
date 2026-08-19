@@ -45,7 +45,7 @@ SHEETS_TREND_ID / SHEETS_TAB     # 공유 시트 ID · 탭명(기본 trends)
 ## 문서
 - `CLAUDE.md` — 기술 명세 (소스·캐시·정책 전부)
 - `docs/HANDOVER.md` — 운영 인계 (일일 확인법·장애 대응·PC 이관)
-- `docs/handover-manual.html` — 담당자 이관 매뉴얼 (커스터마이징 가이드 포함)
+- `docs/handover-simple.html` — 인수인계 안내서 (☀️ 일상 안내 + 📦 상세 매뉴얼 2탭)
 
 ## 주의
 - 캐릿은 **유료 미디어** — 수집물은 내부 분석용으로만, 외부 재배포 금지 (본문 10% 초과 인용 불가). 시트·DB에도 본문 전문은 저장하지 않는다.
