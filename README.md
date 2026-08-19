@@ -1,99 +1,52 @@
 # 트렌드 모니터링 Agent
 
-8개 큐레이션·검색 소스에서 트렌드를 **매일 자동 수집**하고, Gemini vision으로 **본문+이미지를 종합 분석**해 대시보드 카드로 표시하는 에이전트.
+13개 큐레이션·검색 소스에서 트렌드 글을 **매일 자동 수집**하고, Gemini vision으로 **본문+이미지를 종합 분석**해 **구글 공유 시트에 누적**하는 에이전트.
 
-> 목표: 트렌드를 *일찍* 포착하고, 본문·이미지 맥락까지 함께 보여 한눈에 파악한다.
+> 최종 산출물 = 구글 시트 하나. 팀원들이 같은 시트를 보고, 시트에서 직접 메모·상태를 편집한다.
+> (대시보드·교차검증·슬랙 발송은 2026-08-19 정리에서 제거 — git 히스토리에 보존)
 
 ## 무엇을 하나
-매일 오전 9시(Windows 작업 스케줄러 `FF-Trend-Daily`) →
-1. **수집** — 8개 소스(아래 표)에서 최근 14일 글 → `src/data/collected_<날짜>.json`
-2. **분석** — 각 글의 본문 텍스트 + 첨부 이미지를 Gemini 3.5 flash vision으로 종합 분석 → `src/data/article_content_analysis.json`
-3. **대시보드** — 카드형 HTML 빌드 → `docs/dashboard.html`
+매일 오전 8시(Windows 작업 스케줄러 `FF-Trend-Daily`) → `run_daily.py` 4단계:
+1. **수집** — 13개 소스에서 최근 21일 글 → `src/data/collected/collected_<날짜>.json`
+2. **분석** — 글별 본문+이미지를 Gemini 3.5 flash vision으로 종합 분석 (URL 단위 영구 캐시, 새 글만 비용 발생) → `src/data/analysis/<글ID>.json`
+3. **DB 누적** — 분석 결과를 `trends.db`(SQLite)에 upsert
+4. **시트 push** — 구글 공유 시트에 **새 글만 append** (기존 행은 절대 안 건드림 → 사람 편집 보존)
 
-## 수집 소스 (사용자가 좁힌 범위)
-| 소스 | 범위 | 모듈 |
-|---|---|---|
-| 캐릿 | 시리즈 3개 — 요즘뜨는밈·Z세대 최신근황·이주의 유행템 | `collect.py` (Playwright, 로그인) |
-| 고구마팜 | 트렌드 RSS | `gogumafarm.py` |
-| 마케팅레시피(maily) | 카테고리 = **한-입 트렌드**만 | `maily_marketingrecipe.py` |
-| 20대연구소 | NewsLetter 페이지 | `slab20.py` |
-| 뉴닉 고슴이의 비트 | 전체 (광고 포함) | `stibee_gosumi.py` |
-| The Edit(디에디트) | STYLE 카테고리 (패션+뷰티) | `the_edit.py` |
-| HeyPop | POP-UP 카테고리 | `heypop.py` |
-| 인사이트 | 트렌드 | `insight.py` |
-| 구글 트렌드 KR | 한국 급상승 RSS — 14일 누적 | `gtrends.py` |
-
-> 네이버 데이터랩은 사용자 요청으로 제외됨. F&F 적합성 점수화도 일반 트렌드 다이제스트로 전환됨.
-
-## 폴더 구조
-```
-trend-monitoring-agent/
-├── README.md  CLAUDE.md  .env  .gitignore
-├── docs/
-│   ├── dashboard.html              ← 결과 대시보드
-│   ├── plan/        roadmap.md
-│   ├── review/      digest_*.md (legacy 점수화 다이제스트)
-│   └── reference/   careet-structure.md, ff-rubric.md
-├── src/
-│   ├── core/        collect.py · score.py(legacy) · run_daily.py
-│   ├── service/     content_analyzer.py · build_dashboard.py · 8개 소스 모듈 · setup_profile.py · deliver.py
-│   ├── util/
-│   └── data/
-│       ├── collected_*.json              ← 일일 수집 원본
-│       ├── article_content_analysis.json ← Gemini 분석 결과 (URL 단위 영구 캐시)
-│       ├── articles/<id>.txt             ← 본문 텍스트
-│       ├── article_images/<id>/img_*.jpg ← 본문 이미지
-│       ├── *_body_cache.json             ← 소스별 본문/이미지 캐시
-│       └── seen.json · google_trends_history.json
-├── profile/         캐릿 로그인 세션 ⚠️건들지 말 것
-└── venv/            파이썬 환경
-```
+## 수집 소스 (13종)
+캐릿(Playwright 로그인) · 고구마팜 · 마케팅레시피 · 20대연구소 · 고슴이의 비트 · The Edit · HeyPop · 인사이트 · 뉴닉 웹 · Eyesmag · 패션비즈 · Vogue · 구글 트렌드 KR
+— 소스별 URL·수집 방식·캐시는 `CLAUDE.md`의 소스 표 참조.
 
 ## 실행
 ```bat
-:: 수집
+:: 전체 파이프라인 (수집→분석→DB→시트)
+venv\Scripts\python.exe src\core\run_daily.py
+
+:: 개별 단계
 venv\Scripts\python.exe src\core\collect.py
-
-:: 본문+이미지 분석 (dashboard.html의 모든 카드 URL 대상, 캐시 hit 자동 스킵)
 venv\Scripts\python.exe src\service\content_analyzer.py --all
-
-:: 대시보드 빌드
-venv\Scripts\python.exe src\service\build_dashboard.py
-
-:: (legacy) F&F 점수화 다이제스트 — 사용자 요청으로 더 이상 자동 실행 안 함
-venv\Scripts\python.exe src\core\score.py
+venv\Scripts\python.exe src\service\trenddb.py export
+venv\Scripts\python.exe src\service\sheets_push.py        :: --dry 미리보기
 ```
 
-매일 자동 실행은 작업 스케줄러 `FF-Trend-Daily`에 이미 등록돼 있음.
-
-## 최초 1회 / 세션 만료 시 (캐릿 기기 등록)
+## 최초 1회 / 캐릿 세션 만료 시
 ```bat
 venv\Scripts\python.exe src\service\setup_profile.py
 ```
-→ 브라우저가 열려 자동 로그인·기기 삭제·인증번호 발송까지 함. 계정 메일로 온 **인증번호(OTP)** 를 확인해 전달하면 등록 완료. (수집이 `SESSION_INVALID`로 실패하면 이걸 재실행)
+→ 계정 메일로 온 **인증번호(OTP)** 를 프로젝트 루트 `.otp` 파일로 전달하면 기기 등록 완료. (수집이 `SESSION_INVALID`로 실패하면 재실행)
 
 ## 설정 (`.env`)
 ```
-CAREET_EMAIL=...            # 캐릿 로그인 이메일
-CAREET_PASSWORD=...         # 캐릿 비밀번호
-ANTHROPIC_API_KEY=...       # (legacy) score.py용
-GEMINI_API_KEY=...          # 본문+이미지 vision 분석용 (필수)
-SLACK_WEBHOOK_URL=...       # 다이제스트 슬랙 전달
+CAREET_EMAIL / CAREET_PASSWORD   # 캐릿 로그인
+GEMINI_API_KEY                   # 분석 (필수)
+GOOGLE_SA_KEY                    # 서비스계정 키 경로 (기본 gcp_sa.json)
+SHEETS_TREND_ID / SHEETS_TAB     # 공유 시트 ID · 탭명(기본 trends)
 ```
 
-## 분석 결과 JSON 필드
-`article_content_analysis.json`의 각 글:
-- `url`, `article_id`, `source`, `model`, `analyzed_at`
-- `image_urls[]` — 다운로드된 본문 이미지 원본 URL (image_by_image 인덱스와 일치)
-- `body_text` — 본문 텍스트 6000자
-- `one_line_summary`, `full_description` — 한국어 요약
-- `image_by_image[]` — 이미지별 묘사
-- `content_category`, `content_format`, `topics[]`, `brands_products[]`, `people[]`
-- `scene_setting`, `text_in_media[]`, `mood_tone`
-- `is_sponsored`, `sponsorship_note` — 광고 판단(정보로만 사용, 필터 안 함)
-- `marketing_insight`, `target_audience`
+## 문서
+- `CLAUDE.md` — 기술 명세 (소스·캐시·정책 전부)
+- `docs/HANDOVER.md` — 운영 인계 (일일 확인법·장애 대응·PC 이관)
+- `docs/handover-manual.html` — 담당자 이관 매뉴얼 (커스터마이징 가이드 포함)
 
 ## 주의
-- 캐릿은 **유료 미디어**. 수집물은 내부 분석용으로만 쓰고 외부 재배포 금지, 본문 10% 초과 인용 불가.
-- 광고 제외 조건은 제거됨 — 광고로 분류된 글도 대시보드에 그대로 표시 (분류 결과는 `is_sponsored` 필드에 정보로 남음).
-- `profile/`·`src/data/`·`.env` 및 `docs/dashboard.html`·`docs/review/digest_*.md`는 `.gitignore` 적용됨 (캐릿 발췌 포함).
+- 캐릿은 **유료 미디어** — 수집물은 내부 분석용으로만, 외부 재배포 금지 (본문 10% 초과 인용 불가). 시트·DB에도 본문 전문은 저장하지 않는다.
+- `.env`·`gcp_sa.json`·`*.db`·`profile/`·`src/data/`는 `.gitignore` — git 커밋 절대 금지, 전달은 DM으로만.

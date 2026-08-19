@@ -7,39 +7,33 @@
 
 ## 1. 이게 뭐 하는 시스템인가
 
-캐릿·고구마팜·뉴닉·Vogue 등 **13개 트렌드 소스를 매일 아침 자동 수집**해서, Gemini로 본문·이미지를 분석하고, 결과를 3곳으로 내보낸다:
+캐릿·고구마팜·뉴닉·Vogue 등 **13개 트렌드 소스를 매일 아침 자동 수집**해서, Gemini로 본문·이미지를 분석하고, **구글 공유 시트에 누적**한다:
 
 ```
 [13개 소스] ──수집──▶ collected_<날짜>.json ──분석(Gemini)──▶ 분석 JSON
                                                         │
-              ┌─────────────────────────────────────────┼──────────────────────┐
-              ▼                                         ▼                      ▼
-     대시보드 (docs/dashboard.html)          로컬 DB (trends.db)      슬랙 리포트 (08:30)
+                                                        ▼
+                                              로컬 DB (trends.db)
                                                         │
                                                         ▼
-                                        구글 시트 (새 글만 append, 팀 공유)
+                                  구글 시트 (새 글만 append, 팀 공유) ★ 최종 산출물
 ```
 
-- **구글 시트가 팀의 단일 소스**: rachel·david 두 PC가 같은 시트에 push. 시트의 기존 행은 절대 덮어쓰지 않으므로(append-only) 사람이 시트에서 메모·상태를 직접 편집해도 안전하다.
-- 전 과정이 Windows 예약작업으로 무인 실행된다. 평소에는 아무것도 안 해도 된다.
+- **구글 시트가 팀의 단일 소스**: 시트의 기존 행은 절대 덮어쓰지 않으므로(append-only) 사람이 시트에서 메모·상태를 직접 편집해도 안전하다.
+- 전 과정이 Windows 예약작업 하나로 무인 실행된다. 평소에는 아무것도 안 해도 된다.
+- (대시보드·교차검증·슬랙 발송 기능은 2026-08-19 정리에서 제거 — 필요하면 git 히스토리에서 복원)
 
 ## 2. 자동 실행 스케줄 (Windows 작업 스케줄러)
 
 | 작업명 | 매일 | 실행 스크립트 | 하는 일 |
 |---|---|---|---|
-| `FF-Trend-Daily` | 08:00 | `src\core\run_daily.py` | 수집→분석→대시보드→트렌드추출→DB→시트 push |
-| `FF-Trend-Report` | 08:30 | `src\service\send_report.py` | 트렌드 리포트 슬랙 발송 |
-| `FF-Trend-DB-Send` | 08:35 | `src\service\send_db.py` | trends.db 파일 슬랙 업로드 |
+| `FF-Trend-Daily` | 08:00 | `src\core\run_daily.py` | 수집→분석(Gemini)→trends.db→구글시트 push |
 
-⚠️ 세 작업 모두 **PC가 켜져 있고 해당 계정으로 로그인된 상태**여야 돈다. 휴가 등으로 PC를 꺼두면 그날 수집은 건너뛰며, 다음 실행 때 최근 21일 윈도우 내 글은 자동 보충된다.
+⚠️ **PC가 켜져 있고 해당 계정으로 로그인된 상태**여야 돈다. 휴가 등으로 PC를 꺼두면 그날 수집은 건너뛰며, 다음 실행 때 최근 21일 윈도우 내 글은 자동 보충된다.
 
 ## 3. 매일 아침 정상 확인법 (코드 몰라도 됨)
 
-셋 중 하나만 봐도 충분하다:
-
-1. **슬랙**: 08:30에 트렌드 리포트가 왔는가
-2. **구글 시트**: 맨 아래에 오늘 날짜(DB등록일 칸)의 새 행이 추가됐는가
-3. **대시보드**: `docs\dashboard.html`을 열어 날짜가 오늘인가
+**구글 시트**: 맨 아래에 오늘 날짜(DB등록일 칸)의 새 행이 추가됐는가 — 이것 하나면 충분하다.
 
 이상하면 → 4번 증상별 대응 또는 Claude Code에서 `/trend-status`.
 
@@ -47,8 +41,7 @@
 
 | 증상 | 원인(대부분) | 조치 |
 |---|---|---|
-| 슬랙 리포트가 안 옴 | PC 꺼짐/로그인 안 됨 | PC 켜고 로그인 → 수동 실행(아래 5번) |
-| 시트에 오늘 행이 없음 | 위와 동일, 또는 push 실패 | `sheets_push.py` 재실행 — append-only라 몇 번 돌려도 중복 없음 |
+| 시트에 오늘 행이 없음 | PC 꺼짐/로그인 안 됨, 또는 push 실패 | PC 켜고 로그인 → 수동 실행(아래 5번). `sheets_push.py`는 append-only라 몇 번 돌려도 중복 없음 |
 | 수집 실패 (run.log에 collect exit=1) | **캐릿 세션 만료** | `setup_profile.py` 재로그인 (아래 6번) |
 | 분석 단계 실패 | Gemini API 키·쿼터 | `.env`의 `GEMINI_API_KEY` 확인. 실패분은 다음 실행 때 자동 재시도 |
 | trenddb export 실패 (database is locked) | trends.db를 다른 프로그램이 열어둠 | DB Browser 등 닫고 재실행 |
@@ -61,14 +54,11 @@
 모두 프로젝트 루트에서, 반드시 venv의 파이썬으로:
 
 ```powershell
-# 전체 파이프라인 (수집→분석→대시보드→시트까지 한 번에)
+# 전체 파이프라인 (수집→분석→DB→시트까지 한 번에)
 venv\Scripts\python.exe src\core\run_daily.py
 
 # 시트 push만 (미리보기: --dry)
 venv\Scripts\python.exe src\service\sheets_push.py
-
-# 슬랙 리포트만 (미리보기: --dry)
-venv\Scripts\python.exe src\service\send_report.py
 
 # 캐릿 재로그인 (세션 만료 시)
 venv\Scripts\python.exe src\service\setup_profile.py
@@ -93,7 +83,7 @@ venv\Scripts\python.exe src\service\setup_profile.py
 
 ### 7-1. 구 PC에서 챙겨갈 것 (DM/USB로만 — 절대 git 금지)
 
-- [ ] `.env` 파일 (캐릿 계정, Gemini 키, 슬랙 웹훅·봇 토큰, 시트 ID)
+- [ ] `.env` 파일 (캐릿 계정, Gemini 키, 시트 ID)
 - [ ] `gcp_sa.json` (구글 서비스계정 키)
 - [ ] `trends.db` (누적 DB — 새로 시작해도 시트에는 남아있으므로 선택)
 - [ ] `trenddb_owner.txt` (수집자 이름표 — 없으면 새 PC에서 `trenddb.py set-owner <이름>` 1회)
@@ -116,18 +106,15 @@ venv\Scripts\python.exe src\service\setup_profile.py
 ```powershell
 $ROOT = "C:\Users\<사용자>\Agent\trend-monitoring-agent"
 $PY = "$ROOT\venv\Scripts\python.exe"
-schtasks /Create /F /TN FF-Trend-Daily   /SC DAILY /ST 08:00 /TR "`"$PY`" `"$ROOT\src\core\run_daily.py`""
-schtasks /Create /F /TN FF-Trend-Report  /SC DAILY /ST 08:30 /TR "`"$PY`" `"$ROOT\src\service\send_report.py`""
-schtasks /Create /F /TN FF-Trend-DB-Send /SC DAILY /ST 08:35 /TR "`"$PY`" `"$ROOT\src\service\send_db.py`""
+schtasks /Create /F /TN FF-Trend-Daily /SC DAILY /ST 08:00 /TR "`"$PY`" `"$ROOT\src\core\run_daily.py`""
 ```
 
 - [ ] 다음날 아침 3번(정상 확인법)으로 검증
-- [ ] 구 PC의 예약작업 3개 삭제: `schtasks /Delete /F /TN FF-Trend-Daily` (나머지 2개 동일)
+- [ ] 구 PC의 예약작업 삭제: `schtasks /Delete /F /TN FF-Trend-Daily`
 
 ### 7-4. 인계 전 결정할 것
 
 - [ ] **캐릿 유료 계정 명의** — 계정 이메일로 OTP가 오므로, 계정 주인이 바뀌면 새 계정으로 프로필 셋업을 처음부터 다시 해야 한다
-- [ ] 슬랙 웹훅/봇의 채널·워크스페이스 소유권
 - [ ] 구글 시트·서비스계정 편집 권한
 
 ## 8. 보안·이용 규칙 (반드시 지킬 것)

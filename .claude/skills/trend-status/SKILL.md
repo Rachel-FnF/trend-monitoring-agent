@@ -1,6 +1,6 @@
 ---
 name: trend-status
-description: 트렌드 모니터링 파이프라인 상태 점검·장애 진단·복구 안내. "오늘 수집 잘 됐어?", "푸시 확인해줘", "슬랙 리포트가 안 왔어", "시트에 오늘 글이 없어", "캐릿 로그인/세션 만료", "파이프라인 상태 확인" 같은 요청에 사용. 로그 확인 → 시트 교차검증 → 원인 진단 → 복구 절차 안내까지 수행한다.
+description: 트렌드 모니터링 파이프라인 상태 점검·장애 진단·복구 안내. "오늘 수집 잘 됐어?", "푸시 확인해줘", "시트에 오늘 글이 없어", "캐릿 로그인/세션 만료", "파이프라인 상태 확인" 같은 요청에 사용. 로그 확인 → 시트 교차검증 → 원인 진단 → 복구 절차 안내까지 수행한다.
 ---
 
 # 트렌드 파이프라인 상태 점검
@@ -9,9 +9,9 @@ description: 트렌드 모니터링 파이프라인 상태 점검·장애 진단
 
 | 작업명 | 시각 | 스크립트 | 하는 일 |
 |---|---|---|---|
-| FF-Trend-Daily | 08:00 | `src/core/run_daily.py` | 수집→분석→대시보드→cross_trends→DB→시트 push |
-| FF-Trend-Report | 08:30 | `src/service/send_report.py` | 트렌드 리포트 슬랙 발송 |
-| FF-Trend-DB-Send | 08:35 | `src/service/send_db.py` | trends.db 슬랙 업로드 |
+| FF-Trend-Daily | 08:00 | `src/core/run_daily.py` | 수집→분석(Gemini)→trends.db→구글시트 push |
+
+최종 산출물 = 구글 공유 시트. (대시보드·교차검증·슬랙 발송은 2026-08-19 제거됨)
 
 모든 파이썬 실행은 반드시 venv 절대경로로: `<프로젝트루트>\venv\Scripts\python.exe`
 
@@ -25,7 +25,7 @@ Get-Content "<프로젝트루트>\src\data\run.log" -Tail 25
 
 정상 판정 기준:
 - 오늘 날짜의 `=== run_daily start ===` ~ `=== run_daily done ===` 쌍이 있다
-- 각 단계가 `exit=0` (collect / build_dashboard / content_analyzer / cross_trend_compare / trenddb export / sheets_push)
+- 각 단계가 `exit=0` (collect / content_analyzer / trenddb export / sheets_push)
 
 오늘 start 자체가 없으면 → 예약작업이 안 돈 것. `Get-ScheduledTaskInfo FF-Trend-Daily`로 LastRunTime·LastTaskResult 확인. PC가 꺼져 있었거나 로그인 전이었을 가능성이 크다. 수동 실행으로 보충:
 ```powershell
@@ -59,14 +59,7 @@ Get-Content "<프로젝트루트>\src\data\run.log" -Tail 25
 
 **trenddb export 실패 (database is locked)** — DB Browser 등이 trends.db를 열어두고 있는 것. 닫고 재실행.
 
-**content_analyzer / cross_trend_compare 실패** — Gemini API 문제(키 만료·쿼터). `.env`의 `GEMINI_API_KEY` 확인. 분석 실패분은 캐시에 error로 남아 다음 실행 때 자동 재시도되므로, 일시적 오류면 조치 불필요.
-
-**슬랙 리포트가 안 옴 (08:30 발송)** — run_daily와는 별도 작업이다.
-1. `Get-ScheduledTaskInfo FF-Trend-Report`로 실행 여부 확인
-2. 미리보기로 내용 자체는 정상인지 확인: `send_report.py --dry`
-3. 발송 실패면 `.env`의 `SLACK_WEBHOOK_URL` 확인. 수동 발송은 `--dry` 없이 실행.
-
-**trends.db 슬랙 업로드가 안 옴 (08:35)** — `SLACK_BOT_TOKEN`(xoxb)·`SLACK_DB_CHANNEL`이 `.env`에 있어야 하고, 봇이 해당 채널에 /invite 되어 있어야 한다. 토큰이 없으면 원래 SKIP이 정상 동작이다.
+**content_analyzer 실패** — Gemini API 문제(키 만료·쿼터). `.env`의 `GEMINI_API_KEY` 확인. 분석 실패분은 캐시에 error로 남아 다음 실행 때 자동 재시도되므로, 일시적 오류면 조치 불필요.
 
 ### 4단계: 결과 보고
 

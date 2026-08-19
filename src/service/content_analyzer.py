@@ -34,8 +34,7 @@ MODEL = "gemini-3.5-flash"  # 공식 API ID (사용자 지정, GA)
 
 def article_id_from_url(url: str) -> str:
     """URL → 파일명용 article_id.
-    날짜 permalink(보그 /2026/08/03/슬러그)는 연도가 id로 오인되므로 슬러그 기반 id 사용.
-    build_dashboard의 hero 매칭도 같은 규칙을 사용해야 함."""
+    날짜 permalink(보그 /2026/08/03/슬러그)는 연도가 id로 오인되므로 슬러그 기반 id 사용."""
     m = re.search(r"/20\d{2}/\d{2}/\d{2}/([^/?#]+)", url)
     if m:
         from urllib.parse import unquote
@@ -324,25 +323,19 @@ def _save_raw_record(item):
         print(f"  raw save fail: {aid} ({repr(e)[:50]})")
 
 
-def analyze_all_from_dashboard():
-    """docs/dashboard.html (또는 DASHBOARD_IN 환경변수 파일) 안 모든 카드 URL 일괄 분석.
-    동시에 각 카드의 raw record를 src/data/raw/<글ID>.json으로 분리 저장."""
-    html_path = ROOT / "docs" / os.environ.get("DASHBOARD_IN", "dashboard.html")
-    if not html_path.exists():
-        print("dashboard.html 없음 — 먼저 build_dashboard.py 실행 필요")
-        return
-    html = html_path.read_text(encoding="utf-8")
-    m = re.search(r"const DATA = ({.*?});\s*const SRC_COLOR", html, re.DOTALL)
-    data = json.loads(m.group(1))
-    # URL+source, 중복 제거
+def analyze_all():
+    """오늘의 정규화된 글 목록(article_items.collect_items) 전체 일괄 분석.
+    동시에 각 글의 raw record를 src/data/raw/<글ID>.json으로 분리 저장."""
+    sys.path.insert(0, str(ROOT / "src"))
+    from service.article_items import collect_items
+    items = collect_items()
+    # URL 중복 제거
     seen_urls = set()
     pairs = []
     raw_saved = 0
-    for it in data.get("items", []):
+    for it in items:
         u = it.get("url", "")
         if not u or u in seen_urls or u.startswith("#"):
-            continue
-        if "/MicroTrend" in u and any(u == p[0] for p in pairs):
             continue
         seen_urls.add(u)
         pairs.append((u, it.get("source", ""), it.get("title", ""), it.get("date", "")))
@@ -372,7 +365,7 @@ def analyze_all_from_dashboard():
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
     if len(sys.argv) > 1 and sys.argv[1] == "--all":
-        analyze_all_from_dashboard()
+        analyze_all()
     else:
         # 단일 URL 모드
         url = sys.argv[1] if len(sys.argv) > 1 else "https://www.careet.net/1914"
