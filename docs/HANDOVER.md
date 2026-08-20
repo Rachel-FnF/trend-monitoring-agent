@@ -83,20 +83,22 @@ venv\Scripts\python.exe src\service\setup_profile.py
 
 ### 7-1. 구 PC에서 챙겨갈 것 (DM/USB로만 — 절대 git 금지)
 
-- [ ] `.env` 파일 (캐릿 계정, Gemini 키, 시트 ID)
-- [ ] `gcp_sa.json` (구글 서비스계정 키)
+- [ ] Gemini API 키 값 — `.env` 파일 자체는 리포의 `.env.example`을 복사해 만들면 됨(시트 ID는 미리 채워져 있음). 캐릿 칸은 새 담당자의 새 계정(7-2 참고)
+- ℹ️ `gcp_sa.json`(서비스계정 키)은 **받지 않는다** — 새 담당자가 자기 구글 계정으로 새로 만든다 (7-2 참고)
 - [ ] `trends.db` (누적 DB — 새로 시작해도 시트에는 남아있으므로 선택)
 - [ ] `trenddb_owner.txt` (수집자 이름표 — 없으면 새 PC에서 `trenddb.py set-owner <이름>` 1회)
-- [ ] 의존성 목록: 구 PC에서 `venv\Scripts\pip.exe freeze > requirements.txt` 실행해서 같이 가져갈 것
 - [ ] (선택) `src\data\` 폴더 통째 — 본문 캐시를 가져가면 첫 실행 때 재수집·재분석 비용을 아낌
 
 ### 7-2. 새 PC 셋업
 
-- [ ] git clone (또는 폴더 복사) → 프로젝트 루트 확정
+- [ ] GitHub 저장소 접근 권한(초대) 받기 → `git clone` → 프로젝트 루트 확정
 - [ ] `python -m venv venv` → `venv\Scripts\pip.exe install -r requirements.txt`
 - [ ] `venv\Scripts\playwright.exe install chromium`
-- [ ] `.env`·`gcp_sa.json`을 프로젝트 루트에 배치
-- [ ] **캐릿 기기 등록**: `setup_profile.py` 실행 → 이메일 OTP → 필요시 구 PC 기기 슬롯 삭제 (6번 절차와 동일. **이관에서 제일 까다로운 단계**)
+- [ ] `.env` 만들기: `.env.example`을 복사해 `.env`로 저장 → Gemini 키 입력 (시트 ID는 미리 채워져 있음)
+- [ ] **구글 서비스계정(로봇) 새로 만들기**: 새 담당자 구글 계정으로 GCP 콘솔(console.cloud.google.com) → 새 프로젝트 → **Google Sheets API 사용 설정** → 서비스 계정 생성 → JSON 키 다운로드 → `gcp_sa.json`으로 이름 바꿔 프로젝트 루트에 배치 → 시트 공유에 키 파일의 `client_email`을 **편집자**로 추가(옛 로봇 계정은 제거). 상세는 `docs/handover-simple.html` 상세 매뉴얼 탭 1-C
+- [ ] **캐릿 새 계정 준비**: 새 담당자 명의로 캐릿 가입 + 유료 멤버십 결제 (**기존 계정을 이관하지 않고 새 계정으로 시작**)
+- [ ] `.env`의 `CAREET_EMAIL`/`CAREET_PASSWORD`에 새 계정 값 입력
+- [ ] **캐릿 기기 등록**: `setup_profile.py` 실행 → OTP는 **새 계정 이메일**로 옴 → `.otp` 파일로 전달 (새 계정이라 기기 슬롯이 비어 있어 기기 삭제 과정 없음)
 - [ ] 테스트: `run_daily.py` 수동 실행 → run.log 전 단계 exit=0 확인 → `sheets_push.py --dry`로 시트 연결 확인
 
 ### 7-3. 예약작업 등록 (새 경로로)
@@ -114,8 +116,8 @@ schtasks /Create /F /TN FF-Trend-Daily /SC DAILY /ST 08:00 /TR "`"$PY`" `"$ROOT\
 
 ### 7-4. 인계 전 결정할 것
 
-- [ ] **캐릿 유료 계정 명의** — 계정을 바꾸면: `.env`의 CAREET_EMAIL/PASSWORD 교체 → `profile\` 폴더 삭제(옛 세션 제거) → `setup_profile.py` 재실행(OTP는 새 계정 이메일로 옴) → 옛 계정에서 구 기기 삭제
-- [ ] **구글 시트 소유권** — ①시트 공유 메뉴에서 새 담당자에게 소유권 이전(데이터·메모 그대로, .env 수정 불필요) 또는 ②새 계정에서 '사본 만들기'(사람 메모 보존을 위해 반드시 사본) → 새 시트에 서비스계정 이메일(gcp_sa.json의 client_email) 편집자 공유 → `.env`의 SHEETS_TREND_ID 교체 → `sheets_push.py --dry`로 "추가예정 0" 확인. 상세는 `docs/handover-simple.html` 상세 매뉴얼 탭 1-A/1-B
+- [ ] **캐릿 계정 = 새 계정으로 확정** (기존 계정 이관 안 함, 등록 절차는 7-2에 포함). 전임자 마무리: 자기 계정 마이페이지에서 자동화 기기(`trend-agent`) 삭제 → 자기 멤버십 해지 여부 결정 (두 계정 결제가 겹치는 기간 확인)
+- [ ] **구글 시트 소유권 이전** — 시트 공유 메뉴에서 새 담당자를 편집자로 추가 → "소유권 이전" → 새 담당자가 이메일에서 수락. 시트 주소가 안 바뀌므로 데이터·메모 그대로, `.env` 수정 불필요. `sheets_push.py --dry`로 "추가예정 0" 확인. **시트에 push하는 서비스계정(로봇)도 새 담당자 명의로 새로 만든다**(7-2 참고). 상세는 `docs/handover-simple.html` 상세 매뉴얼 탭 1-B·1-C
 
 ## 8. 보안·이용 규칙 (반드시 지킬 것)
 
