@@ -298,12 +298,12 @@ h3.d{margin:2rem 0 .5rem}
       <thead><tr><th>묶음</th><th>내용</th><th>받는 방법</th></tr></thead>
       <tbody>
         <tr><td><strong>① 프로젝트 폴더</strong></td><td>시스템의 모든 프로그램과 설명서. 과거 수정 이력까지 담겨 있음</td><td>전임자에게 <strong>깃허브 저장소 초대</strong>를 받아 <code>git clone</code> (4절 1번)</td></tr>
-        <tr><td><strong>② 비밀 파일 묶음</strong></td><td>Gemini AI 열쇠 값 하나뿐 — <code>.env</code>는 저장소의 <code>.env.example</code>을 복사해 만들면 시트 주소는 이미 채워져 있고, 캐릿 칸은 새 계정(1-A절)·AI 열쇠만 받아서 입력. <code>gcp_sa.json</code>(로봇 열쇠)도 받는 게 아니라 <strong>새 담당자가 직접 새로 만듭니다</strong>(1-C절) · (선택) <code>trends.db</code>와 <code>src\data</code> 폴더(그동안 모은 자료 — 받으면 첫 실행 때 AI 비용 절약)</td><td><strong>반드시 1:1 메시지나 USB로만.</strong> 이메일·단체방 금지</td></tr>
+        <tr><td><strong>② (선택) 과거 데이터</strong></td><td><strong>비밀 열쇠는 받을 게 없습니다</strong> — 캐릿 계정(1-A절)·로봇 열쇠 <code>gcp_sa.json</code>(1-C절)·Gemini AI 열쇠(1-D절) 전부 새 담당자가 직접 만들고, <code>.env</code>는 저장소의 <code>.env.example</code>을 복사해 채우면 됩니다(시트 주소는 미리 채워져 있음). 받을 것은 (선택) 과거 데이터뿐 · (선택) <code>trends.db</code>와 <code>src\data</code> 폴더(그동안 모은 자료 — 받으면 첫 실행 때 AI 비용 절약)</td><td><strong>반드시 1:1 메시지나 USB로만.</strong> 이메일·단체방 금지</td></tr>
       </tbody>
     </table></div>
     <p class="small dim">깃허브에 들어있지 <em>않은</em> 것: <code>venv</code> 폴더, <code>profile</code> 폴더(캐릿 로그인 상태), 아침 8시 자동 실행 설정 — 없는 게 정상이고, 모두 4절 설치 과정에서 새로 만들어집니다.</p>
 
-    <div class="warnbox"><strong>인계에서 가장 중요한 두 가지 = 계정 정리</strong> — ① 캐릿: <strong>새 담당자 명의의 새 유료 계정</strong>을 만들어 등록(전임자 계정 이관 안 함), ② 구글 시트: <strong>소유권 이전</strong> + 시트에 글 쓰는 <strong>로봇 계정도 새 담당자 구글 계정으로 새로 생성</strong>(1-B·1-C절). 아래에 "어디서 무엇을 바꾸는지"까지 절차로 정리했습니다. 전부 새 담당자 소유가 되어야, 전임자가 퇴사해도 시스템이 계속 살아있습니다.</div>
+    <div class="warnbox"><strong>인계 원칙 = 모든 계정·열쇠를 새 담당자 명의로</strong> — ① 캐릿: <strong>새 유료 계정</strong> 가입(1-A절, 전임자 계정 이관 안 함), ② 구글 시트: <strong>소유권 이전</strong>(1-B절) + 시트에 글 쓰는 <strong>로봇 계정 새로 생성</strong>(1-C절), ③ <strong>Gemini AI 열쇠 직접 발급</strong>(1-D절). 아래에 "어디서 무엇을 바꾸는지"까지 절차로 정리했습니다. 전부 새 담당자 소유가 되어야, 전임자가 퇴사해도 시스템이 계속 살아있습니다.</div>
 
     <h3 class="d" id="careet-move">1-A. 캐릿 — 새 계정 만들어 기기 등록 ★</h3>
     <p>캐릿은 유료 회원제 + <strong>기기 4대 제한</strong>이 있는 사이트입니다. <strong>인계 방침: 전임자 계정을 물려받지 않고, 새 담당자 명의의 새 계정으로 시작합니다.</strong> 관련 설정은 딱 두 곳:</p>
@@ -352,6 +352,15 @@ h3.d{margin:2rem 0 .5rem}
 <pre>venv\Scripts\python.exe src\service\sheets_push.py --dry</pre></li>
     </ol>
     <p class="small dim">중간에 막히면 Claude Code에 "gcp_sa.json 새로 만드는 중인데 ○단계에서 막혔어"라고 물어보세요. 콘솔 화면은 종종 바뀌지만 흐름(프로젝트 → Sheets API → 서비스 계정 → JSON 키 → 시트 공유)은 같습니다.</p>
+
+    <h3 class="d" id="gemini-key">1-D. Gemini AI 열쇠도 직접 발급 ★</h3>
+    <p>글을 요약·분석하는 AI(Gemini)의 열쇠도 전임자 것을 물려받지 않고 <strong>새 담당자 구글 계정으로 직접 발급</strong>합니다. 1분이면 끝나요.</p>
+    <ol class="steps">
+      <li><code>aistudio.google.com</code> 접속 → 새 담당자 구글 계정으로 로그인.</li>
+      <li><strong>"Get API key" / "API 키 만들기"</strong> 버튼 클릭 → 키 생성 → 복사.</li>
+      <li>프로젝트 폴더의 <code>.env</code> 파일을 메모장으로 열어 <code>GEMINI_API_KEY=</code> 뒤에 붙여넣고 저장.</li>
+    </ol>
+    <p class="small dim">무료 등급으로도 동작하지만 하루 사용량 제한이 있어, 운영 중 분석 실패가 자주 보이면 구글 클라우드 결제 연결로 상향하면 됩니다. 이 키도 비밀 — 단체방·이메일 공유 금지.</p>
   </section>
 
   <!-- 2. 시스템이 매일 하는 일 -->
@@ -459,7 +468,7 @@ h3.d{margin:2rem 0 .5rem}
     <ol class="steps">
       <li><strong>깃허브에서 프로젝트 받기</strong> — 전임자에게 저장소 초대(접근 권한)를 받은 뒤, 원하는 위치(예: <code>C:\Users\내이름\Agent</code>)에서:
 <pre>git clone &lt;저장소 주소&gt;</pre></li>
-      <li><strong>비밀 파일 넣기</strong> — 폴더 안의 <code>.env.example</code>을 복사해 <code>.env</code>로 저장하고, 캐릿 새 계정과 1:1로 받은 Gemini AI 열쇠를 채우기(시트 주소는 이미 채워져 있음). <code>gcp_sa.json</code>은 1-C절 절차로 직접 만들어 폴더 맨 위에, (받았다면) <code>trends.db</code>·<code>src\data</code> 폴더도 제자리에.</li>
+      <li><strong>비밀 파일 넣기</strong> — 폴더 안의 <code>.env.example</code>을 복사해 <code>.env</code>로 저장하고, 캐릿 새 계정(1-A절)과 직접 발급한 Gemini AI 열쇠(1-D절)를 채우기(시트 주소는 이미 채워져 있음). <code>gcp_sa.json</code>은 1-C절 절차로 직접 만들어 폴더 맨 위에, (받았다면) <code>trends.db</code>·<code>src\data</code> 폴더도 제자리에.</li>
       <li><strong>실행 환경 설치</strong> — 아래 세 줄을 순서대로:
 <pre>python -m venv venv
 venv\Scripts\pip.exe install -r requirements.txt

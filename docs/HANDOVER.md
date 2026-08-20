@@ -83,8 +83,7 @@ venv\Scripts\python.exe src\service\setup_profile.py
 
 ### 7-1. 구 PC에서 챙겨갈 것 (DM/USB로만 — 절대 git 금지)
 
-- [ ] Gemini API 키 값 — `.env` 파일 자체는 리포의 `.env.example`을 복사해 만들면 됨(시트 ID는 미리 채워져 있음). 캐릿 칸은 새 담당자의 새 계정(7-2 참고)
-- ℹ️ `gcp_sa.json`(서비스계정 키)은 **받지 않는다** — 새 담당자가 자기 구글 계정으로 새로 만든다 (7-2 참고)
+- ℹ️ **비밀 키는 아무것도 받지 않는다** — 캐릿 계정·Gemini API 키·`gcp_sa.json`(서비스계정 키) 전부 새 담당자가 자기 명의로 새로 만든다 (7-2 참고). `.env`는 리포의 `.env.example` 복사로 만들면 됨(시트 ID는 미리 채워져 있음)
 - [ ] `trends.db` (누적 DB — 새로 시작해도 시트에는 남아있으므로 선택)
 - [ ] `trenddb_owner.txt` (수집자 이름표 — 없으면 새 PC에서 `trenddb.py set-owner <이름>` 1회)
 - [ ] (선택) `src\data\` 폴더 통째 — 본문 캐시를 가져가면 첫 실행 때 재수집·재분석 비용을 아낌
@@ -94,7 +93,7 @@ venv\Scripts\python.exe src\service\setup_profile.py
 - [ ] GitHub 저장소 접근 권한(초대) 받기 → `git clone` → 프로젝트 루트 확정
 - [ ] `python -m venv venv` → `venv\Scripts\pip.exe install -r requirements.txt`
 - [ ] `venv\Scripts\playwright.exe install chromium`
-- [ ] `.env` 만들기: `.env.example`을 복사해 `.env`로 저장 → Gemini 키 입력 (시트 ID는 미리 채워져 있음)
+- [ ] `.env` 만들기: `.env.example`을 복사해 `.env`로 저장 → **Gemini 키는 본인 구글 계정으로 aistudio.google.com에서 직접 발급**해 입력 (시트 ID는 미리 채워져 있음)
 - [ ] **구글 서비스계정(로봇) 새로 만들기**: 새 담당자 구글 계정으로 GCP 콘솔(console.cloud.google.com) → 새 프로젝트 → **Google Sheets API 사용 설정** → 서비스 계정 생성 → JSON 키 다운로드 → `gcp_sa.json`으로 이름 바꿔 프로젝트 루트에 배치 → 시트 공유에 키 파일의 `client_email`을 **편집자**로 추가(옛 로봇 계정은 제거). 상세는 `docs/handover-simple.html` 상세 매뉴얼 탭 1-C
 - [ ] **캐릿 새 계정 준비**: 새 담당자 명의로 캐릿 가입 + 유료 멤버십 결제 (**기존 계정을 이관하지 않고 새 계정으로 시작**)
 - [ ] `.env`의 `CAREET_EMAIL`/`CAREET_PASSWORD`에 새 계정 값 입력
