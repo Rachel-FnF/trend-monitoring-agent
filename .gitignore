@@ -28,3 +28,6 @@ trenddb_owner.txt
 docs/dashboard.html
 docs/review/digest_*.md
 docs/review/deepread_*.md
+
+# 개인 보관용 (인수인계 제외)
+docs/legacy-slack.md
